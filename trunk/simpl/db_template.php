@@ -87,54 +87,56 @@ class DbTemplate extends Form {
 			$this->required = $required;	
 		
 		// Check to see if there is a cache yet.
-		clearstatcache();
-		if (USE_CACHE == true && is_file(FS_SIMPL . WS_CACHE . $this->table . '.cache') && date ("Ymd", filemtime(FS_SIMPL . WS_CACHE . $this->table . '.cache')) >= date ("Ymd")){
-			Debug('Contructor(), Create From Cache');
-			// Grab the Cache file
-			$cache = file_get_contents(FS_SIMPL . WS_CACHE . $this->table . '.cache');
-			// Make the nessisary eval line
-			$cache = '$this->fields = ' . substr($cache,0,-1) . ';';
-			eval($cache);
-			// Unserialize the classes
-			foreach($this->fields as $key=>$field){
-				$tmpField = unserialize($field);
-				$this->fields[$key] = $tmpField;
-				if ($tmpField->primary_key == 1)
-					$this->primary = $key;
-			}
-		}else{
-			Debug('Contructor(), Create From Database');
-			// Grab the list of fields from the DB
-			$query = "SELECT * FROM `" . $this->table . "` LIMIT 1";
-			$result = fnc_db_query($query, $this->database);
-			
-			// Get the information about each field
-			while(($field = mysql_fetch_field($result))){
-				// Get the max length of the field in the DB
-				$field->length = mysql_field_len($result,count($this->fields));
-				// Set that info into the field class
-				$key = $field->name;
-				// Set the Label of the Key
-				$field->label = ($labels[$key] != '')?$labels[$key]:'';
-				// Set the Example of the Key
-				$field->example = ($examples[$key] != '')?$examples[$key]:'';
-				// Add this field to the list of fields
-				$this->fields[$key] = $field;
-				// If this is the Primary Key Save the field name
-				if ($field->primary_key == 1)
-					$this->primary = $key;
-			}// end for each field
-			
-			// Write the Cache
-			if (is_writable(FS_SIMPL . WS_CACHE)){
-				$contents = arraytostring($this->fields);
-				$filename = $this->table . '.cache';
-			
-				//Open and Write the File
-				$fp = fopen(FS_SIMPL . WS_CACHE . $filename ,"w");
-				fwrite($fp,$contents);
-				fclose($fp);
-				chmod (FS_SIMPL . WS_CACHE . $filename, 0777);
+		if (!is_array($this->fields)){
+			clearstatcache();
+			if (USE_CACHE == true && is_file(FS_SIMPL . WS_CACHE . $this->table . '.cache') && date ("Ymd", filemtime(FS_SIMPL . WS_CACHE . $this->table . '.cache')) >= date ("Ymd")){
+				Debug('Contructor(), Create From Cache');
+				// Grab the Cache file
+				$cache = file_get_contents(FS_SIMPL . WS_CACHE . $this->table . '.cache');
+				// Make the nessisary eval line
+				$cache = '$this->fields = ' . substr($cache,0,-1) . ';';
+				eval($cache);
+				// Unserialize the classes
+				foreach($this->fields as $key=>$field){
+					$tmpField = unserialize($field);
+					$this->fields[$key] = $tmpField;
+					if ($tmpField->primary_key == 1)
+						$this->primary = $key;
+				}
+			}else{
+				Debug('Contructor(), Create From Database');
+				// Grab the list of fields from the DB
+				$query = "SELECT * FROM `" . $this->table . "` LIMIT 1";
+				$result = fnc_db_query($query, $this->database);
+				
+				// Get the information about each field
+				while(($field = mysql_fetch_field($result))){
+					// Get the max length of the field in the DB
+					$field->length = mysql_field_len($result,count($this->fields));
+					// Set that info into the field class
+					$key = $field->name;
+					// Set the Label of the Key
+					$field->label = ($labels[$key] != '')?$labels[$key]:'';
+					// Set the Example of the Key
+					$field->example = ($examples[$key] != '')?$examples[$key]:'';
+					// Add this field to the list of fields
+					$this->fields[$key] = $field;
+					// If this is the Primary Key Save the field name
+					if ($field->primary_key == 1)
+						$this->primary = $key;
+				}// end for each field
+				
+				// Write the Cache
+				if (is_writable(FS_SIMPL . WS_CACHE)){
+					$contents = arraytostring($this->fields);
+					$filename = $this->table . '.cache';
+				
+					//Open and Write the File
+					$fp = fopen(FS_SIMPL . WS_CACHE . $filename ,"w");
+					fwrite($fp,$contents);
+					fclose($fp);
+					chmod (FS_SIMPL . WS_CACHE . $filename, 0777);
+				}
 			}
 		}
 		
