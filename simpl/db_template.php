@@ -635,7 +635,7 @@ class DbTemplate extends Form {
 		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . 'order'];
 		
 		// Get the List of Customers
-		$list = $this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
+		$list = $this->GetList($display, $_SESSION[$this->table . '_order'], $_SESSION[$this->table . '_sort']);
 		
 		// If there is items
 		if (is_array($list)){
