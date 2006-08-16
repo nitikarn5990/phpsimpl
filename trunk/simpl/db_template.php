@@ -515,7 +515,7 @@ class DbTemplate extends Form {
 	* @todo Write this Function
 	* @return NULL
 	*/
-	function Form($display='', $hidden=array(), $options=array()){
+	function Form($display='', $hidden=array(), $options=array(), $config=array()){
 		// Rearrange the Fields if there is a custom display
 		$show = array();
 		if(is_array($display)){
@@ -549,14 +549,26 @@ class DbTemplate extends Form {
 				
 				// If there is specialty options
 				if ($options[$key] != ''){
-					// Start the Select Box
-					echo '<select name="' . $key . '" id="' . $key . '">' . "\n";
-					// Loop though each option
-					foreach($options[$key] as $opt_key=>$opt_value){
-						echo "\t" . '<option value="' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
+					switch($config[$key]){
+						case 'radio':
+							echo '<div class="radio">' . "\n";
+							// Loop though each option
+							foreach($options[$key] as $opt_key=>$opt_value){
+								echo "\t" . '<input name="' . $key . '" type="radio" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label><br />' . "\n";
+							}
+							echo '</div>';
+							break;
+						default:
+							// Start the Select Box
+							echo '<select name="' . $key . '" id="' . $key . '">' . "\n";
+							// Loop though each option
+							foreach($options[$key] as $opt_key=>$opt_value){
+								echo "\t" . '<option value="' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
+							}
+							// End the Select Box
+							echo '</select><br />' . "\n";
+							break;
 					}
-					// End the Select Box
-					echo '</select><br />' . "\n";
 				}elseif($this->fields[$key]->type == 'blob'){
 					// If it is a blob or text in the DB then make it a text area
 					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->fields[$key]->value) . '</textarea><br />' . "\n";
