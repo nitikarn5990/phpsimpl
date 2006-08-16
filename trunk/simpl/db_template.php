@@ -521,7 +521,7 @@ class DbTemplate extends Form {
 		if(is_array($display)){
 			// If there is a custome Display make the array
 			foreach($display as $key=>$data)
-				$show[$data] = ($this->fields[$data]->label != '')?$this->fields[$data]->label:ucfirst(str_replace('_',' ',$data));
+				$show[$data] = ($this->fields[$data]->label != '')?$this->fields[$data]->label:ucfirst(str_replace('_',' ',$data)) . ':';
 			
 			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
 			if (is_array($this->fields))
@@ -533,7 +533,7 @@ class DbTemplate extends Form {
 			if (is_array($this->fields))
 				foreach($this->fields as $key=>$data){
 					if (!in_array($key,$hidden))
-						$show[$key] = ($data->label != '')?$data->label:ucfirst(str_replace('_',' ',$key));
+						$show[$key] = ($data->label != '')?$data->label:ucfirst(str_replace('_',' ',$key)) . ':';
 				}
 		}
 		
@@ -545,7 +545,7 @@ class DbTemplate extends Form {
 			// If the field is not in the hidden array
 			if (!in_array($key,$hidden)){
 				// Create the Field Div with the example, label and error if need be
-				echo '<div>' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . ':</label>' . (($this->error[$key] != '')?'<div class="error">':'');
+				echo '<div>' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
 				
 				// If there is specialty options
 				if ($options[$key] != ''){
