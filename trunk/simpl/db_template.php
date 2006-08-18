@@ -151,7 +151,10 @@ class DbTemplate extends Form {
 				}else if ($field->type == 'time' && trim($data[$key]) != ''){
 					$field->value = date("H:i",strtotime($data[$key]));
 				}else{
-					$field->value = ($data[$key] != '')?$data[$key]:'';
+					if (is_array($data[$key]))
+						$field->value = implode(",", $data[$key]);
+					else
+						$field->value = ($data[$key] != '')?$data[$key]:'';
 				}
 			}
 				
@@ -545,7 +548,7 @@ class DbTemplate extends Form {
 			// If the field is not in the hidden array
 			if (!in_array($key,$hidden)){
 				// Create the Field Div with the example, label and error if need be
-				echo '<div>' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
+				echo '<div class="field_' . $key . '">' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
 				
 				// If there is specialty options
 				if ($options[$key] != ''){
@@ -554,7 +557,18 @@ class DbTemplate extends Form {
 							echo '<div class="radio">' . "\n";
 							// Loop though each option
 							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<input name="' . $key . '" type="radio" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label><br />' . "\n";
+								echo "\t" . '<div><input name="' . $key . '" type="radio" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
+							}
+							echo '</div>';
+							break;
+						case 'checkbox':
+							// Split values
+							$split = split(',',$this->GetValue($key));
+													
+							echo '<div class="checkbox">' . "\n";
+							// Loop though each option
+							foreach($options[$key] as $opt_key=>$opt_value){
+								echo "\t" . '<div><input name="' . $key . '[]" type="checkbox" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (is_array($split) && in_array((string)$opt_key,$split)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
 							}
 							echo '</div>';
 							break;
@@ -576,7 +590,7 @@ class DbTemplate extends Form {
 					// Create the Javascript Date Menu
 					echo '<span id="cal_' . $key . '"></span>';
 					echo '<script type="text/javascript">';
-					echo 'createCalendarWidget(\'' . $key . '\',\'NO_EDIT\', \'ICON\',\'' . WS_SIMPL . WS_SIMPL_IMAGE . 'cal.gif\');';
+					echo 'createCalendarWidget(\'' . $key . '\',\'NO_EDIT\', \'ICON\',\'' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'cal.gif\');';
 					if ($this->fields[$key]->value != '')
 						echo 'setCalendar(\'' . $key . '\',' . date("Y,n,j",strtotime($this->fields[$key]->value)) . ');';
 					echo '</script>';
