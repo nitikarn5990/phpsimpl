@@ -146,15 +146,15 @@ class DbTemplate extends Form {
 				if ($field->type == 'date' && trim($data[$key]) != ''){
 					// Transform the purchased on Date
 					$tmp_date = split('[/.-]', $data[$key]);
-					$field->value = date("Y-m-d",strtotime($tmp_date[2].'-'.$tmp_date[0].'-'.$tmp_date[1]));
+					$this->SetValue($key,date("Y-m-d",strtotime($tmp_date[2].'-'.$tmp_date[0].'-'.$tmp_date[1])));
 					unset($tmp_date);
 				}else if ($field->type == 'time' && trim($data[$key]) != ''){
-					$field->value = date("H:i",strtotime($data[$key]));
+					$this->SetValue($key,date("H:i",strtotime($data[$key])));
 				}else{
 					if (is_array($data[$key]))
-						$field->value = implode(",", $data[$key]);
+						$this->SetValue($key,implode(",", $data[$key]));
 					else
-						$field->value = ($data[$key] != '')?$data[$key]:'';
+						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
 				}
 			}
 				
