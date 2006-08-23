@@ -341,19 +341,17 @@ class DbTemplate extends Form {
 		$fields = array($this->primary);
 		// If we can get the info then we can delete it
 		if ($this->GetInfo($fields)){
-			// fields [0] is always primary key
-			$primary = $this->primary;
-			Debug('Delete(), Item Found, Primary Field: ' . $primary . ', Value: ' . $this->fields[$this->primary]->value);
+			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->fields[$this->primary]->value);
 		
 			// Delete the row
-			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $primary . "` = '" . $this->fields[$this->primary]->value . "' LIMIT 1";
+			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $this->primary . "` = '" . $this->fields[$this->primary]->value . "' LIMIT 1";
 			$result = fnc_db_query($query, $this->database);
 
 			// If it did something the return that everything is gone
 			if ($result)
 				return true;
 		}else
-			Debug('Delete(), Item Not Found, Primary Field: ' . $primary . ', Value: ' . $this->fields[$this->primary]->value);
+			Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->fields[$this->primary]->value);
 		
 		return false;
 	}
