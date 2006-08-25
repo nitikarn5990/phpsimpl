@@ -658,11 +658,12 @@ class DbTemplate extends Form {
 		$_SESSION[$this->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
 		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . 'order'];
 		
-		// Get the List of Customers
-		$list = $this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
+		// Get the List of Items If they are not already set
+		if (!is_array($this->list))
+			$this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
 		
 		// If there is items
-		if (is_array($list)){
+		if (is_array($this->list)){
 			// Simplify the order
 			$order = ($_SESSION[$this->table . '_order'] == 'desc')?'asc':'desc';
 			// Start the table
@@ -686,7 +687,7 @@ class DbTemplate extends Form {
 			
 			// Loop through all the items
 			$i=1;
-			foreach($list as $field=>$data){
+			foreach($this->list as $field=>$data){
 				echo '<tr' . (($i%2 == 0)?' class="odd"':'') . '>' . "\n";
 				foreach($show as $key=>$column){
 					// Overwrite the DB data with usable data
