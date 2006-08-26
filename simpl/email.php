@@ -76,6 +76,7 @@ class Mail{
 	var $charset = "us-ascii";
 	var $ctencoding = "7bit";
 	var $receipt = 0;
+	var $content_type = 'text/plain';
 	
 
 	/*
@@ -210,8 +211,11 @@ class Mail{
 	 *		default to us-ascii
 	 *		$mail->Body( "mél en français avec des accents", "iso-8859-1" );
 	 */
-	function Body( $body, $charset="" ){
+	function Body( $body, $content_type='', $charset="" ){
 		$this->body = $body;
+		
+		if ($content_type != '')
+			$this->content_type = strtolower(trim($content_type));
 		
 		if( $charset != "" ) {
 			$this->charset = strtolower($charset);
@@ -289,7 +293,7 @@ class Mail{
 		
 		if( $this->charset != "" ) {
 			$this->xheaders["Mime-Version"] = "1.0";
-			$this->xheaders["Content-Type"] = "text/plain; charset=$this->charset";
+			$this->xheaders["Content-Type"] = "$this->content_type; charset=$this->charset";
 			$this->xheaders["Content-Transfer-Encoding"] = $this->ctencoding;
 		}
 	
@@ -323,6 +327,8 @@ class Mail{
 		
 		// envoie du mail
 		$res = @mail( $this->strTo, $this->xheaders['Subject'], $this->fullBody, $this->headers );
+		
+		return $res;
 	}
 	
 	
