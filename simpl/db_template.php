@@ -295,7 +295,7 @@ class DbTemplate extends Form {
 			foreach($this->fields as $key=>$data){
 				$infoArray[$key] = $this->fields[$key]->value;
 			}
-			
+		
 		if (DB_STATUS != false){
 			Debug('Save(), Database Found');
 			
@@ -549,7 +549,26 @@ class DbTemplate extends Form {
 				echo '<div class="field_' . $key . '">' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
 				
 				// If there is specialty options
-				if ($options[$key] != ''){
+				if(is_object($options[$key])){
+					switch(get_class($options[$key])){
+						case 'Upload':
+							// Check to see if it is set or not
+							if (stripslashes($this->fields[$key]->value) != ''){
+								// If there is something in the field
+								echo '<p id="form_' . $key . '">' . $this->fields[$key]->value . ' <a href="' . $options[$key]->directory . $this->fields[$key]->value . '" target="_blank"><img src="' . DIR_IMAGES . 'picture_go.png" width="16" height="16" alt="View ' . $this->fields[$key]->value . '" align="top" /></a> <a href="?id=' . $this->GetPrimary() . '&amp;remove=image" class="funcDeleteImage()"><img src="' . DIR_IMAGES . 'picture_delete.png" width="16" height="16" alt="Remove ' . $this->fields[$key]->value . '" align="top" /></a></p>';
+								// Add this field to the Hidden List
+								if (!in_array($key,$hidden))
+									$hidden[]=$key;
+							}else{
+								// If there not anything uploaded yet
+								echo '<input name="' . $key . '" id="' . $key . '" type="file" />';
+							}
+							break;
+						default:
+							echo '<p>Unknown</p>';
+							break;
+					}
+				}elseif ($options[$key] != ''){
 					switch($config[$key]){
 						case 'radio':
 							echo '<div class="radio">' . "\n";
