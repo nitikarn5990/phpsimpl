@@ -253,10 +253,11 @@ class DbTemplate extends Form {
 	* Saves all the fields and their current values into the DB, it either 
 	* inserts or updated depending on if the primary key is set.
 	*
+	* @param array
 	* @return BOOL
 	* @todo Check the Cache file for any not entered records
 	*/
-	function Save(){
+	function Save($options = array()){
 		// Do not save if there is errors
 		if (is_array($this->error))
 			return false;
@@ -275,6 +276,11 @@ class DbTemplate extends Form {
 					foreach($this->fields as $key=>$data)
 						if ($key == 'date_entered' || $key == 'created_on' || $key == 'last_updated' || $key == 'updated_on')
 							$this->fields[$key]->value = date("Y-m-d H:i:s");
+						else if ($key == 'display_order' && is_object($options['display_order'])){
+							// Find out what the next display order is
+							$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
+							$this->fields[$key]->value = ((int)$last_item[0]['display_order']+1);
+						}
 				break;
 			default: 
 				$type = 'update';
@@ -352,6 +358,86 @@ class DbTemplate extends Form {
 				return true;
 		}else
 			Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->fields[$this->primary]->value);
+		
+		return false;
+	}
+	
+	/**
+	* Move Item
+	*
+	* Moves the Menu Item up or down depending on the direction
+	*
+	* @todo Clean this function up.
+	* @param string ('up','down'), array
+	* @return bool
+	*/
+	function Move($direction,$options){
+		// Loop through all the options
+		if (is_array($options)){
+			foreach($options as $key=>$item){
+				// Make sure the variable to move is in the field list
+				if (in_array($key,$this->GetFields())){
+					// Depending on the Move find the next/previous key
+					// Limit the Search
+					$extra = '';
+					// Run trough each each field looking for values inside of each variable
+					if(is_array($item->fields))
+						foreach($item->fields as $key2=>$data){
+							// Make sure the variable has something in it
+							if (isset($item->fields[$key2]->value) && (string)$item->fields[$key2]->value != ''){
+								Debug('Move(), Filter Item: ' . $key2 . ', Value: ' . $item->fields[$key2]->value);
+								// Determine how to search in the database
+								if (is_string($this->fields[$key2]->value))
+									$extra .= " `" . $key2 . "` LIKE '" . $item->fields[$key2]->value . "' AND";
+								else		
+									$extra .= " `" . $key2 . "` = '" . $item->fields[$key2]->value . "' AND";
+							}
+						}
+					
+					// Add the Move Variable
+					if ($direction == 'up')
+						$extra .= " `" . $key . "` < '" . $this->fields[$key]->value . "' AND";
+					else
+						$extra .= " `" . $key . "` > '" . $this->fields[$key]->value . "' AND";
+					
+					// Format it for MySQL
+					$extra = ($extra != '')?'WHERE ' . substr($extra,0,-4):'';
+			
+					// Make the Query
+					$query = 'SELECT `' . $item->primary . '`,`' . $key . '` ';
+						
+					// Finish the query
+					$query .= 'FROM `' . $this->table . '` ' . $extra . ' ORDER BY `' . $key . '` ' . (($direction == 'up')?'DESC':'ASC');
+					
+					// Put in the Offset
+					$query .= ' LIMIT 1';
+					
+					// Do the Query
+					$result = fnc_db_query($query, $this->database);
+					Debug('Move(), Query: ' . $query);
+					
+					// Make sure there is one result
+					if (fnc_db_num_rows($result) == 1){
+						// Get the New Order
+						$new_order = fnc_db_fetch_array($result);
+						// Make sure they are not the same numbers
+						if ($new_order[$key] != $this->GetValue($key)){
+							// Update the Old One
+							$oldArray = array($key => $this->GetValue($key));
+							fnc_db_perform($item->table, $oldArray, 'update', '`' . $item->primary . '`=\'' . $new_order[$item->primary] . '\'');
+							// Update the New one
+							$newArray = array($key => $new_order[$key]);
+							fnc_db_perform($this->table, $newArray, 'update', '`' . $this->primary . '`=\'' . $this->GetPrimary() . '\'');
+							
+							// Set the value to this class
+							$this->SetValue($key,$new_order[$key]);
+							
+							return true;
+						}
+					}
+				}
+			}
+		}
 		
 		return false;
 	}
@@ -513,7 +599,6 @@ class DbTemplate extends Form {
 	* Hidden Array takes presidence over $display
 	*
 	* @param array, array, array
-	* @todo Write this Function
 	* @return NULL
 	*/
 	function Form($display='', $hidden=array(), $options=array(), $config=array()){
@@ -669,7 +754,6 @@ class DbTemplate extends Form {
 	* Displays a list of classes according the the list criteria and sort order
 	*
 	* @param array, string, array
-	* @todo Write this Function
 	* @return NULL
 	*/
 	function DisplayList($display='',$format=array(),$options=array()){
@@ -715,6 +799,8 @@ class DbTemplate extends Form {
 						$value = $data[$key];
 						// Get the Option Value
 						$data[$key] = $options[$key][$value];
+					}else if ($options[$key] == 'move'){
+						$data[$key] = '<div class="center">' . (($i != 1)?'<a href="?item=' . $data[$this->primary] . '&amp;move=up"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'asc.gif" align="top" width="17" height="17" alt="Move Item Up" /></a>':'') . (($i != count($this->list))?'<a href="?item=' . $data[$this->primary] . '&amp;move=down"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'desc.gif" align="top" width="17" height="17" alt="Move Item Down" /></a>':'') . '</div>'; 
 					}
 					// Display the Data
 					echo "\t" . '<td>';
