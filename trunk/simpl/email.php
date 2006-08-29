@@ -1,44 +1,24 @@
 <?php
-
 /*
-
-
-	this class encapsulates the PHP mail() function.
-	implements CC, Bcc, Priority headers
-
-
-@version	1.3 
-
-- added ReplyTo( $address ) method
-- added Receipt() method - to add a mail receipt
-- added optionnal charset parameter to Body() method. this should fix charset problem on some mail clients
-	     
-@example
-
-	include "libmail.php";
-	
-	$m= new Mail; // create the mail
-	$m->From( "leo@isp.com" );
-	$m->To( "destination@somewhere.fr" );
-	$m->Subject( "the subject of the mail" );	
-
-	$message= "Hello world!\nthis is a test of the Mail class\nplease ignore\nThanks.";
-	$m->Body( $message);	// set the body
-	$m->Cc( "someone@somewhere.fr");
-	$m->Bcc( "someoneelse@somewhere.fr");
-	$m->Priority(4) ;	// set the priority to Low 
-	$m->Attach( "/home/leo/toto.gif", "image/gif" ) ;	// attach a file of type image/gif
-	$m->Send();	// send the mail
-	echo "the mail below has been sent:<br><pre>", $m->Get(), "</pre>";
-
-	
-LASTMOD
-	Fri Oct  6 15:46:12 UTC 2000
-
-@author	Leo West - lwest@free.fr
-
-*/
-
+ * this class encapsulates the PHP mail() function.
+ * 
+ * @version	1.3 
+ * @example
+ * $m= new Mail; // create the mail
+ * $m->From( "leo@isp.com" );
+ * $m->To( "destination@somewhere.fr" );
+ * $m->Subject( "the subject of the mail" );
+ * $message= "Hello world!\nthis is a test of the Mail class\nplease ignore\nThanks.";
+ * $m->Body( $message);	// set the body
+ * $m->Cc( "someone@somewhere.fr");
+ * $m->Bcc( "someoneelse@somewhere.fr");
+ * $m->Priority(4) ;	// set the priority to Low
+ * $m->Attach( "/home/leo/toto.gif", "image/gif" ) ;	// attach a file of type image/gif
+ * $m->Send();	// send the mail
+ * echo "the mail below has been sent:<br><pre>", $m->Get(), "</pre>";
+ * 
+ * @author	Leo West - lwest@free.fr
+ */
 
 class Mail{
 	/*
@@ -78,7 +58,6 @@ class Mail{
 	var $receipt = 0;
 	var $content_type = 'text/plain';
 	
-
 	/*
 		Mail contructor
 	*/
@@ -86,7 +65,6 @@ class Mail{
 		$this->autoCheck( true );
 		$this->boundary= "--" . md5( uniqid("myboundary") );
 	}
-	
 	
 	/*		
 	
@@ -98,12 +76,8 @@ class Mail{
 	@access public
 	*/
 	function autoCheck( $bool ){
-		if( $bool )
-			$this->checkAddress = true;
-		else
-			$this->checkAddress = false;
+		$this->checkAddress = ($bool)?true:false;
 	}
-	
 	
 	/*
 	
@@ -114,7 +88,6 @@ class Mail{
 	function Subject( $subject ){
 		$this->xheaders['Subject'] = strtr( $subject, "\r\n" , "  " );
 	}
-	
 	
 	/*
 	
@@ -143,7 +116,6 @@ class Mail{
 			
 	}
 	
-	
 	/*
 	add a receipt to the mail ie.  a confirmation is returned to the "From" address (or "ReplyTo" if defined) 
 	when the receiver opens the message.
@@ -153,7 +125,6 @@ class Mail{
 	function Receipt(){
 		$this->receipt = 1;
 	}
-	
 	
 	/*
 	set the mail recipient
@@ -168,9 +139,7 @@ class Mail{
 	
 		if( $this->checkAddress == true )
 			$this->CheckAdresses( $this->sendto );
-	
 	}
-	
 	
 	/*		Cc()
 	 *		set the CC headers ( carbon copy )
@@ -184,10 +153,7 @@ class Mail{
 			
 		if( $this->checkAddress == true )
 			$this->CheckAdresses( $this->acc );
-		
 	}
-	
-	
 	
 	/*		Bcc()
 	 *		set the Bcc headers ( blank carbon copy ). 
@@ -203,7 +169,6 @@ class Mail{
 		if( $this->checkAddress == true )
 			$this->CheckAdresses( $this->abcc );
 	}
-	
 	
 	/*		Body( text [, charset] )
 	 *		set the body (message) of the mail
@@ -224,7 +189,6 @@ class Mail{
 		}
 	}
 	
-	
 	/*		Organization( $org )
 	 *		set the Organization header
 	 */
@@ -232,7 +196,6 @@ class Mail{
 		if( trim( $org != "" )  )
 			$this->xheaders['Organization'] = $org;
 	}
-	
 	
 	/*		Priority( $priority )
 	 *		set the mail priority 
@@ -311,8 +274,6 @@ class Mail{
 			if( $hdr != "Subject" )
 				$this->headers .= "$hdr: $value\n";
 		}
-		
-	
 	}
 	
 	/*		
@@ -331,8 +292,6 @@ class Mail{
 		return $res;
 	}
 	
-	
-	
 	/*
 	 *		return the whole e-mail , headers + message
 	 *		can be used for displaying the message in plain text or logging it
@@ -344,7 +303,6 @@ class Mail{
 		$mail .= $this->fullBody;
 		return $mail;
 	}
-	
 	
 	/*
 		check an email address validity
@@ -362,7 +320,6 @@ class Mail{
 	 		return false;
 	}
 	
-	
 	/*
 		check validity of email addresses 
 		@param	array $aad - 
@@ -377,7 +334,6 @@ class Mail{
 			}
 		}
 	}
-	
 	
 	/*
 	 check and encode attach file(s) . internal use only
