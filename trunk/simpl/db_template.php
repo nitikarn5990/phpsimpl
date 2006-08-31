@@ -152,7 +152,7 @@ class DbTemplate extends Form {
 					$this->SetValue($key,date("H:i",strtotime($data[$key])));
 				}else{
 					if (is_array($data[$key]))
-						$this->SetValue($key,implode(",", $data[$key]));
+						$this->SetValue($key,implode(',', $data[$key]));
 					else
 						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
 				}
@@ -584,7 +584,7 @@ class DbTemplate extends Form {
 			$this->list = array();
 			// For each result make a class
 			while ($info = fnc_db_fetch_array($result))
-				$this->list[] = $info;
+				$this->list[$info[$this->primary]] = $info;
 			// Return the list of object
 			return $this->list;
 		}// if there is atleast one template
@@ -653,7 +653,7 @@ class DbTemplate extends Form {
 							echo '<p>Unknown</p>';
 							break;
 					}
-				}elseif ($options[$key] != ''){
+				}elseif (is_array($options[$key])){
 					switch($config[$key]){
 						case 'radio':
 							echo '<div class="radio">' . "\n";
