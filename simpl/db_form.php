@@ -146,6 +146,36 @@ class Form {
 	}
 	
 	/**
+	* Get Error
+	*
+	* Get the error of a field
+	*
+	* @return MIXED
+	*/
+	function GetError($field){
+		// Make sure there is fields and return the value
+		if (is_string($this->error[$field]))
+			return $this->error[$field];
+	}
+	
+	/**
+	* Set Error
+	*
+	* Set the error of a field
+	*
+	* @return BOOL
+	*/
+	function SetError($field,$value){
+		// Make sure there is fields
+		if (is_string($this->error[$field])){
+			$this->error[$field] = $value;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
 	* Get Fields
 	*
 	* Get a list of all the fields in the database
@@ -162,6 +192,35 @@ class Form {
 		}
 		
 		return 0;
+	}
+	
+	/**
+	* Set Values
+	*
+	* Set all the Values of a Class
+	*
+	* @return bool
+	*/
+	function SetValues($data = array()){
+		// Set all the Data for the Class
+		if (is_array($this->fields))
+			foreach($this->fields as $key=>$field){
+				if ($field->type == 'date' && trim($data[$key]) != ''){
+					// Transform the purchased on Date
+					$tmp_date = split('[/.-]', $data[$key]);
+					$this->SetValue($key,date("Y-m-d",strtotime($tmp_date[2].'-'.$tmp_date[0].'-'.$tmp_date[1])));
+					unset($tmp_date);
+				}else if ($field->type == 'time' && trim($data[$key]) != ''){
+					$this->SetValue($key,date("H:i",strtotime($data[$key])));
+				}else{
+					if (is_array($data[$key]))
+						$this->SetValue($key,implode(',', $data[$key]));
+					else
+						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
+				}
+			}
+		
+		return true;
 	}
 	
 	function DisplayForm($display='', $hidden=array(), $options=array()){ 
