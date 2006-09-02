@@ -499,7 +499,7 @@ class DbTemplate extends Form {
 	* Returns an array of objects from the Database according to criteria set
 	*
 	* @todo Create a helper function to "Get" any config for the field, "type" for example
-	* @param string, string, int, int
+	* @param array, string, int, int
 	* @return ARRAY
 	*/
 	function GetList($fields='', $order_by='', $sort='', $offset='', $limit=''){
@@ -584,6 +584,37 @@ class DbTemplate extends Form {
 			return $this->list;
 		}// if there is atleast one template
 
+		return false;
+	}
+	
+	/**
+	* Get an Associative array
+	*
+	* Returns an associtive array to be used for drop downs
+	*
+	* @param string, string, int, int
+	* @return ARRAY
+	*/
+	function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
+		// Create the Array for the Get List funciton
+		$fields = array($field);
+		
+		// Call the regular Get List
+		$this->GetList($fields, $order_by, $sort, $offset, $limit);
+		
+		// If there are results returned
+		if (is_array($this->list)){
+			// Create the return array
+			$tmp_list = array();
+			// Loop through each results
+			foreach($this->list as $data){
+				// Create the ASSOC array
+				$tmp_list[$data[$this->primary]] = $data[$field];
+			}
+			// Return the ASSOC array
+			return $tmp_list;
+		}
+		
 		return false;
 	}
 	
