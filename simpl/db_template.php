@@ -41,7 +41,7 @@ class DBtemp extends Field {
 	var $zerofill;
 }
 
-/*
+/**
 * DB Template Class
 * Needs to be extended to do anything out of the ordinary
 *
@@ -735,7 +735,7 @@ class DbTemplate extends Form {
 		
 		// Make all the Hidden Fields
 		foreach($hidden as $field)
-			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . stripslashes($this->GetValue($key)) . '" />' . "\n";
+			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . stripslashes($this->GetValue($field)) . '" />' . "\n";
 		
 		// End the Fieldset
 		echo '</fieldset>' . "\n";
