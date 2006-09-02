@@ -172,7 +172,7 @@ class DbTemplate extends Form {
 		// Get the Primary Key Name
 		if (is_array($this->fields) && $this->primary != ''){
 			// Set the Primary Key
-			$this->fields[$this->primary]->value = $value;
+			$this->SetValue($this->primary,$value);
 			// Yay Primary Key Found
 			return true;
 		}
@@ -190,7 +190,7 @@ class DbTemplate extends Form {
 	function GetPrimary(){
 		// Make sure there is fields and return the value
 		if (is_array($this->fields))
-			return $this->fields[$this->primary]->value;
+			return $this->GetValue($this->primary);
 		
 		return NULL;
 	}
@@ -205,10 +205,8 @@ class DbTemplate extends Form {
 	function GetInfo($fields=''){
 		// Make Sure there is a Primary Key set
 		if ($this->primary != ''){
-			// Create a One Word Variable
-			$primary = $this->primary;
 			// Display the Debug
-			Debug('GetInfo(), Primary Field: ' . $primary . ', Value: ' . $this->fields[$this->primary]->value);
+			Debug('GetInfo(), Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 			// Start the Query
 			$query = 'SELECT ';
 			// If there is a limiting field
@@ -220,7 +218,7 @@ class DbTemplate extends Form {
 				$query = substr($query,0,-2) . ' ';
 			}else
 				$query .= '* ';
-			$query .= 'FROM `' . $this->table . '` WHERE `' . $primary . '` = \'' . $this->fields[$this->primary]->value . '\' LIMIT 1';
+			$query .= 'FROM `' . $this->table . '` WHERE `' . $this->primary . '` = \'' . $this->GetPrimary() . '\' LIMIT 1';
 			
 			// Do the Query
 			$result = fnc_db_query($query, $this->database);
@@ -235,7 +233,7 @@ class DbTemplate extends Form {
 				if (is_array($this->fields)){
 					// Loop thought all the fields and set the values
 					foreach($this->fields as $key=>$data)
-						$this->fields[$key]->value = $info[$key];
+						$this->SetValue($key,$info[$key]);
 					// Return that all went well
 					return true;
 				}
@@ -262,10 +260,8 @@ class DbTemplate extends Form {
 		if (is_array($this->error))
 			return false;
 		
-		// Get the Primary Key
-		$primary = $this->primary;
 		// Decide to Insert or Update
-		switch($this->fields[$this->primary]->value){
+		switch($this->GetPrimary()){
 			case '':
 				$type = 'insert';
 				$extra = '';
@@ -275,23 +271,23 @@ class DbTemplate extends Form {
 				if (is_array($this->fields))
 					foreach($this->fields as $key=>$data)
 						if ($key == 'date_entered' || $key == 'created_on' || $key == 'last_updated' || $key == 'updated_on')
-							$this->fields[$key]->value = date("Y-m-d H:i:s");
+							$this->SetValue($key,date("Y-m-d H:i:s"));
 						else if ($key == 'display_order' && is_object($options['display_order'])){
 							// Find out what the next display order is
 							$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
-							$this->fields[$key]->value = ((int)$last_item[0]['display_order']+1);
+							$this->SetValue($key,((int)$last_item[0]['display_order']+1));
 						}
 				break;
 			default: 
 				$type = 'update';
-				$extra = '`' . $primary . '`=\'' . $this->fields[$this->primary]->value . '\'';
-				Debug('Save(), Updating, Primary Field: ' . $primary . ', Value: ' . $this->fields[$this->primary]->value);
+				$extra = '`' . $this->primary . '`=\'' . $this->GetPrimary() . '\'';
+				Debug('Save(), Updating, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 				
 				// Check for fields that need to be updated on each saved
 				if (is_array($this->fields))
 					foreach($this->fields as $key=>$data)
 						if ($key == 'last_updated' || $key == 'updated_on')
-							$this->fields[$key]->value = date("Y-m-d H:i:s");
+							$this->SetValue($key,date("Y-m-d H:i:s"));
 				break;
 		}
 		
@@ -299,7 +295,7 @@ class DbTemplate extends Form {
 		$infoArray = array();
 		if (is_array($this->fields))
 			foreach($this->fields as $key=>$data){
-				$infoArray[$key] = $this->fields[$key]->value;
+				$infoArray[$key] = $this->GetValue($key);
 			}
 		
 		if (DB_STATUS != false){
@@ -310,10 +306,10 @@ class DbTemplate extends Form {
 	
 			// Grab the ID if inserting
 			if ($type == 'insert')
-				$this->fields[$this->primary]->value = fnc_db_insert_id();
+				$this->SetPrimary(fnc_db_insert_id());
 			
 			// If the primary key is set then we are all good
-			if ($this->fields[$this->primary]->value != '')
+			if ($this->GetPrimary() != '')
 				return true;
 		}else{
 			// Write to File if DB is down
@@ -343,21 +339,19 @@ class DbTemplate extends Form {
 	* @return BOOL
 	*/
 	function Delete(){
-		// Only Grab the Primary Key
-		$fields = array($this->primary);
 		// If we can get the info then we can delete it
-		if ($this->GetInfo($fields)){
-			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->fields[$this->primary]->value);
+		if ($this->GetInfo(array($this->primary))){
+			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 		
 			// Delete the row
-			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $this->primary . "` = '" . $this->fields[$this->primary]->value . "' LIMIT 1";
+			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $this->primary . "` = '" . $this->GetPrimary() . "' LIMIT 1";
 			$result = fnc_db_query($query, $this->database);
 
 			// If it did something the return that everything is gone
 			if ($result)
 				return true;
 		}else
-			Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->fields[$this->primary]->value);
+			Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 		
 		return false;
 	}
@@ -384,21 +378,21 @@ class DbTemplate extends Form {
 					if(is_array($item->fields))
 						foreach($item->fields as $key2=>$data){
 							// Make sure the variable has something in it
-							if (isset($item->fields[$key2]->value) && (string)$item->fields[$key2]->value != ''){
-								Debug('Move(), Filter Item: ' . $key2 . ', Value: ' . $item->fields[$key2]->value);
+							if ((string)$this->GetValue($key2) != ''){
+								Debug('Move(), Filter Item: ' . $key2 . ', Value: ' . $this->GetValue($key2));
 								// Determine how to search in the database
-								if (is_string($this->fields[$key2]->value))
-									$extra .= " `" . $key2 . "` LIKE '" . $item->fields[$key2]->value . "' AND";
+								if (is_string($this->GetValue($key2)))
+									$extra .= " `" . $key2 . "` LIKE '" . $this->GetValue($key2) . "' AND";
 								else		
-									$extra .= " `" . $key2 . "` = '" . $item->fields[$key2]->value . "' AND";
+									$extra .= " `" . $key2 . "` = '" . $this->GetValue($key2) . "' AND";
 							}
 						}
 					
 					// Add the Move Variable
 					if ($direction == 'up')
-						$extra .= " `" . $key . "` < '" . $this->fields[$key]->value . "' AND";
+						$extra .= " `" . $key . "` < '" . $this->GetValue($key) . "' AND";
 					else
-						$extra .= " `" . $key . "` > '" . $this->fields[$key]->value . "' AND";
+						$extra .= " `" . $key . "` > '" . $this->GetValue($key) . "' AND";
 					
 					// Format it for MySQL
 					$extra = ($extra != '')?'WHERE ' . substr($extra,0,-4):'';
@@ -504,6 +498,7 @@ class DbTemplate extends Form {
 	*
 	* Returns an array of objects from the Database according to criteria set
 	*
+	* @todo Create a helper function to "Get" any config for the field, "type" for example
 	* @param string, string, int, int
 	* @return ARRAY
 	*/
@@ -524,13 +519,13 @@ class DbTemplate extends Form {
 		if(is_array($this->fields))
 			foreach($this->fields as $key=>$data){
 				// Make sure the variable has something in it
-				if (isset($this->fields[$key]->value) && (string)$this->fields[$key]->value != ''){
-					Debug('GetList(), Filter Item: ' . $key . ', Value: ' . $this->fields[$key]->value);
+				if ((string)$this->GetValue($key) != ''){
+					Debug('GetList(), Filter Item: ' . $key . ', Value: ' . $this->GetValue($key));
 					// Determine how to search in the database
 					if (is_string($this->fields[$key]->value))
-						$extra .= " `" . $key . "` LIKE '" . $this->fields[$key]->value . "' AND";
+						$extra .= " `" . $key . "` LIKE '" . $this->GetValue($key) . "' AND";
 					else		
-						$extra .= " `" . $key . "` = '" . $this->fields[$key]->value . "' AND";
+						$extra .= " `" . $key . "` = '" . $this->GetValue($key) . "' AND";
 				}
 			}
 			
@@ -640,7 +635,7 @@ class DbTemplate extends Form {
 							// Check to see if it is set or not
 							if (stripslashes($this->fields[$key]->value) != ''){
 								// If there is something in the field
-								echo '<p id="form_' . $key . '">' . $this->fields[$key]->value . ' <a href="' . $options[$key]->directory . $this->fields[$key]->value . '" target="_blank"><img src="' . DIR_IMAGES . 'picture_go.png" width="16" height="16" alt="View ' . $this->fields[$key]->value . '" align="top" /></a> <a href="?id=' . $this->GetPrimary() . '&amp;remove=image" class="funcDeleteImage()"><img src="' . DIR_IMAGES . 'picture_delete.png" width="16" height="16" alt="Remove ' . $this->fields[$key]->value . '" align="top" /></a></p>';
+								echo '<p id="form_' . $key . '">' . $this->GetValue($key) . ' <a href="' . $options[$key]->directory . $this->GetValue($key) . '" target="_blank"><img src="' . DIR_IMAGES . 'picture_go.png" width="16" height="16" alt="View ' . $this->GetValue($key) . '" align="top" /></a> <a href="?id=' . $this->GetPrimary() . '&amp;remove=image" class="funcDeleteImage()"><img src="' . DIR_IMAGES . 'picture_delete.png" width="16" height="16" alt="Remove ' . $this->GetValue($key) . '" align="top" /></a></p>';
 								// Add this field to the Hidden List
 								if (!in_array($key,$hidden))
 									$hidden[]=$key;
@@ -659,7 +654,7 @@ class DbTemplate extends Form {
 							echo '<div class="radio">' . "\n";
 							// Loop though each option
 							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<div><input name="' . $key . '" type="radio" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
+								echo "\t" . '<div><input name="' . $key . '" type="radio" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (((string)$this->GetValue($key) == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
 							}
 							echo '</div>';
 							break;
@@ -679,7 +674,7 @@ class DbTemplate extends Form {
 							echo '<select name="' . $key . '" id="' . $key . '">' . "\n";
 							// Loop though each option
 							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<option value="' . $opt_key . '"' . (((string)$this->fields[$key]->value == (string)$opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
+								echo "\t" . '<option value="' . $opt_key . '"' . (((string)$this->GetValue($key) == (string)$opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
 							}
 							// End the Select Box
 							echo '</select><br />' . "\n";
@@ -687,20 +682,20 @@ class DbTemplate extends Form {
 					}
 				}elseif($this->fields[$key]->type == 'blob'){
 					// If it is a blob or text in the DB then make it a text area
-					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->fields[$key]->value) . '</textarea><br />' . "\n";
+					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->GetValue($key)) . '</textarea><br />' . "\n";
 				}elseif($this->fields[$key]->type == 'date'){
 					// Create the Javascript Date Menu
 					echo '<span id="cal_' . $key . '"></span>';
 					echo '<script type="text/javascript">';
 					echo 'createCalendarWidget(\'' . $key . '\',\'NO_EDIT\', \'ICON\',\'' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'cal.gif\');';
 					if ($this->fields[$key]->value != '')
-						echo 'setCalendar(\'' . $key . '\',' . date("Y,n,j",strtotime($this->fields[$key]->value)) . ');';
+						echo 'setCalendar(\'' . $key . '\',' . date("Y,n,j",strtotime($this->GetValue($key))) . ');';
 					echo '</script>';
 				}else{
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
 					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="' . $size . '" maxlength="64" value="' . stripslashes($this->fields[$key]->value) . '" />';
+					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';
 				}
 				// If there is an error show it and end the field div
 				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";
@@ -709,7 +704,7 @@ class DbTemplate extends Form {
 		
 		// Make all the Hidden Fields
 		foreach($hidden as $field)
-			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->value) . '" />' . "\n";
+			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . stripslashes($this->GetValue($key)) . '" />' . "\n";
 		
 		// End the Fieldset
 		echo '</fieldset>' . "\n";
