@@ -4,7 +4,7 @@
 *
 * Used to mirror the database information about a field
 *
-* @author Nick DeNardis <nick@design-man.com>
+* @author Nick DeNardis <nick.denardis@gmail.com>
 */
 class DBtemp extends Field {
 	/**
@@ -45,7 +45,7 @@ class DBtemp extends Field {
 * DB Template Class
 * Needs to be extended to do anything out of the ordinary
 *
-* @author Nick DeNardis <nick@design-man.com>
+* @author Nick DeNardis <nick.denardis@gmail.com>
 */
 class DbTemplate extends Form {
 	/**
@@ -70,8 +70,14 @@ class DbTemplate extends Form {
 	*
 	* Creates a DB Class with all the information to use the DB functions
 	*
-	* @param array, array, string, array
-	* @return NULL
+	* @param $data An associtive array with the key being the field and the data being the values for the class
+	* @param $required An array with all the keys that are required to save into the database
+	* @param $labels An associtive array with all the keys and the Output strings that will fill up the HTML label for the form
+	* @param $examples An associtive arrray with all the keys and an example of what should be in the HTML form field
+	* @param $table A string with the table name this class pertains to
+	* @param $fields An associtive array if the class already has fields there is no need to pull from the DB or cache
+	* @param $database A string containing the name of the database for this class
+	* @return bool
 	*/
 	function DbTemplate($data, $required='', $labels='', $examples='', $table='', $fields='', $database=''){
 		// Set the Table that we are going to be mirroring as a class
@@ -98,9 +104,9 @@ class DbTemplate extends Form {
 				eval($cache);
 				// Unserialize the classes
 				foreach($this->fields as $key=>$field){
-					$tmpField = unserialize($field);
-					$this->fields[$key] = $tmpField;
-					if ($tmpField->primary_key == 1)
+					$this->fields[$key] = unserialize($field);
+					// Define the Primary Key
+					if ($this->fields[$key]->primary_key == 1)
 						$this->primary = $key;
 				}
 			}else{
@@ -144,7 +150,7 @@ class DbTemplate extends Form {
 		if (is_array($this->fields))
 			foreach($this->fields as $key=>$field){
 				if ($field->type == 'date' && trim($data[$key]) != ''){
-					// Transform the purchased on Date
+					// Transform the Date
 					$tmp_date = split('[/.-]', $data[$key]);
 					$this->SetValue($key,date("Y-m-d",strtotime($tmp_date[2].'-'.$tmp_date[0].'-'.$tmp_date[1])));
 					unset($tmp_date);
@@ -158,7 +164,9 @@ class DbTemplate extends Form {
 				}
 			}
 				
-		Debug($this);	
+		Debug($this);
+		
+		return true;	
 	}
 	
 	/**
@@ -166,17 +174,18 @@ class DbTemplate extends Form {
 	*
 	* Sets the Primary Key of the Databse Structure
 	*
-	* @return BOOL
+	* @param $value Usually an INT that is the primary key value for this object
+	* @return bool
 	*/
 	function SetPrimary($value){
 		// Get the Primary Key Name
 		if (is_array($this->fields) && $this->primary != ''){
 			// Set the Primary Key
 			$this->SetValue($this->primary,$value);
-			// Yay Primary Key Found
+			// Primary Key Found
 			return true;
 		}
-		// Primary key not found?
+		// Primary key not found
 		return false;
 	}
 	
@@ -185,7 +194,7 @@ class DbTemplate extends Form {
 	*
 	* Gets the Primary Key of the Databse Structure
 	*
-	* @return BOOL
+	* @return bool
 	*/
 	function GetPrimary(){
 		// Make sure there is fields and return the value
@@ -200,7 +209,8 @@ class DbTemplate extends Form {
 	*
 	* Gets the item information from the DB with the criteria set
 	*
-	* @return BOOL
+	* @param $fields List of all the field keys that should be returned
+	* @return bool
 	*/
 	function GetInfo($fields=''){
 		// Make Sure there is a Primary Key set
@@ -213,11 +223,13 @@ class DbTemplate extends Form {
 			if (is_array($fields)){
 				// Add the list up of fields
 				foreach($fields as $data)
-					$query .= '`' . $data . '`, ';
+					$query .= '`' . trim($data) . '`, ';
 				// Trim off the last comma
 				$query = substr($query,0,-2) . ' ';
-			}else
+			}else{
 				$query .= '* ';
+			}
+			// Add the rest of the query together
 			$query .= 'FROM `' . $this->table . '` WHERE `' . $this->primary . '` = \'' . $this->GetPrimary() . '\' LIMIT 1';
 			
 			// Do the Query
@@ -251,12 +263,12 @@ class DbTemplate extends Form {
 	* Saves all the fields and their current values into the DB, it either 
 	* inserts or updated depending on if the primary key is set.
 	*
-	* @param array
-	* @return BOOL
+	* @param $options An associtive array to specify options for each field, display_order for example on how to find the next display_order
+	* @return bool
 	* @todo Check the Cache file for any not entered records
 	*/
 	function Save($options = array()){
-		// Do not save if there is errors
+		// Do not save if there are errors
 		if (is_array($this->error))
 			return false;
 		
@@ -294,12 +306,12 @@ class DbTemplate extends Form {
 		// Create the array of items to insert or update
 		$infoArray = array();
 		if (is_array($this->fields))
-			foreach($this->fields as $key=>$data){
+			foreach($this->fields as $key=>$data)
 				$infoArray[$key] = $this->GetValue($key);
-			}
 		
 		if (DB_STATUS != false){
 			Debug('Save(), Database Found');
+			// TODO: Check to see if there is any files that need to be inserted from cache first
 			
 			// Do the Operation
 			fnc_db_perform($this->table, $infoArray, $type, $extra, $this->database);
@@ -324,6 +336,7 @@ class DbTemplate extends Form {
 			fclose($fp);
 			chmod (FS_SIMPL . WS_CACHE . $filename, 0777);
 			
+			// If the file is written we did all we can do for now
 			if (is_file(FS_SIMPL . WS_CACHE . $filename))
 				return true;
 		}
@@ -336,7 +349,7 @@ class DbTemplate extends Form {
 	*
 	* Deletes the info from the DB accourding to the primary key
 	*
-	* @return BOOL
+	* @return bool
 	*/
 	function Delete(){
 		// If we can get the info then we can delete it
@@ -350,8 +363,9 @@ class DbTemplate extends Form {
 			// If it did something the return that everything is gone
 			if ($result)
 				return true;
-		}else
+		}else{
 			Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
+		}
 		
 		return false;
 	}
@@ -362,7 +376,8 @@ class DbTemplate extends Form {
 	* Moves the Menu Item up or down depending on the direction
 	*
 	* @todo Clean this function up.
-	* @param string ('up','down'), array
+	* @param $direction A string containing either 'up' or 'down'
+	* @param $options An array containing the search criteria for the move, if there is a cetain category or list to stay within
 	* @return bool
 	*/
 	function Move($direction,$options){
@@ -439,9 +454,12 @@ class DbTemplate extends Form {
 	/**
 	* Search the info from the DB
 	*
-	* Uses a smarter search engine to search through the fields and return certain fields
+	* Uses a smarter search engine to search through the fields and return certain fields, puts the results in a local $results array
 	*
-	* @return INT
+	* @param $keywords A string that we are going to be searching the DB for
+	* @param $search_fields An array of the field keys that we are going to be searching through
+	* @param $return_fields An array of the field keys that are going to be returned
+	* @return int
 	*/
 	function Search($keywords,$search_fields,$return_fields){
 		$terms = search_split_terms($keywords);
@@ -498,9 +516,12 @@ class DbTemplate extends Form {
 	*
 	* Returns an array of objects from the Database according to criteria set
 	*
-	* @todo Create a helper function to "Get" any config for the field, "type" for example
-	* @param array, string, int, int
-	* @return ARRAY
+	* @param $fields An array of field keys to return
+	* @param $order_by A string of a field key to order by (ex. "display_order")
+	* @param $sort A string on how to sort the data (ex "ASC" or "DESC")
+	* @param $offset An int on where to start returning, used mainly for page numbering
+	* @param $limit An int limit on the number of rows to be returned
+	* @return array
 	*/
 	function GetList($fields='', $order_by='', $sort='', $offset='', $limit=''){
 		// If they request an order build the query
@@ -522,7 +543,7 @@ class DbTemplate extends Form {
 				if ((string)$this->GetValue($key) != ''){
 					Debug('GetList(), Filter Item: ' . $key . ', Value: ' . $this->GetValue($key));
 					// Determine how to search in the database
-					if (is_string($this->fields[$key]->value))
+					if (is_string($this->GetValue($key)))
 						$extra .= " `" . $key . "` LIKE '" . $this->GetValue($key) . "' AND";
 					else		
 						$extra .= " `" . $key . "` = '" . $this->GetValue($key) . "' AND";
@@ -534,7 +555,7 @@ class DbTemplate extends Form {
 				$extra .= ' (';
 				foreach($this->fields as $key=>$data){
 						// Determine how to search in the database
-						if ($this->fields[$key]->type == 'blob' || $this->fields[$key]->type == 'string')
+						if ($this->Get('type',$key) == 'blob' || $this->Get('type',$key) == 'string')
 							$extra .= ' `' . $key . '` LIKE \'%' . $this->search . '%\' OR';
 						else		
 							$extra .= ' `' . $key . '` = \'' . $this->search . '\' OR';
@@ -590,10 +611,14 @@ class DbTemplate extends Form {
 	/**
 	* Get an Associative array
 	*
-	* Returns an associtive array to be used for drop downs
+	* Does the same thing as "GetList()" but returns an associtive array to be used for drop downs
 	*
-	* @param string, string, int, int
-	* @return ARRAY
+	* @param $fields An array of field keys to return
+	* @param $order_by A string of a field key to order by (ex. "display_order")
+	* @param $sort A string on how to sort the data (ex. "ASC" or "DESC")
+	* @param $offset An int on where to start returning, used mainly for page numbering
+	* @param $limit An int limit on the number of rows to be returned
+	* @return array
 	*/
 	function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
 		// Create the Array for the Get List funciton
@@ -746,7 +771,9 @@ class DbTemplate extends Form {
 	*
 	* Displays the single items to be viewed only.
 	*
-	* @param array, string
+	* @todo Change the order of the output to reflect the order of the $display
+	* @todo Add a flag to return the output instead of echoing it to the screen
+	* @param $display An array of field keys that are going to be displayed to the screen
 	* @return NULL
 	*/
 	function View($display=''){
@@ -775,11 +802,15 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Display a list of Classes
+	* Display a list of items
 	*
-	* Displays a list of classes according the the list criteria and sort order
+	* Displays a list of items according the the list criteria and sort order
 	*
-	* @param array, string, array
+	* @todo Modify the "format" to parse more than an sprintf to make it more extendable
+	* @todo Change over to use the Get() helper functions instead of accessing the information directly
+	* @param $display An array of field keys that are going to be displayed in the list
+	* @param $format A string that will be passed through a sprintf() and use the ID and the String as the first and second parameters
+	* @param $options An associtive array with the key being the value for a field if there are output options for that field (ex. array("is_active"=>array("no","yes")))
 	* @return NULL
 	*/
 	function DisplayList($display='',$format=array(),$options=array()){
@@ -802,7 +833,7 @@ class DbTemplate extends Form {
 			$show = array();
 			if(is_array($display)){
 				foreach($display as $key=>$data)
-					$show[$data] = ($this->fields[$data]->label != '')?$this->fields[$data]->label:ucfirst(str_replace('_',' ',$data));
+					$show[$data] = ($this->Get('label',$data) != '')?$this->Get('label',$data):ucfirst(str_replace('_',' ',$data));
 			}else{
 				if (is_array($this->fields))
 					foreach($this->fields as $key=>$data)
@@ -811,7 +842,7 @@ class DbTemplate extends Form {
 			// Display the Header
 			echo "\n" . '<tr>';
 			foreach($show as $key=>$column)
-				echo "\t" . '<th scope="col"><a href="' . basename($_SERVER['PHP_SELF']) . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">' . $column . (($_SESSION[$this->table . '_sort'] == $key)? '<img src="' . WS_SIMPL . WS_SIMPL_IMAGE . $_SESSION[$this->table . '_order'] . '.gif" align="top" width="17" height="17" alt="' . $_SESSION[$this->table . '_order'] . '" />' : '') . '</a></th>' . "\n";
+				echo "\t" . '<th scope="col"><a href="' . $_SERVER['PHP_SELF'] . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">' . $column . (($_SESSION[$this->table . '_sort'] == $key)? '<img src="' . WS_SIMPL . WS_SIMPL_IMAGE . $_SESSION[$this->table . '_order'] . '.gif" align="top" width="17" height="17" alt="' . $_SESSION[$this->table . '_order'] . '" />' : '') . '</a></th>' . "\n";
 			echo '</tr>' . "\n";
 			
 			// Loop through all the items
