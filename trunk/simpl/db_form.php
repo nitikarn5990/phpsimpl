@@ -4,7 +4,7 @@
 *
 * Used to create individual fields on a form
 *
-* @author Nick DeNardis <nick@design-man.com>
+* @author Nick DeNardis <nick.denardis@gmail.com>
 */
 class Field {
 	/**
@@ -43,23 +43,36 @@ class Field {
 	* @var various 
 	*/
 	var $value;
+	/**
+	* @var string 
+	*/
+	var $error;
 	
+	/**
+	 * Field Constructor
+	 * 
+	 * @param $data An Array of all the field properties and values
+	 */
 	function Field($data){
 		// Make sure the data for the form fields is in an array
 		if (is_array($data)){
 			// Loop through all the fields
 			foreach($data as $key=>$data){
 				// Setup the form fields
-				
+				$this->$key = $data;
 			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 }
 
 /**
-* Base Class for Froms, checks the REQUIRED ARRAY
+* Base Class for Forms
 *
-* @author Nick DeNardis <nick@design-man.com>
+* @author Nick DeNardis <nick.denardis@gmail.com>
 */
 class Form {
 	/**
@@ -80,11 +93,19 @@ class Form {
 	*
 	* Creates a Form Class with all the information to use the Form functions
 	*
-	* @param array, array, string, array
-	* @return NULL
+	* @param $data An Array of all the values for the fields
+	* @param $required An Array of all the required keys for the form
+	* @param $labels An Array of all the custom labels for the form
+	* @param $examples An Array of all the exmples for each form element
+	* @return bool
 	*/
-	function Form($data){
-	
+	function Form($data, $required=array(), $labels=array(), $examples=array()){
+		// Create the Combined Array
+		$this->fields = array();
+		foreach($data as $key=>$item){
+			$fields[$key]->value = $item;
+			
+		}
 	}
 	
 	/**
@@ -113,6 +134,38 @@ class Form {
 		}
 		
 		return $this->error;
+	}
+	
+	/**
+	* Get Field Property
+	*
+	* Get a specific property about a field
+	*
+	* @param $property string, $field string
+	* @return bool
+	*/
+	function Get($property,$field){
+		// Make sure there is fields and return the value
+		if (is_array($this->fields))
+			return $this->fields[trim($field)]->$property;
+	}
+	
+	/**
+	* Set Field Property
+	*
+	* Set a specific property about a field
+	*
+	* @param $property string, $field string, $value mixed
+	* @return bool
+	*/
+	function Set($property,$field,$value){
+		// Make sure there is fields
+		if (is_array($this->fields)){
+			$this->fields[trim($field)]->$property = $value;
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -156,6 +209,8 @@ class Form {
 		// Make sure there is fields and return the value
 		if (is_string($this->error[$field]))
 			return $this->error[$field];
+		// There is no error set for this field
+		return NULL;
 	}
 	
 	/**
