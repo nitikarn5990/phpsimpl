@@ -17,6 +17,9 @@ class Simpl {
 	 			case 'Form':
 	 				include_once(FS_SIMPL . 'form.php');
 	 				break;
+	 			case 'Db':
+	 				include_once(FS_SIMPL . 'db.php');
+	 				break;
 	 			case 'DbTemplate':
 	 				include_once(FS_SIMPL . 'db_template.php');
 	 				break;
