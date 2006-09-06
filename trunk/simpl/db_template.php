@@ -663,8 +663,11 @@ class DbTemplate extends Form {
 			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
 			if (is_array($this->fields))
 				foreach($this->fields as $key=>$data)
-					if (!array_key_exists($key,$show) && !in_array($key,$hidden))
+					if (!array_key_exists($key,$show) && !in_array($key,$hidden)){
+						if ($this->GetError($key) != '')
+							Alert($this->GetError($key));
 						$hidden[] = $key;
+					}
 		}else{
 			// If there is fields in the db table make the show array
 			if (is_array($this->fields))
