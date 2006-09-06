@@ -60,7 +60,7 @@ class DB {
 	 * @param $db THe optional alternative database
 	 * 
 	 */
-	function fnc_db_query($query, $db = '') {
+	function Query($query, $db = '') {
    		// Use the Global Link
 		global $db_link;
 		
