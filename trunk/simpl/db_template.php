@@ -80,6 +80,9 @@ class DbTemplate extends Form {
 	* @return bool
 	*/
 	function DbTemplate($data, $required='', $labels='', $examples='', $table='', $fields='', $database=''){
+		// Use the global mysql class
+		global $db;
+		
 		// Set the Table that we are going to be mirroring as a class
 		$this->table = $table;
 		$this->database = $database;
@@ -113,12 +116,12 @@ class DbTemplate extends Form {
 				Debug('Contructor(), Create From Database');
 				// Grab the list of fields from the DB
 				$query = "SELECT * FROM `" . $this->table . "` LIMIT 1";
-				$result = fnc_db_query($query, $this->database);
+				$result = $db->Query($query, $this->database);
 				
 				// Get the information about each field
-				while(($field = mysql_fetch_field($result))){
+				while(($field = $db->FetchField($result))){
 					// Get the max length of the field in the DB
-					$field->length = mysql_field_len($result,count($this->fields));
+					$field->length = $db->FieldLength($result,count($this->fields));
 					// Set that info into the field class
 					$key = $field->name;
 					// Set the Label of the Key
@@ -213,6 +216,9 @@ class DbTemplate extends Form {
 	* @return bool
 	*/
 	function GetInfo($fields=''){
+		// Use the global mysql class
+		global $db;
+		
 		// Make Sure there is a Primary Key set
 		if ($this->primary != ''){
 			// Display the Debug
@@ -233,14 +239,14 @@ class DbTemplate extends Form {
 			$query .= 'FROM `' . $this->table . '` WHERE `' . $this->primary . '` = \'' . $this->GetPrimary() . '\' LIMIT 1';
 			
 			// Do the Query
-			$result = fnc_db_query($query, $this->database);
+			$result = $db->Query($query, $this->database);
 			Debug('GetInfo(), Query: ' . $query);
 		
 			// If there is atleast one result
-			if (fnc_db_num_rows($result) == 1){
+			if ($db->NumRows($result) == 1){
 				Debug('GetInfo(), Item Found');
 				// Get the Info for the record
-				$info = fnc_db_fetch_array($result);
+				$info = $db->FetchArray($result);
 				// If there are fields to fill in set them all
 				if (is_array($this->fields)){
 					// Loop thought all the fields and set the values
@@ -268,6 +274,9 @@ class DbTemplate extends Form {
 	* @todo Check the Cache file for any not entered records
 	*/
 	function Save($options = array()){
+		// Use the global mysql class
+		global $db;
+		
 		// Do not save if there are errors
 		if (is_array($this->error))
 			return false;
@@ -314,11 +323,11 @@ class DbTemplate extends Form {
 			// TODO: Check to see if there is any files that need to be inserted from cache first
 			
 			// Do the Operation
-			fnc_db_perform($this->table, $infoArray, $type, $extra, $this->database);
+			$db->Perform($this->table, $infoArray, $type, $extra, $this->database);
 	
 			// Grab the ID if inserting
 			if ($type == 'insert')
-				$this->SetPrimary(fnc_db_insert_id());
+				$this->SetPrimary($db->InsertID());
 			
 			// If the primary key is set then we are all good
 			if ($this->GetPrimary() != '')
@@ -352,13 +361,16 @@ class DbTemplate extends Form {
 	* @return bool
 	*/
 	function Delete(){
+		// Use the global mysql class
+		global $db;
+		
 		// If we can get the info then we can delete it
 		if ($this->GetInfo(array($this->primary))){
 			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 		
 			// Delete the row
 			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $this->primary . "` = '" . $this->GetPrimary() . "' LIMIT 1";
-			$result = fnc_db_query($query, $this->database);
+			$result = $db->Query($query, $this->database);
 
 			// If it did something the return that everything is gone
 			if ($result)
@@ -381,6 +393,9 @@ class DbTemplate extends Form {
 	* @return bool
 	*/
 	function Move($direction,$options){
+		// Use the global mysql class
+		global $db;
+		
 		// Loop through all the options
 		if (is_array($options)){
 			foreach($options as $key=>$item){
@@ -422,21 +437,21 @@ class DbTemplate extends Form {
 					$query .= ' LIMIT 1';
 					
 					// Do the Query
-					$result = fnc_db_query($query, $this->database);
+					$result = $db->Query($query, $this->database);
 					Debug('Move(), Query: ' . $query);
 					
 					// Make sure there is one result
-					if (fnc_db_num_rows($result) == 1){
+					if ($db->NumRows($result) == 1){
 						// Get the New Order
-						$new_order = fnc_db_fetch_array($result);
+						$new_order = $db->FetchArray($result);
 						// Make sure they are not the same numbers
 						if ($new_order[$key] != $this->GetValue($key)){
 							// Update the Old One
 							$oldArray = array($key => $this->GetValue($key));
-							fnc_db_perform($item->table, $oldArray, 'update', '`' . $item->primary . '`=\'' . $new_order[$item->primary] . '\'');
+							$db->Perform($item->table, $oldArray, 'update', '`' . $item->primary . '`=\'' . $new_order[$item->primary] . '\'');
 							// Update the New one
 							$newArray = array($key => $new_order[$key]);
-							fnc_db_perform($this->table, $newArray, 'update', '`' . $this->primary . '`=\'' . $this->GetPrimary() . '\'');
+							$db->Perform($this->table, $newArray, 'update', '`' . $this->primary . '`=\'' . $this->GetPrimary() . '\'');
 							
 							// Set the value to this class
 							$this->SetValue($key,$new_order[$key]);
@@ -462,6 +477,9 @@ class DbTemplate extends Form {
 	* @return int
 	*/
 	function Search($keywords,$search_fields,$return_fields){
+		// Use the global mysql class
+		global $db;
+		
 		$terms = search_split_terms($keywords);
 		$terms_db = search_db_escape_terms($terms);
 		$terms_rx = search_rx_escape_terms($terms);
@@ -490,8 +508,8 @@ class DbTemplate extends Form {
 	
 		$rows = array();
 	
-		$result = fnc_db_query($sql);
-		while($row = fnc_db_fetch_array($result)){
+		$result = $db->Query($sql);
+		while($row = $db->FetchArray($result)){
 			$row[score] = 0;
 			foreach($terms_rx as $term_rx){
 				if (is_array($search_fields)){
@@ -524,6 +542,9 @@ class DbTemplate extends Form {
 	* @return array
 	*/
 	function GetList($fields='', $order_by='', $sort='', $offset='', $limit=''){
+		// Use the global mysql class
+		global $db;
+		
 		// If they request an order build the query
 		if ( isset($order_by) && $order_by != '' ){
 			$order = 'ORDER BY `' . $order_by . '` ';
@@ -590,16 +611,16 @@ class DbTemplate extends Form {
 			$query .= ' LIMIT ' . $offset . ', ' . $limit;
 		
 		// Do the Query
-		$result = fnc_db_query($query, $this->database);
+		$result = $db->Query($query, $this->database);
 		Debug('GetList(), Query: ' . $query);
 		
 		// If there is atleast one result
-		if (fnc_db_num_rows($result) > 0){
-			Debug('GetList(), Number Found: ' . fnc_db_num_rows($result));
+		if ($db->NumRows($result) > 0){
+			Debug('GetList(), Number Found: ' . $db->NumRows($result));
 			// Create the return array
 			$this->list = array();
 			// For each result make a class
-			while ($info = fnc_db_fetch_array($result))
+			while ($info = $db->FetchArray($result))
 				$this->list[$info[$this->primary]] = $info;
 			// Return the list of object
 			return $this->list;

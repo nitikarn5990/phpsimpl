@@ -11,6 +11,10 @@ class DB {
 	* @var string 
 	*/
     var $database;
+    /**
+	* @var int 
+	*/
+    var $query_count;
     
     /**
 	* Class Constructor
@@ -38,6 +42,7 @@ class DB {
 		
 		// Set all the local variables
 		$this->database = $database;
+		$this->query_count = 0;
 		
 		// Connect to MySQL
 		$db_link = @mysql_connect($server, $username, $password);
@@ -65,16 +70,18 @@ class DB {
 		global $db_link;
 		
 		// Change the DB if needed
-		if ($db != ''){
+		if ($db != '' && $db != $this->database){
 			$old_db = $this->database;
 			$this->Change($db);
 		}
 		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
+    	// Increment the query counter
+    	$this->query_count++;
     	
     	// Change the DB back is needed
-    	if ($db != '')
+    	if ($db != '' && $db != $this->database)
     		$this->Change($old_db);
     	
     	// Return the query results
@@ -240,8 +247,19 @@ class DB {
 	 * @param $result The result that was returned from the database
 	 * @return object
 	 */
-	function FetchFields($result) {
+	function FetchField($result) {
 		return mysql_fetch_field($result);
+	}
+	
+	/**
+	 * Get the Field Length
+	 * 
+	 * @param $result The result that was returned from the database
+	 * @param $field The field number that we are intrested in getting the info for
+	 * @return object
+	 */
+	function FieldLength($result,$field) {
+		return mysql_field_len($result,$field);
 	}
 	
 	/**
@@ -260,7 +278,7 @@ class DB {
 	 * @param $string A string that is going to be inserted into the database
 	 * @return object
 	 */
-	function Input($string) {
+	function Prepare($string) {
 		return (is_numeric($string))?addslashes($string):mysql_real_escape_string($string);
 	}
 }
