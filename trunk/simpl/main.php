@@ -15,13 +15,13 @@ class Simpl {
 	 		switch($class){
 	 			case 'Field':
 	 			case 'Form':
-	 				include_once(FS_SIMPL . 'db_form.php');
+	 				include_once(FS_SIMPL . 'form.php');
 	 				break;
 	 			case 'DbTemplate':
 	 				include_once(FS_SIMPL . 'db_template.php');
 	 				break;
 	 			case 'Export':
-	 				include_once(FS_SIMPL . 'db_export.php');
+	 				include_once(FS_SIMPL . 'export.php');
 	 				break;
 	 			case 'Upload':
 	 				include_once(FS_SIMPL . 'upload.php');
