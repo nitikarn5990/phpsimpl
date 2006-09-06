@@ -33,11 +33,11 @@ class DB {
 	 * @return bool
 	 */
 	function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
-		// Set all the local variables
-		$this->database = $database;
-		
 		// Use the Global Link
 		global $db_link;
+		
+		// Set all the local variables
+		$this->database = $database;
 		
 		// Connect to MySQL
 		$db_link = @mysql_connect($server, $username, $password);
@@ -81,7 +81,18 @@ class DB {
     	return $result;
 	}
 	
-	
+	/**
+	 * Perform a Query
+	 * 
+	 * Use a smart way to create a query from abstract data
+	 * 
+	 * @param $table String of the table that the query is going to act on
+	 * @param $data Array of the data that is going to be inserted/updated
+	 * @param $action Either "update" or "insert"
+	 * @param $parameters String of the additional things that need to go on like "item_id='5'"
+	 * @param $db String of a different database if this is going to happen on another location
+	 * @return result
+	 */
 	function Perform($table, $data, $action = 'insert', $parameters = '', $db = '') {
 		// Use the Global Link
 		global $db_link;
