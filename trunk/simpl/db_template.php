@@ -63,11 +63,11 @@ class DbTemplate extends Form {
 	/**
 	* @var array 
 	*/
-	var $list = array();
+	var $list;
 	/**
 	* @var array 
 	*/
-	var $results = array();
+	var $results;
 	
 	/**
 	* Class Constructor
