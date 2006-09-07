@@ -661,7 +661,7 @@ class DbTemplate extends Form {
 			return $tmp_list;
 		}
 		
-		return false;
+		return array();
 	}
 	
 	/**
