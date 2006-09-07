@@ -626,7 +626,7 @@ class DbTemplate extends Form {
 			return $this->list;
 		}// if there is atleast one template
 
-		return false;
+		return array();
 	}
 	
 	/**
