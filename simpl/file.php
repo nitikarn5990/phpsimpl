@@ -1,7 +1,4 @@
 <?php
-// Include the Folder Class
-$mySimpl->Load('Folder');
-
 /**
 * Base File Class
 *
