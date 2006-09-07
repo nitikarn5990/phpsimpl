@@ -1,17 +1,28 @@
 <?php
-/*
+/**
  * Created on Sep 5, 2006
  * main.php
  */
 class Simpl {
-	/*
+	/**
+	* Class Constructor
+	*
+	* Creates a Simpl Class with nothing in it
+	*
+	* @return NULL
+	*/
+    function Simpl(){ }
+    
+	/**
 	 * Load a class file when needed.
 	 * 
 	 * @param $class A string containing the class name
 	 * @return bool
 	 */
 	 function Load($class){
+	 	// First check to make sure the class does not already exist
 	 	if (!class_exists($class)){
+	 		// Include the correct file for the class
 	 		switch($class){
 	 			case 'Field':
 	 			case 'Form':
