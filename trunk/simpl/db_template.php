@@ -888,9 +888,9 @@ class DbTemplate extends Form {
 					$end = '';
 					// If there is links
 					if (is_array($format) && $format[$key] != ''){
-						printf($format[$key],$data[$this->primary],$data[$key]);
+						printf($format[$key],$data[$this->primary],stripslashes($data[$key]));
 					}else{
-						echo ($data[$key] != '')?$data[$key]:'&nbsp;';
+						echo ($data[$key] != '')?stripslashes($data[$key]):'&nbsp;';
 					}
 					echo $end;
 					echo '</td>' . "\n";
