@@ -63,11 +63,7 @@ class DbTemplate extends Form {
 	/**
 	* @var array 
 	*/
-	var $list;
-	/**
-	* @var array 
-	*/
-	var $results;
+	var $results = array();
 	
 	/**
 	* Class Constructor
@@ -622,15 +618,13 @@ class DbTemplate extends Form {
 		if ($db->NumRows($result) > 0){
 			Debug('GetList(), Number Found: ' . $db->NumRows($result));
 			// Create the return array
-			$this->list = array();
+			$this->results = array();
 			// For each result make a class
 			while ($info = $db->FetchArray($result))
-				$this->list[$info[$this->primary]] = $info;
-			// Return the list of object
-			return $this->list;
+				$this->results[$info[$this->primary]] = $info;
 		}// if there is atleast one template
 
-		return array();
+		return $this->results;
 	}
 	
 	/**
@@ -653,11 +647,11 @@ class DbTemplate extends Form {
 		$this->GetList($fields, $order_by, $sort, $offset, $limit);
 		
 		// If there are results returned
-		if (is_array($this->list)){
+		if (is_array($this->results)){
 			// Create the return array
 			$tmp_list = array();
 			// Loop through each results
-			foreach($this->list as $data){
+			foreach($this->results as $data){
 				// Create the ASSOC array
 				$tmp_list[$data[$this->primary]] = $data[$field];
 			}
@@ -847,11 +841,11 @@ class DbTemplate extends Form {
 		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . 'order'];
 		
 		// Get the List of Items If they are not already set
-		if (!is_array($this->list))
+		if (!is_array($this->results))
 			$this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
 		
 		// If there is items
-		if (is_array($this->list)){
+		if (is_array($this->results)){
 			// Simplify the order
 			$order = ($_SESSION[$this->table . '_order'] == 'desc')?'asc':'desc';
 			// Start the table
@@ -875,7 +869,7 @@ class DbTemplate extends Form {
 			
 			// Loop through all the items
 			$i=1;
-			foreach($this->list as $field=>$data){
+			foreach($this->results as $field=>$data){
 				echo '<tr' . (($i%2 == 0)?' class="odd"':'') . '>' . "\n";
 				foreach($show as $key=>$column){
 					// Overwrite the DB data with usable data
@@ -885,7 +879,7 @@ class DbTemplate extends Form {
 						// Get the Option Value
 						$data[$key] = $options[$key][$value];
 					}else if ($options[$key] == 'move'){
-						$data[$key] = '<div class="center">' . (($i != 1)?'<a href="?item=' . $data[$this->primary] . '&amp;move=up"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'asc.gif" align="top" width="17" height="17" alt="Move Item Up" /></a>':'') . (($i != count($this->list))?'<a href="?item=' . $data[$this->primary] . '&amp;move=down"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'desc.gif" align="top" width="17" height="17" alt="Move Item Down" /></a>':'') . '</div>'; 
+						$data[$key] = '<div class="center">' . (($i != 1)?'<a href="?item=' . $data[$this->primary] . '&amp;move=up"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'asc.gif" align="top" width="17" height="17" alt="Move Item Up" /></a>':'') . (($i != count($this->results))?'<a href="?item=' . $data[$this->primary] . '&amp;move=down"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'desc.gif" align="top" width="17" height="17" alt="Move Item Down" /></a>':'') . '</div>'; 
 					}
 					// Display the Data
 					echo "\t" . '<td>';
