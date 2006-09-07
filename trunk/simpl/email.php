@@ -1,6 +1,6 @@
 <?php
-/*
- * this class encapsulates the PHP mail() function.
+/**
+ * This class encapsulates the PHP mail() function.
  * 
  * @version	1.3 
  * @example
@@ -17,53 +17,61 @@
  * $m->Send();	// send the mail
  * echo "the mail below has been sent:<br><pre>", $m->Get(), "</pre>";
  * 
- * @author	Leo West - lwest@free.fr
+ * @author	Leo West <lwest@free.fr>
+ * @author Nick DeNardis <nick.denardis@gmail.com>
  */
-
 class Mail{
-	/*
-	list of To addresses
-	@var	array
-	*/
+	/**
+	 * @var	array
+	 */
 	var $sendto = array();
-	/*
-	@var	array
-	*/
+	/**
+	 * @var	array
+	 */
 	var $acc = array();
-	/*
-	@var	array
-	*/
+	/**
+	 * @var	array
+	 */
 	var $abcc = array();
-	/*
-	paths of attached files
-	@var array
-	*/
+	/**
+	 * @var	array List of message attachments
+	 */
 	var $aattach = array();
-	/*
-	list of message headers
-	@var array
-	*/
+	/**
+	 * @var	array List of message headers
+	 */
 	var $xheaders = array();
-	/*
-	message priorities referential
-	@var array
-	*/
+	/**
+	 * @var	array Message priorities referential
+	 */
 	var $priorities = array( '1 (Highest)', '2 (High)', '3 (Normal)', '4 (Low)', '5 (Lowest)' );
-	/*
-	character set of message
-	@var string
-	*/
+	/**
+	 * @var	string Character set of message
+	 */
 	var $charset = "us-ascii";
+	/**
+	 * @var	string Character encoding
+	 */
 	var $ctencoding = "7bit";
+	/**
+	 * @var	int If reciept is desired
+	 */
 	var $receipt = 0;
+	/**
+	 * @var	string Content type of mail
+	 */
 	var $content_type = 'text/plain';
+	/**
+	 * @var	string Boundary of types in mail
+	 */
+	var $boundary;
 	
 	/*
 		Mail contructor
 	*/
 	function Mail(){
-		$this->autoCheck( true );
-		$this->boundary= "--" . md5( uniqid("myboundary") );
+		$this->autoCheck(true);
+		$this->boundary = "--" . md5(uniqid("myboundary"));
 	}
 	
 	/*		
