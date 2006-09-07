@@ -29,5 +29,247 @@ class File extends Folder {
 		if (isset($directory))
 			$this->directory = $directory;
 	}
+	
+	
+	/**
+	 * Move the file
+	 *
+	 * Move the file to another location
+	 * 
+	 * @param $new_directory string the directory to which we are moving the file
+	 * @return bool
+	 */  
+	function Move($new_directory) {
+		//if the file exists in the directory
+		if(is_file($this->directory . $this->filename)) {
+			//if a file with the same name does not exist in the new directory
+			if(!is_file($new_directory . $this->filename)) {
+				//move the file over to the new directory
+				if(rename($this->directory . $this->filename, $new_directory . $this->filename)) {
+					//change persmissions of the file in the new directory
+					if(chmod($new_directory . $this->filename, 0775)) {
+						//update the directory in the class
+						$this->directory = $new_directory;
+						return true;
+					}
+				}
+			}
+		}
+		return false;	
+	}
+	
+	/**
+	 * Copy the file
+	 * 
+	 * Copy the file in another directory
+	 * 
+	 * @param $new_directory string the directory to which we a re moving the file
+	 * @return bool
+	 */
+	function Copy($new_directory) {
+		//if the file exists in the current directory
+		if(is_file($this->directory . $this->filename)) {
+			//if a file with the same name doesnot exist in the new directory
+			if(!is_file($new_directory . $this->filename)) {
+				//copy the file to the new directory
+				if(copy($this->directory . $this->filename, $new_directory . $this->filename)) {
+					//update the file permissions in the new directory
+					if(chmod($new_directory . $this->filename, 0775)) {
+						return true;
+					}
+				}
+			}
+		}
+		//return any issues
+		return false;
+	}
+	
+	/**
+	 * Rename the file
+	 * 
+	 * @param $new_filename string the name to which we want to rename the file
+	 * @result bool
+	 */
+	function Rename($new_filename) {
+		//if the file exists in the current directory
+		if(is_file($this->directory . $this->filename)) {
+			//if a file with the new name does not already exist in the current directory
+			if(!is_file($this->directory . $new_filename)) {
+				//rename the file
+				if ( rename($this->directory . $this->filename, $this->directory . $new_filename) ) {
+					//update the file name in the class
+					$this->filename = $new_filename;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * If the file is writable
+	 * 
+	 * @param NULL
+	 * @return bool
+	 */
+	function IsWritable() {
+		//if the file exists in the current directory
+		if(is_file($this->directory . $this->filename)) {
+			//if the file is writable
+			if(is_writable($this->directory . $this->filename)) {
+				return true;
+			}
+		}	
+		return false;
+	}
+	
+	/**
+	 * Make the file writable
+	 * 
+	 * @param NULL
+	 * @result bool
+	 */
+	function MakeWritable() {
+		if(is_file($this->directory . $this->filename)) {
+			//if the file is writable return true
+			if(is_writable($this->directory . $this->filename)) {
+				return true;
+			} else {
+				//change persmissions
+				if(chmod($this->directory . $this->filename, 0755)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Get extension of the file
+	 * 
+	 * @param NULL
+	 * @return string extension of the file
+	 */
+	function GetExtension() {
+		if(is_file($this->directory . $this->filename)) {
+			//get position of the last dot in the filename
+			$pos = strrpos($this->directory . $this->filename, '.');
+			//return whatever is there after the last dot in the filename
+			return substr($this->directory . $this->filename, $pos+1);			
+		}
+		return false;
+	}
+	
+	/**
+	 * Delete the file
+	 * 
+	 * @param NULL
+	 * @result bool
+	 */
+	function Delete() {
+		if(is_file($this->directory . $this->filename)) {
+			//delete the file
+			if(unlink($this->directory . $this->filename)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Date when the file was last modified
+	 * 
+	 * Returns the date time in SQL format (as Y-m-d H:i:s) 
+	 * 
+	 * @param NULL
+	 * @result bool
+	 */
+	function LastModified() {
+		if(is_file($this->directory . $this->filename)) {
+			//return the last modified date in the SQL date time format as Y-m-d H:i:s
+			return date("Y-m-d H:i:s",filemtime($this->directory . $this->filename));
+		}
+		//Return Issues
+		return false;
+	}
+	
+	/**
+	 * If the file with the given name exists
+	 * 
+	 * @param NULL
+	 * @return bool
+	 * 
+	 */
+	function Exists() {
+		//if the file exists in the current directory
+		if(is_file($this->directory . $this->filename)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Get the contents of the file in a string
+	 * 
+	 * @param NULL
+	 * @return bool
+	 */
+	function GetContents() {
+		//if the file exists in the directory
+		if(is_file($this->directory . $this->filename)) {
+			//return contents of the file in a string
+			return file_get_contents($this->directory . $this->filename);
+		}
+		return false;
+	}
+	
+	/**
+	 * Formats the filename
+	 * 
+	 * @param NULL
+	 * @return NULL 
+	 */
+	function FormatFilename() {
+		// Make Lowercase
+		$this->filename = strtolower($this->filename);
+		$pieces = explode('.', $this->filename);
+		$fext  = array_pop($pieces);
+		$fname = basename($this->filename, '.'.$fext);
+
+		// Cut out bad chars
+		$bad_chars = array(' ', "'", '\'', '(', ')', '*', '!', '/', ',', '&', '|', '{', '}', '[', ']', '+', '=', '<', '>');
+		$fname = str_replace($bad_chars, '_', $fname);
+		// remove doubles
+		$fname = str_replace('__', '', $fname);
+
+		$i = 1;
+		while ( file_exists($this->directory . $fname . '.' . $fext) ){
+			// if already had a number appended cut it off
+			if ($i > 1)
+				$fname = substr($fname, 0, -2);
+
+			// Add a number to the end of the file
+			$fname =  $fname . '_' . $i;
+			$i++;
+		}
+		// Recreate the file name with extention
+		$this->filename = $fname . '.' . $fext;
+	}
+	
+
+	/**
+	 * Get the size of the file
+	 * 
+	 * @param NULL
+	 * @return int size of file in bytes
+	 */
+	function Filesize() {
+		//if the file exists in the directory
+		if(is_file($this->directory . $this->filename)) {
+			//return the size in number of bytes
+			return filesize($this->directory . $this->filename);
+		}
+		return false;
+	}
 }
 ?>
