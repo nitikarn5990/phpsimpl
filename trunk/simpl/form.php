@@ -254,6 +254,7 @@ class Form {
 	*
 	* Set all the Values of a Class
 	*
+	* @param $data An associtive array with all the keys and values for the object
 	* @return bool
 	*/
 	function SetValues($data = array()){
@@ -274,6 +275,27 @@ class Form {
 						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
 				}
 			}
+		
+		return true;
+	}
+	
+	/**
+	* Reset Values
+	*
+	* Reset all the Values of a Class
+	*
+	* @return bool
+	*/
+	function ResetValues(){
+		// Reset all the Data for the Class
+		if (is_array($this->fields))
+			foreach($this->fields as $key=>$field){
+				$this->SetValue($key,'');
+				$this->SetError($key,'');
+			}
+		// Reset List and search
+		$this->list = array();
+		$this->search = array();
 		
 		return true;
 	}
