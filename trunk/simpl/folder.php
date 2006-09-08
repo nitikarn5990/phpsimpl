@@ -108,6 +108,34 @@ class Folder {
 	} 
 	
 	/**
+	 * Delete subfolders and files recursively
+	 * 
+	 * Private function that deletes the sub files and sub-folders. the function is called from Delete function
+	 * 
+	 * @param $directory directory to be deleted
+	 * @return bool
+	 */
+	private function delete_recursive($directory) {
+   	  	//loop through for each directory/file that the function scandir returns
+   	  	foreach (scandir($directory) as $folderItem) {
+       		//skip for these two cases
+       		if ($folderItem != "." AND $folderItem != "..") {
+           		//if 'file' is a directory
+           		if (is_dir($directory.$folderItem.'/')) {
+               		//call the function recursively 
+               		$this->delete_recursive( $directory.$folderItem.'/');
+           		} else {
+            		//delete the files within the directory
+            		unlink($directory . $folderItem);
+           		}
+       		}
+   		}
+   		//delete the sub-directories and the directory itself
+		rmdir($directory);
+   		return true;
+	}
+	
+	/**
 	 * Deletes the folder
 	 * 
 	 * @todo on force check for subfolders also
@@ -116,27 +144,21 @@ class Folder {
 	 * @return bool;
 	 */
 	function Delete($force=false){
-		if($force != false) {
-			$path = $this->directory . $this->folder_name;
-			$sub_folders = $this->DirList();
-			
-			
-		/*
-			$sub_files = $this->DirList();
-			if(is_array($sub_files)) {
-				foreach($sub_files as $file) {
-					if(!unlink($this->directory . $this->folder_name . $file)) {
-						return false;
-					}
-				}
-			}*/
+		if($force == false) {
+			//delete the directory
+			if(rmdir($this->directory . $this->folder_name)) {
+				return true;
+			}
+		} else {
+			//call this function to delete the sub folders and sub files recursively
+			if($this->delete_recursive($this->directory . $this->folder_name) ) {
+				return true;
+			}
 		}
-	
-		if(rmdir($this->directory . $this->folder_name)) {
-			return true;
-		} 	
-		return false;	
+		return false;
 	}
+	
+
 	
 	/**
 	 * Directory Listing
