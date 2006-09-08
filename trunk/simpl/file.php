@@ -20,6 +20,7 @@ class File extends Folder {
 	 * @return 				NULL
 	 */
 	function File($filename,$directory=''){
+		Debug('Constructor(), Intitializing values');
 		// Set the Local variables
 		$this->filename = $filename;
 		// If there is directory passed, set the directory
@@ -42,10 +43,13 @@ class File extends Folder {
 			//if a file with the same name does not exist in the new directory
 			if(!is_file($new_directory . $this->filename)) {
 				//move the file over to the new directory
+				Debug('Move(), From: "' . $this->directory . '" To: "' . $new_directory . '"');			
 				if(rename($this->directory . $this->filename, $new_directory . $this->filename)) {
 					//change persmissions of the file in the new directory
+					Debug('Move(), Changing permissions of the file: ' . $new_directory . $this->filename);
 					if(chmod($new_directory . $this->filename, 0775)) {
 						//update the directory in the class
+						Debug('Move(), Updating the directory variable from: ' . $this->directory . ' To: ' . $new_directory);
 						$this->directory = $new_directory;
 						return true;
 					}
@@ -69,8 +73,10 @@ class File extends Folder {
 			//if a file with the same name doesnot exist in the new directory
 			if(!is_file($new_directory . $this->filename)) {
 				//copy the file to the new directory
+				Debug('Copy(), From: "' . $this->directory . '" To: "' . $new_directory . '"');
 				if(copy($this->directory . $this->filename, $new_directory . $this->filename)) {
 					//update the file permissions in the new directory
+					Debug('Copy(), Changing permissions of the file: ' . $new_directory . $this->filename);
 					if(chmod($new_directory . $this->filename, 0775)) {
 						return true;
 					}
@@ -90,15 +96,17 @@ class File extends Folder {
 	function Rename($new_filename) {
 		//if the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
-			//if a file with the new name does not already exist in the current directory
-			if(!is_file($this->directory . $new_filename)) {
-				//rename the file
-				if ( rename($this->directory . $this->filename, $this->directory . $new_filename) ) {
-					//update the file name in the class
-					$this->filename = $new_filename;
+			//copy the filename into the variable
+			$old_filename = $this->filename;
+			//assign the new_filename to the class variable
+			$this->filename = $new_filename;
+			//format the new filename
+			$this->FormatFilename();
+			//rename the file
+			Debug('Rename(), From: "' . $old_filename . '" To: "' . $this->filename . '"');
+			if ( rename($this->directory . $old_filename, $this->directory . $this->filename) ) {
 					return true;
 				}
-			}
 		}
 		return false;
 	}
@@ -114,6 +122,7 @@ class File extends Folder {
 		if(is_file($this->directory . $this->filename)) {
 			//if the file is writable
 			if(is_writable($this->directory . $this->filename)) {
+				Debug('IsWritable(), The file ' . $this->directory . $this->filename . ' is writable.');
 				return true;
 			}
 		}	
@@ -130,9 +139,11 @@ class File extends Folder {
 		if(is_file($this->directory . $this->filename)) {
 			//if the file is writable return true
 			if(is_writable($this->directory . $this->filename)) {
+				Debug('MakeWritable(), The file ' . $this->directory . $this->filename . ' is already writable.');
 				return true;
 			} else {
 				//change persmissions
+				Debug('MakeWritable(), Changing permissions of file ' . $this->directory . $this->filename);
 				if(chmod($this->directory . $this->filename, 0755)) {
 					return true;
 				}
@@ -152,6 +163,7 @@ class File extends Folder {
 			//get position of the last dot in the filename
 			$pos = strrpos($this->directory . $this->filename, '.');
 			//return whatever is there after the last dot in the filename
+			Debug('GetExtension(), Getting extension of file ' . $this->directory . $this->filename);			
 			return substr($this->directory . $this->filename, $pos+1);			
 		}
 		return false;
@@ -166,6 +178,7 @@ class File extends Folder {
 	function Delete() {
 		if(is_file($this->directory . $this->filename)) {
 			//delete the file
+			Debug('Delete(), Deleting file ' . $this->directory . $this->filename);
 			if(unlink($this->directory . $this->filename)){
 				return true;
 			}
@@ -184,6 +197,7 @@ class File extends Folder {
 	function LastModified() {
 		if(is_file($this->directory . $this->filename)) {
 			//return the last modified date in the SQL date time format as Y-m-d H:i:s
+			Debug('LastModified(), Last modified time of file ' . $this->directory . $this->filename);
 			return date("Y-m-d H:i:s",filemtime($this->directory . $this->filename));
 		}
 		//Return Issues
