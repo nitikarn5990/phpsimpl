@@ -841,7 +841,7 @@ class DbTemplate extends Form {
 		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . 'order'];
 		
 		// Get the List of Items If they are not already set
-		if (!is_array($this->results))
+		if (count($this->results) == 0)
 			$this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
 		
 		// If there is items
