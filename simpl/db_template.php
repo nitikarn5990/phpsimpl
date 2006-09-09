@@ -845,7 +845,7 @@ class DbTemplate extends Form {
 			$this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
 		
 		// If there is items
-		if (is_array($this->results)){
+		if (count($this->results) > 0){
 			// Simplify the order
 			$order = ($_SESSION[$this->table . '_order'] == 'desc')?'asc':'desc';
 			// Start the table
@@ -886,7 +886,8 @@ class DbTemplate extends Form {
 					$end = '';
 					// If there is links
 					if (is_array($format) && $format[$key] != ''){
-						printf($format[$key],$data[$this->primary],stripslashes($data[$key]));
+						// Parse the custom format
+						echo str_replace(array('{$item_id}','{$data}'),array($data[$this->primary],stripslashes($data[$key])),$format[$key]);
 					}else{
 						echo ($data[$key] != '')?stripslashes($data[$key]):'&nbsp;';
 					}
