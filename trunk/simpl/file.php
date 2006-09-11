@@ -24,8 +24,15 @@ class File extends Folder {
 		// Set the Local variables
 		$this->filename = $filename;
 		// If there is directory passed, set the directory
-		if (isset($directory))
-			$this->directory = $directory;
+		if (isset($directory)) {
+			if(substr($directory,-1) == '/') {
+				// Set the Local variables
+				$this->directory = $directory;
+			} else {
+				//append '/' at the end
+				$this->directory = $directory . '/';
+			}
+		}
 	}
 	
 	
@@ -214,6 +221,7 @@ class File extends Folder {
 	function Exists() {
 		//if the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
+			Debug('Esixts(), The file ' . $this->directory . $this->filename . ' exists.');
 			return true;
 		}
 		return false;
@@ -229,6 +237,7 @@ class File extends Folder {
 		//if the file exists in the directory
 		if(is_file($this->directory . $this->filename)) {
 			//return contents of the file in a string
+			Debug('GetContents(), Get the contents of the file ' . $this->directory . $this->filename . ' into a string.');
 			return file_get_contents($this->directory . $this->filename);
 		}
 		return false;
@@ -252,7 +261,8 @@ class File extends Folder {
 		$fname = str_replace($bad_chars, '_', $fname);
 		// remove doubles
 		$fname = str_replace('__', '', $fname);
-
+		Debug('FormatFilename(), Removing bad characters from the filename ' . $this->filename);
+		
 		$i = 1;
 		while ( file_exists($this->directory . $fname . '.' . $fext) ){
 			// if already had a number appended cut it off
@@ -263,6 +273,7 @@ class File extends Folder {
 			$fname =  $fname . '_' . $i;
 			$i++;
 		}
+		Debug('FormatFilename(), Add a number to the end of the filename ' . $this->filename);
 		// Recreate the file name with extention
 		$this->filename = $fname . '.' . $fext;
 	}
@@ -278,6 +289,7 @@ class File extends Folder {
 		//if the file exists in the directory
 		if(is_file($this->directory . $this->filename)) {
 			//return the size in number of bytes
+			Debug('Filesize(), Get size of file ' . $this->directory . $this->filename);
 			return filesize($this->directory . $this->filename);
 		}
 		return false;
