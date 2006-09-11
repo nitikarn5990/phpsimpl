@@ -25,6 +25,7 @@ class Folder {
 	 * @return 				NULL
 	 */
 	function Folder($folder_name,$directory){
+		Debug('Constructor(), Initializing values');
 		//If the  folder name doesn't end in '/', then append it at the end 
 		if(substr($folder_name,-1) == '/') {
 			// Set the Local variables
@@ -35,8 +36,16 @@ class Folder {
 		}
 		
 		// If there is directory passed, set the directory
-		if (isset($directory))
-			$this->directory = $directory;
+		if (isset($directory)){
+			if(substr($directory,-1) == '/') {
+				// Set the Local variables
+				$this->directory = $directory;
+			} else {
+				//append '/' at the end
+				$this->directory = $directory . '/';
+			}
+		}
+			
 	}
 	
 	
@@ -55,7 +64,9 @@ class Folder {
 			if(!is_dir($new_directory . $this->folder_name) ) {
 				//move the folder to the new directory
 				if( rename($this->directory . $this->folder_name, $new_directory . $this->folder_name) ) {
+					Debug('Move(), Moving the folder from ' . $this->directory . ' to ' . $new_directory);
 					if(chmod($new_directory . $this->folder_name, 0775)) {
+						Debug('Move(), Changing permissions for folder ' . $this->folder . ' in directory ' . $new_directory);
 						$this->directory = $new_directory;
 						return true;
 					}
@@ -78,6 +89,7 @@ class Folder {
 		if(is_dir($this->directory . $this->folder_name)) {
 			//check if it is writable
 			if(is_writable($this->directory . $this->folder_name)){
+				Debug('IsWritable(), The folder ' . $this->directory . $this->folder . ' is writable.');
 				return true;
 			}
 		}
@@ -96,10 +108,12 @@ class Folder {
 		if(is_dir($this->directory . $this->folder_name)) {
 			//if it is already writable return true
 			if(is_writable($this->directory . $this->folder_name)){
+				Debug('MakeWritable(), The folder ' . $this->directory . $this->folder . ' is already writable.');
 				return true;
 			} else {
 				//change permissions of the folder
 				if(chmod($this->directory . $this->folder_name, 0755)){
+					Debug('MakeWritable(), Changing permissions of folder ' . $this->directory . $this->folder);
 					return true;
 				}
 			}
@@ -118,6 +132,7 @@ class Folder {
 	private function delete_recursive($directory) {
    	  	//loop through for each directory/file that the function scandir returns
    	  	foreach (scandir($directory) as $folderItem) {
+       		Debug('delete_recursive(), Looping through directory ' . $directory);
        		//skip for these two cases
        		if ($folderItem != "." AND $folderItem != "..") {
            		//if 'file' is a directory
@@ -126,11 +141,13 @@ class Folder {
                		$this->delete_recursive( $directory.$folderItem.'/');
            		} else {
             		//delete the files within the directory
+            		Debug('delete_recursive(), Deleting file ' . $directory . $folderItem);
             		unlink($directory . $folderItem);
            		}
        		}
    		}
    		//delete the sub-directories and the directory itself
+   		Debug('delete_recursive(), Deleting directory ' . $directory);
 		rmdir($directory);
    		return true;
 	}
@@ -147,9 +164,11 @@ class Folder {
 		if($force == false) {
 			//delete the directory
 			if(rmdir($this->directory . $this->folder_name)) {
+				Debug('Delete(), Deleting directory ' . $this->directory . $this->folder_name);
 				return true;
 			}
 		} else {
+			Debug('Delete(), Deleting sub-folders and sub-files recursively.');
 			//call this function to delete the sub folders and sub files recursively
 			if($this->delete_recursive($this->directory . $this->folder_name) ) {
 				return true;
@@ -175,6 +194,7 @@ class Folder {
 				if( ($file == '.') || ($file == '..'))
 					unset($files[$pos]);
 			}
+			Debug('DirList(), Getting a list of files in directory ' . $this->directory);
 			return $files;
 		}
 		return false;
@@ -193,6 +213,7 @@ class Folder {
 			if(!is_dir($this->directory . $new_folder)) {
 				//rename the folder to the new name
 				if (rename($this->directory . $this->folder_name, $this->directory . $new_folder)){
+					Debug('Rename(), Renaming folder ' . $this->directory . $this->folder_name . ' to ' . $this->directory . $new_folder);
 					if(substr($new_folder,-1) == '/') {
 						$this->folder_name = $new_folder;
 					} else {
@@ -213,6 +234,7 @@ class Folder {
 	 */
 	function Exists() {
 		//if the folder exists
+		Debug('Exists(), Checking if the folder ' . $this->folder_name . ' exists in the directory ' . $this->directory);
 		if(is_dir($this->directory . $this->folder_name)) {
 			return true;
 		}
@@ -230,6 +252,7 @@ class Folder {
 	function Create() {
 		//if the folder exists make it writable 
 		if(is_dir($this->directory . $this->folder_name)) {
+			Debug('Create(), The folder ' . $this->folder_name . ' already exists in the directory ' .$this->directory);
 			//change persmissions of folder
 			if(chmod($this->directory . $this->folder_name, 0775)){
 					return true;
@@ -237,6 +260,7 @@ class Folder {
 		} else {
 			//create the folder
 			if(mkdir($this->directory . $this->folder_name)) {
+				Debug('Create(), Created folder ' . $this->folder_name . ' in directory ' . $this->directory);
 				//change persmissions of the folder
 				if(chmod($this->directory . $this->folder_name, 0775)) {
 					return true;
