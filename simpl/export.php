@@ -1,1 +1,103 @@
-<?php/*** Base Class for Exporting** @author Nick DeNardis <nick@design-man.com>*/class Export extends Form{	/**	* @var DbTemplate Object 	*/	var $db_data;	/**	* @var array	*/	var $display;	/**	* @var string	*/	var $filename;	/**	* @var string	*/	var $directory;	/**	* Class Constructor	*	* Creates an Export Object Built on the Database Template	*	* @param DBTemplate Object	* @return NULL	*/	function Export($dbTemplate, $display='', $filename='', $directory=''){		// Made sure they are passing a DbTemplate		if (is_object($dbTemplate))			$this->db_data = $dbTemplate;					// Set the Local Variables		$this->display = $display;		$this->filename = $filename;		$this->directory = $directory;	}		/**	* XLS	*	* Creates and XLS file from the List of Items in the DBTemplate	*	* @return BOOL	*/	function XLS(){		// Make sure there is a list of items		if (!is_array($this->db_data->fields))			return false;					// Filter these Charictors		$bad_output = array("\n", "\r", "\t");				// Rearrange the Fields if there is a custom display		$show = array();		if(is_array($this->display)){			foreach($this->display as $key=>$data)				$show[$data] = ($db_data->fields[$data]->label != '')?$db_data->fields[$data]->label:ucfirst(str_replace('_',' ',$data));		}else{			if (is_array($this->db_data->fields))				foreach($this->db_data->fields as $key=>$data)					$show[$key] = ($data->label != '')?$data->label:ucfirst(str_replace('_',' ',$key));		}				// Loop through all the fields to get the Title		foreach($show as $key=>$column)			$csv_output .= $column . "\t";				// Create a New Line		$csv_output = substr($csv_output,0,-1) . "\n";			// If there are items listed in the object		if (is_array($this->db_data->list))			foreach($this->db_data->list as $item){				// Loop through all the fields				foreach($show as $key=>$column){					$csv_output .= str_replace($bad_output, '', $item[$key]) . "\t";				}				$csv_output = substr($csv_output,0,-1) . "\n";			}			header("Content-type: application/vnd.ms-excel");		header("Content-disposition: attachment; filename=" .  str_replace(' ','_',strtolower($this->db_data->table)) . '_' . date("Y-m-d") . ".xls");		print $csv_output;		exit;  	}}?>
+<?php
+/**
+* Base Class for Exporting a XLS file
+*
+* @author Rob Vrabel <rvrabel@wayne.edu>
+*/
+class Export {
+	/**
+	* @var array
+	*/
+	var $display;
+	/**
+	* @var array
+	*/
+	var $data;
+	/**
+	* @var string
+	*/
+	var $file_name;
+	/**
+	* @var string
+	*/
+	var $output;
+	
+	/**
+	* Class Constructor
+	*
+	* Creates an exported file from a given array
+	*
+	* @param display array, data array
+	* @return NULL
+	*/	
+	function Export($display='', $data='', $file_name='') {
+		$this->display	= $display;
+		$this->data		= $data;
+		$this->file_name = $file_name;
+		
+		// If all the data is correct call GetXLS
+		(is_array($this->display) && is_array($this->data)) ? $this->GetXLS() : '';
+	}
+	
+	/**
+	* GetXLS
+	*
+	* Creates an output string from the class data
+	*
+	* @return BOOL
+	*/
+	function GetXLS() {
+		// Make sure display is an array
+		if(is_array($this->display)) {
+			// Make sure data is an array
+			if(is_array($this->data)) {
+				// Filter these out
+				$bad_output = array("\n", "\r", "\t");
+				
+				// Start the output
+				$this->output = '';
+				
+				// Loop through all the fields in display to create the titles
+				foreach($this->display as $key=>$title)
+					$this->output .= $title . "\t";
+					
+				// Create a blank Line
+				$this->output = substr($this->output,0,-1) . "\n";
+	
+				// Loop through all the data
+				foreach($this->data as $id => $data){
+					// Loop through all the displays
+					foreach($this->display as $key => $display) {
+						// Replace badchars 
+						$this->output .= str_replace($bad_output, '', $data[$key]) . "\t";
+					}
+					// Create a new line
+					$this->output = substr($this->output,0,-1) . "\n";
+				}				
+				return $this->output;
+			}
+			Debug('XLS(), Data is not an array');
+		}
+		Debug('XLS(), Display is not an array');
+		return false;
+	}
+
+	/**
+	* DisplayXLS
+	*
+	* Displays the XLS file
+	*
+	* @return NULL
+	*/	
+	function DisplayXLS($output='') {
+		// Check if they are sending ouput, if not just use the classes output
+		($output == '')? $output = $this->output : '';
+		
+		// Display the XLS
+		header("Content-type: application/vnd.ms-excel");
+		header("Content-disposition: attachment; filename=" .  str_replace(' ','_',strtolower($this->file_name)) . '_' . date("Y-m-d") . ".xls");
+		print $output;
+		exit;  
+	}
+}
+?>
