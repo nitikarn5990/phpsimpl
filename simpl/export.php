@@ -50,7 +50,7 @@ class Export {
 		// Make sure data is an array
 		if(is_array($this->data)) {
 			// Debug
-			(!is_array($this->display)) ? Debug('GetXLS(), Display is not an array, gathering display from the data array'); : '';
+			(!is_array($this->display)) ? Debug('GetXLS(), Display is not an array, gathering display from the data array') : '';
 			
 			// If there is a display go by those, otherwise get all the fields from the data array
 			if(!is_array($this->display))
