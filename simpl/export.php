@@ -30,13 +30,13 @@ class Export {
 	* @param display array, data array
 	* @return NULL
 	*/	
-	function Export($display='', $data='', $file_name='') {
+	function Export($data='', $display='', $file_name='') {
 		$this->display	= $display;
 		$this->data		= $data;
 		$this->file_name = $file_name;
 		
 		// If all the data is correct call GetXLS
-		(is_array($this->display) && is_array($this->data)) ? $this->GetXLS() : '';
+		(is_array($this->data)) ? $this->GetXLS() : '';
 	}
 	
 	/**
@@ -47,38 +47,43 @@ class Export {
 	* @return BOOL
 	*/
 	function GetXLS() {
-		// Make sure display is an array
-		if(is_array($this->display)) {
-			// Make sure data is an array
-			if(is_array($this->data)) {
-				// Filter these out
-				$bad_output = array("\n", "\r", "\t");
+		// Make sure data is an array
+		if(is_array($this->data)) {
+			// Debug
+			(!is_array($this->display)) ? Debug('GetXLS(), Display is not an array, gathering display from the data array'); : '';
+			
+			// If there is a display go by those, otherwise get all the fields from the data array
+			if(!is_array($this->display))
+				foreach(end($this->data) as $key => $data)
+					$this->display[$key] = ucfirst(str_replace('_',' ',$key));
+			
+			// Filter these out
+			$bad_output = array("\n", "\r", "\t");
+			
+			// Start the output
+			$this->output = '';
+			
+			// Loop through all the fields in display to create the titles
+			foreach($this->display as $key=>$title)
+				$this->output .= $title . "\t";
 				
-				// Start the output
-				$this->output = '';
-				
-				// Loop through all the fields in display to create the titles
-				foreach($this->display as $key=>$title)
-					$this->output .= $title . "\t";
-					
-				// Create a blank Line
+			// Create a blank Line
+			$this->output = substr($this->output,0,-1) . "\n";
+
+			// Loop through all the data
+			foreach($this->data as $id => $data){
+				// Loop through all the displays
+				foreach($this->display as $key => $display) {
+					// Replace badchars 
+					$this->output .= str_replace($bad_output, '', $data[$key]) . "\t";
+				}
+				// Create a new line
 				$this->output = substr($this->output,0,-1) . "\n";
-	
-				// Loop through all the data
-				foreach($this->data as $id => $data){
-					// Loop through all the displays
-					foreach($this->display as $key => $display) {
-						// Replace badchars 
-						$this->output .= str_replace($bad_output, '', $data[$key]) . "\t";
-					}
-					// Create a new line
-					$this->output = substr($this->output,0,-1) . "\n";
-				}				
-				return $this->output;
-			}
-			Debug('XLS(), Data is not an array');
+			}				
+			return $this->output;
 		}
-		Debug('XLS(), Display is not an array');
+		// Debug
+		Debug('GetXLS(), Data is not an array');
 		return false;
 	}
 
