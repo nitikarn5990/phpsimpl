@@ -614,7 +614,7 @@ class DbTemplate extends Form {
 		
 		// Do the Query
 		$result = $db->Query($query, $this->database);
-		Pre($query);
+		
 		Debug('GetList(), Query: ' . $query);
 		
 		// If there is atleast one result
