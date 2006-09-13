@@ -296,9 +296,12 @@ class DbTemplate extends Form {
 						else if ($key == 'display_order' && is_object($options['display_order'])){
 							// Find out what the next display order is
 							$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
-							if (is_array($last_item) && count($last_item) == 1)
+							if (is_array($last_item) && count($last_item) == 1){
 								foreach($last_item as $item)
 									$this->SetValue($key,((int)$item['display_order']+1));
+							} else {
+								$this->SetValue($key,1);
+							}
 						}
 				break;
 			default: 
