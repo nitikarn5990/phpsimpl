@@ -222,7 +222,7 @@ class Form {
 	*/
 	function SetError($field,$value){
 		// Make sure there is fields
-		if (is_string($this->error[$field])){
+		if ($value != ''){
 			$this->error[$field] = $value;
 			return true;
 		}
