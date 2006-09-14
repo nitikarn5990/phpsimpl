@@ -629,8 +629,13 @@ class DbTemplate extends Form {
 			// Create the return array
 			$this->results = array();
 			// For each result make a class
-			while ($info = $db->FetchArray($result))
-				$this->results[$info[$this->primary]] = $info;
+			if($fields == 'count') {
+				$info = $db->FetchArray($result);
+				$this->results['count'] = $info['count'];		
+			}else{
+				while ($info = $db->FetchArray($result))
+					$this->results[$info[$this->primary]] = $info;
+			}		
 		}// if there is atleast one template
 
 		return $this->results;
