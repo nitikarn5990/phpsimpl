@@ -606,8 +606,11 @@ class DbTemplate extends Form {
 				$query .= '`' . $data . '`, ';
 			// Trim off the last comma
 			$query = substr($query,0,-2) . ' ';
-		}else
+		}elseif($fields == 'count'){
+			$query .= 'count(*) as `count`'; 
+		}else{
 			$query .= '* '; 
+		}
 		// Finish the query
 		$query .= 'FROM `' . $this->table . '` ' . $extra . ' ' . $order . ' ' . $sort;
 		
