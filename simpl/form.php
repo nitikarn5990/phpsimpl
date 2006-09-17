@@ -300,6 +300,36 @@ class Form {
 		return true;
 	}
 	
+	/**
+	 * Simple Format
+	 * Formats $this is a easy to read compact way to be used for Debug
+	 * 
+	 * @return string
+	 */
+	function SimpleFormat(){
+		// Start the Output
+		$output = '';
+		
+		// Format a nice Summary
+		$output .= '<strong>Name:</strong>' . "\t" . get_class($this) . ' ' . "\t" . '<strong>Parent:</strong>' . "\t" . get_parent_class($this) . '' . "\n";
+		$output .= '<strong>Table:</strong>' . "\t" . $this->table . ' ' . "\t" . '<strong>Primary Key:</strong>' . "\t" . $this->primary . ' ' . "\t" . '<strong>Database:</strong>' . "\t" . $this->database . "\n";
+		$output .= '<strong>Required:</strong>' . "\n\t" . ((is_array($this->required))?implode(', ',$this->required):'No Required Fields') . "\n";
+		$output .= '<strong>Errors:</strong>' . "\n";
+		if (is_array($this->error))
+			foreach($this->error as $key=>$data)
+				$output .= "\t" . $key . ' => ' . $data . "\n";
+		else
+			$output .= "\t" . 'No Errors' . "\n";
+		$output .= '<strong>Fields:</strong>' . "\n";
+		if (is_array($this->fields))
+			foreach($this->fields as $key=>$data)
+				$output .= "\t" . $key . ' => ' . $data->value . (($data->error != '')?' <strong>:</strong> ' . $data->error:'') . "\n";
+		else
+			$output .= "\t" . 'No Fields' . "\n";
+		
+		return $output;
+	}
+	
 	function DisplayForm($display='', $hidden=array(), $options=array()){ 
 		// Rearrange the Fields if there is a custom display
 		$show = array();

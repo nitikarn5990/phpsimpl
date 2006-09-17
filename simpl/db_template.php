@@ -167,7 +167,7 @@ class DbTemplate extends Form {
 				}
 			}
 				
-		Debug($this);
+		Debug($this->SimpleFormat());
 		
 		return true;	
 	}
