@@ -365,13 +365,19 @@ class DbTemplate extends Form {
 	*
 	* @return bool
 	*/
-	function Delete(){
+	function Delete($options = array()){
 		// Use the global mysql class
 		global $db;
 		
 		// If we can get the info then we can delete it
-		if ($this->GetInfo(array($this->primary))){
+		if ($this->GetInfo()){
 			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
+			
+			// Check to see if we need to cleanup the display order first
+			if (is_object($options['display_order'])){
+				// Move the item all the way down to the bottom
+				while ($this->Move('down',$options)){}
+			}
 		
 			// Delete the row
 			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $this->primary . "` = '" . $this->GetPrimary() . "' LIMIT 1";
