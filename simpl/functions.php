@@ -11,7 +11,7 @@ function Alert($alerts, $type=''){
 	$class = ($type == '')?'Error':$type;
 	
 	//Display all errors to user
-	if ( is_array($alerts) ){
+	if ( is_array($alerts) && count($alerts) > 0){
 		while ( list($key,$data) = each($alerts) ){
 			echo '<div class="form' . ucfirst($class) . '" id="form' . ucfirst($class) . '"><p>' . $data . '</p></div>'. "\n";
 		}
