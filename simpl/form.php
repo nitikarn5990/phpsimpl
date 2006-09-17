@@ -294,8 +294,8 @@ class Form {
 				$this->SetError($key,'');
 			}
 		// Reset List and search
-		$this->list = array();
-		$this->search = array();
+		$this->results = array();
+		$this->search = '';
 		
 		return true;
 	}
