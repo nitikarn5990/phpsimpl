@@ -271,7 +271,6 @@ class DbTemplate extends Form {
 	*
 	* @param $options An associtive array to specify options for each field, display_order for example on how to find the next display_order
 	* @return bool
-	* @todo Check the Cache file for any not entered records
 	*/
 	function Save($options = array()){
 		// Use the global mysql class
@@ -325,7 +324,26 @@ class DbTemplate extends Form {
 		
 		if (DB_STATUS != false){
 			Debug('Save(), Database Found');
-			// TODO: Check to see if there is any files that need to be inserted from cache first
+			// Check to see if there is any items that were left without a database
+			$orphans = glob(FS_SIMPL . WS_CACHE . "*.db.php");
+			if (is_array($orphans)){
+				Debug('Save(), Found ' . count($orphans) . ' Orphans');
+				// Create an array to hold them all
+				$found = array();
+				foreach ($orphans as $orphan){
+					// Transform the "file safe" text into a PHP class
+					$data = urldecode(file_get_contents($orphan));
+					$data = '$found[] = unserialize(\'' . $data . substr($data,0,-1) . '\');';
+					eval($data);
+					// Remove the File, it will be recreated if there is any DB loss again
+					unlink($orphan);
+				}
+				// Make sure the items are objects and save their info in the DB
+				foreach($found as $item)
+					if (is_object($item))
+						if ($item->Save())
+							Debug('Save(), Orphan ' . $item->table . ' #' . $item->GetPrimary() . ' Saved');
+			}
 			
 			// Do the Operation
 			$db->Perform($this->table, $infoArray, $type, $extra, $this->database);
@@ -339,8 +357,8 @@ class DbTemplate extends Form {
 				return true;
 		}else{
 			// Write to File if DB is down
-			$contents = arraytostring($infoArray);
-			$filename = $this->table . '_' . date("YmdHis") . '.txt';
+			$contents = urlencode(serialize($this));
+			$filename = $this->table . '_' . date("YmdHis") . '.db.php';
 			
 			Debug('Save(), Database Down, Saving to File: ' . $filename);
 			
