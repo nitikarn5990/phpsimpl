@@ -413,13 +413,13 @@ class DbTemplate extends Form {
 					if(is_array($item->fields))
 						foreach($item->fields as $key2=>$data){
 							// Make sure the variable has something in it
-							if ((string)$this->GetValue($key2) != ''){
-								Debug('Move(), Filter Item: ' . $key2 . ', Value: ' . $this->GetValue($key2));
+							if ((string)$item->GetValue($key2) != ''){
+								Debug('Move(), Filter Item: ' . $key2 . ', Value: ' . $item->GetValue($key2));
 								// Determine how to search in the database
-								if (is_string($this->GetValue($key2)))
-									$extra .= " `" . $key2 . "` LIKE '" . $this->GetValue($key2) . "' AND";
+								if ($this->Get('blob',$key2) == 1)
+									$extra .= " `" . $key2 . "` LIKE '" . $item->GetValue($key2) . "' AND";
 								else		
-									$extra .= " `" . $key2 . "` = '" . $this->GetValue($key2) . "' AND";
+									$extra .= " `" . $key2 . "` = '" . $item->GetValue($key2) . "' AND";
 							}
 						}
 					
@@ -569,7 +569,7 @@ class DbTemplate extends Form {
 				if ((string)$this->GetValue($key) != ''){
 					Debug('GetList(), Filter Item: ' . $key . ', Value: ' . $this->GetValue($key));
 					// Determine how to search in the database
-					if (is_string($this->GetValue($key)))
+					if ($this->Get('blob',$key) == 1)
 						$extra .= " `" . $key . "` LIKE '" . $this->GetValue($key) . "' AND";
 					else		
 						$extra .= " `" . $key . "` = '" . $this->GetValue($key) . "' AND";
@@ -581,7 +581,7 @@ class DbTemplate extends Form {
 				$extra .= ' (';
 				foreach($this->fields as $key=>$data){
 						// Determine how to search in the database
-						if ($this->Get('type',$key) == 'blob' || $this->Get('type',$key) == 'string')
+						if ($this->Get('blob',$key) == 1)
 							$extra .= ' `' . $key . '` LIKE \'%' . $this->search . '%\' OR';
 						else		
 							$extra .= ' `' . $key . '` = \'' . $this->search . '\' OR';
