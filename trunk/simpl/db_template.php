@@ -576,7 +576,22 @@ class DbTemplate extends Form {
 		
 		// If they request an order build the query
 		if ( isset($order_by) && $order_by != '' ){
-			$order = 'ORDER BY `' . $order_by . '` ';
+			// If its an array handle the order_by and sort together
+			if(is_array($order_by)) {
+				$i = 0;
+				$order = 'ORDER BY'; 
+				foreach($order_by as $item) {
+					$order .= ' `'.$item.'`';
+					(is_array($sort) && isset($sort[$i])) ? $order .= ' ' . $sort[$i] : '' ;
+					$order .= ',';
+					$i++; 
+				}
+				// Delete the comma
+				$order = substr($order, 0, -1);
+				// If sort is an array make it nothing in the query string 
+				(is_array($sort)) ? $sort = '' : '';
+			}else
+				$order = 'ORDER BY `' . $order_by . '` ';
 		}else{
 			// Make sure if order_by is not passed then sort cannot have a value
 			$order = '';
@@ -636,7 +651,7 @@ class DbTemplate extends Form {
 			$query .= '* '; 
 		}
 		// Finish the query
-		$query .= 'FROM `' . $this->table . '` ' . $extra . ' ' . $order . ' ' . $sort;
+		$query .= 'FROM `' . $this->table . '` ' . $extra . ' ' . $order . ' ' . $sort; Pre($query);
 		
 		// Put in the Offset
 		if ($offset >0 || $limit >0)
