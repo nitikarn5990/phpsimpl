@@ -651,7 +651,7 @@ class DbTemplate extends Form {
 			$query .= '* '; 
 		}
 		// Finish the query
-		$query .= 'FROM `' . $this->table . '` ' . $extra . ' ' . $order . ' ' . $sort; Pre($query);
+		$query .= 'FROM `' . $this->table . '` ' . $extra . ' ' . $order . ' ' . $sort;
 		
 		// Put in the Offset
 		if ($offset >0 || $limit >0)
