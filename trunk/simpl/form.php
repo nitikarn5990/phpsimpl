@@ -123,7 +123,11 @@ class Form {
 						break;
 					case 'wsu_phone':
 						if ( isset($this->fields[$data]->value) && !ereg("^[0-9]+-[0-9]{4}$", $this->fields[$data]->value) )
-							$this->error[$data] = 'The Phone number you entered is not valid (123-457-1234), Please try again.';
+							$this->error[$data] = 'The Phone number you entered is not valid (7-1234), Please try again.';
+						break;
+					case 'phone':
+						if( isset($this->fields[$data]->value) && !ereg("^[0-9]{3}-[0-9]{3}-[0-9]{4}$", $this->fields[$data]->value) )
+							$this->error[$data] = 'The Phone number you entered is not valid (123-456-1234), Please try again.';
 						break;
 					default:
 						if (!isset($this->fields[$data]->value) || (string)$this->fields[$data]->value == '')
