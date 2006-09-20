@@ -685,7 +685,7 @@ class DbTemplate extends Form {
 	*
 	* Does the same thing as "GetList()" but returns an associtive array to be used for drop downs
 	*
-	* @param $fields An array of field keys to return
+	* @param $field A string of a field that it will return
 	* @param $order_by A string of a field key to order by (ex. "display_order")
 	* @param $sort A string on how to sort the data (ex. "ASC" or "DESC")
 	* @param $offset An int on where to start returning, used mainly for page numbering
