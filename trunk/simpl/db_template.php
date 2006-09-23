@@ -344,6 +344,8 @@ class DbTemplate extends Form {
 						if ($item->Save())
 							Debug('Save(), Orphan ' . $item->table . ' #' . $item->GetPrimary() . ' Saved');
 			}
+			// Get all the txt files waiting to be entered
+			
 			
 			// Do the Operation
 			$db->Perform($this->table, $infoArray, $type, $extra, $this->database);
@@ -881,20 +883,20 @@ class DbTemplate extends Form {
 	*
 	* Displays a list of items according the the list criteria and sort order
 	*
-	* @todo Modify the "format" to parse more than an sprintf to make it more extendable
 	* @todo Change over to use the Get() helper functions instead of accessing the information directly
 	* @param $display An array of field keys that are going to be displayed in the list
 	* @param $format A string that will be passed through a sprintf() and use the ID and the String as the first and second parameters
 	* @param $options An associtive array with the key being the value for a field if there are output options for that field (ex. array("is_active"=>array("no","yes")))
+	* @param $force_check A bool to flag if this function should pull a GetList or not, default it will be in the case a get list has already been done it can be set to false
 	* @return NULL
 	*/
-	function DisplayList($display='',$format=array(),$options=array()){
+	function DisplayList($display='',$format=array(),$options=array(),$force_check=true){
 		// Setup the Sort Sessions
 		$_SESSION[$this->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
 		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . 'order'];
 		
 		// Get the List of Items If they are not already set
-		if (count($this->results) == 0)
+		if (count($this->results) == 0 && $force_check == true )
 			$this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);
 		
 		// If there is items
