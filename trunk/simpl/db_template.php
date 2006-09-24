@@ -289,7 +289,7 @@ class DbTemplate extends Form {
 					foreach($this->fields as $key=>$data)
 						if ($key == 'date_entered' || $key == 'created_on' || $key == 'last_updated' || $key == 'updated_on')
 							$this->SetValue($key,date("Y-m-d H:i:s"));
-						else if ($data['type'] == 'date')
+						else if ($data->type == 'date')
 							$this->SetValue($key,date("Y-m-d",strtotime($data['value'])));
 						else if ($key == 'display_order' && is_object($options['display_order'])){
 							// Find out what the next display order is
