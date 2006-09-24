@@ -262,14 +262,12 @@ class Form {
 	* @return bool
 	*/
 	function SetValues($data = array()){
+		Debug($data);
 		// Set all the Data for the Class
 		if (is_array($this->fields))
 			foreach($this->fields as $key=>$field){
 				if ($field->type == 'date' && trim($data[$key]) != ''){
-					// Transform the purchased on Date
-					$tmp_date = split('[/.-]', $data[$key]);
-					$this->SetValue($key,date("Y-m-d",strtotime($tmp_date[2].'-'.$tmp_date[0].'-'.$tmp_date[1])));
-					unset($tmp_date);
+					$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
 				}else if ($field->type == 'time' && trim($data[$key]) != ''){
 					$this->SetValue($key,date("H:i",strtotime($data[$key])));
 				}else{

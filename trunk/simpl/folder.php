@@ -4,7 +4,6 @@
  * 
  * Used to manipulate folders on the server
  * 
- * @todo	
  * @author 	Nick DeNardis <nick.denardis@gmail.com>
  */
 class Folder {
