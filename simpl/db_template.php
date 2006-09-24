@@ -153,7 +153,7 @@ class DbTemplate extends Form {
 		if (is_array($this->fields))
 			foreach($this->fields as $key=>$field){
 				if ($field->type == 'date' && trim($data[$key]) != ''){
-					$this->SetValue($key,date("l, F j, Y",strtotime($data[$key])));
+					$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
 				}else if ($field->type == 'time' && trim($data[$key]) != ''){
 					$this->SetValue($key,date("H:i",strtotime($data[$key])));
 				}else{
@@ -289,8 +289,6 @@ class DbTemplate extends Form {
 					foreach($this->fields as $key=>$data)
 						if ($key == 'date_entered' || $key == 'created_on' || $key == 'last_updated' || $key == 'updated_on')
 							$this->SetValue($key,date("Y-m-d H:i:s"));
-						else if ($data->type == 'date')
-							$this->SetValue($key,date("Y-m-d",strtotime($data['value'])));
 						else if ($key == 'display_order' && is_object($options['display_order'])){
 							// Find out what the next display order is
 							$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
@@ -311,9 +309,7 @@ class DbTemplate extends Form {
 				if (is_array($this->fields))
 					foreach($this->fields as $key=>$data)
 						if ($key == 'last_updated' || $key == 'updated_on')
-							$this->SetValue($key,date("Y-m-d H:i:s"));
-						else if ($data->type == 'date')
-							$this->SetValue($key,date("Y-m-d",strtotime($data->value)));	
+							$this->SetValue($key,date("Y-m-d H:i:s"));	
 				break;
 		}
 		
@@ -819,14 +815,14 @@ class DbTemplate extends Form {
 					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->GetValue($key)) . '</textarea><br />' . "\n";
 				}elseif($this->fields[$key]->type == 'date'){
 					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="30" maxlength="64" value="' . date("l, F j, Y",strtotime(stripslashes($this->GetValue($key)))) . '" />';					
-					echo '<script language="javascript">
+					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($key) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($key)))):'') . '" /><button type="reset" id="' . $key . '_b">...</button>';					
+					echo '<script type="text/javascript">
 						Calendar.setup(
-						{
-						  inputField  : "'.$key.'",         // ID of the input field
-						  ifFormat    : "%A, %B %e, %Y",    // the date format
-						  button      : "'.$key.'"       // ID of the button
-						}
+							{
+							  inputField  : "'.$key.'",         // ID of the input field
+							  ifFormat    : "%B %e, %Y",    // the date format
+							  button      : "'.$key.'_b"       // ID of the button
+							}
 						);					
 					</script>';					
 				}else{
