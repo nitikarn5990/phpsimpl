@@ -153,10 +153,7 @@ class DbTemplate extends Form {
 		if (is_array($this->fields))
 			foreach($this->fields as $key=>$field){
 				if ($field->type == 'date' && trim($data[$key]) != ''){
-					// Transform the Date
-					$tmp_date = split('[/.-]', $data[$key]);
-					$this->SetValue($key,date("Y-m-d",strtotime($tmp_date[2].'-'.$tmp_date[0].'-'.$tmp_date[1])));
-					unset($tmp_date);
+					$this->SetValue($key,date("l, F j, Y",strtotime($data[$key])));
 				}else if ($field->type == 'time' && trim($data[$key]) != ''){
 					$this->SetValue($key,date("H:i",strtotime($data[$key])));
 				}else{
@@ -292,6 +289,8 @@ class DbTemplate extends Form {
 					foreach($this->fields as $key=>$data)
 						if ($key == 'date_entered' || $key == 'created_on' || $key == 'last_updated' || $key == 'updated_on')
 							$this->SetValue($key,date("Y-m-d H:i:s"));
+						else if ($data['type'] == 'date')
+							$this->SetValue($key,date("Y-m-d",strtotime($data['value'])));
 						else if ($key == 'display_order' && is_object($options['display_order'])){
 							// Find out what the next display order is
 							$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
@@ -313,6 +312,8 @@ class DbTemplate extends Form {
 					foreach($this->fields as $key=>$data)
 						if ($key == 'last_updated' || $key == 'updated_on')
 							$this->SetValue($key,date("Y-m-d H:i:s"));
+						else if ($data->type == 'date')
+							$this->SetValue($key,date("Y-m-d",strtotime($data->value)));	
 				break;
 		}
 		
@@ -817,13 +818,17 @@ class DbTemplate extends Form {
 					// If it is a blob or text in the DB then make it a text area
 					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->GetValue($key)) . '</textarea><br />' . "\n";
 				}elseif($this->fields[$key]->type == 'date'){
-					// Create the Javascript Date Menu
-					echo '<span id="cal_' . $key . '"></span>';
-					echo '<script type="text/javascript">';
-					echo 'createCalendarWidget(\'' . $key . '\',\'NO_EDIT\', \'ICON\',\'' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'cal.gif\');';
-					if ($this->fields[$key]->value != '')
-						echo 'setCalendar(\'' . $key . '\',' . date("Y,n,j",strtotime($this->GetValue($key))) . ');';
-					echo '</script>';
+					// Display the Input Field
+					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="30" maxlength="64" value="' . date("l, F j, Y",strtotime(stripslashes($this->GetValue($key)))) . '" />';					
+					echo '<script language="javascript">
+						Calendar.setup(
+						{
+						  inputField  : "'.$key.'",         // ID of the input field
+						  ifFormat    : "%A, %B %e, %Y",    // the date format
+						  button      : "'.$key.'"       // ID of the button
+						}
+						);					
+					</script>';					
 				}else{
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
