@@ -377,14 +377,6 @@ class Form {
 				}elseif($this->fields[$key]->type == 'blob'){
 					// If it is a blob or text in the DB then make it a text area
 					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->fields[$key]->value) . '</textarea><br />' . "\n";
-				}elseif($this->fields[$key]->type == 'date'){
-					// Create the Javascript Date Menu
-					echo '<span id="cal_' . $key . '"></span>';
-					echo '<script type="text/javascript">';
-					echo 'createCalendarWidget(\'' . $key . '\',\'NO_EDIT\', \'ICON\',\'' . WS_SIMPL . WS_SIMPL_IMAGE . 'cal.gif\');';
-					if ($this->fields[$key]->value != '')
-						echo 'setCalendar(\'' . $key . '\',' . date("Y,n,j",strtotime($this->fields[$key]->value)) . ');';
-					echo '</script>';
 				}else{
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
