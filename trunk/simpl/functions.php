@@ -6,17 +6,19 @@
 * @param $type A string with the type of alert, usually ("error","success")
 * @return NULL
 */
-function Alert($alerts, $type=''){
-	// Decide what class to display
-	$class = ($type == '')?'Error':$type;
-	
-	//Display all errors to user
-	if ( is_array($alerts) && count($alerts) > 0){
-		while ( list($key,$data) = each($alerts) ){
-			echo '<div class="form' . ucfirst($class) . '" id="form' . ucfirst($class) . '"><p>' . $data . '</p></div>'. "\n";
+if (!function_exists('Alert')){
+	function Alert($alerts, $type=''){
+		// Decide what class to display
+		$class = ($type == '')?'Error':$type;
+		
+		//Display all errors to user
+		if ( is_array($alerts) && count($alerts) > 0){
+			while ( list($key,$data) = each($alerts) ){
+				echo '<div class="form' . ucfirst($class) . '" id="form' . ucfirst($class) . '"><p>' . $data . '</p></div>'. "\n";
+			}
+		}else if ( is_string($alerts) ){
+			echo '<div class="form' . ucfirst($class) . '" id="form' . ucfirst($class) . '"><p>' . $alerts . '</p></div>'. "\n";
 		}
-	}else if ( is_string($alerts) ){
-		echo '<div class="form' . ucfirst($class) . '" id="form' . ucfirst($class) . '"><p>' . $alerts . '</p></div>'. "\n";
 	}
 }
 
@@ -27,11 +29,13 @@ function Alert($alerts, $type=''){
  * @param $type A string with the type of alert, usually ("error","success")
  * @return bool
  */
-function SetAlert($alert,$type='error'){
-	// Set the Alert into the correct session type
-	$_SESSION[$type][] = $alert;
-	
-	return true;
+if (!function_exists('SetAlert')){
+	function SetAlert($alert,$type='error'){
+		// Set the Alert into the correct session type
+		$_SESSION[$type][] = $alert;
+		
+		return true;
+	}
 }
 
 /**
@@ -40,9 +44,11 @@ function SetAlert($alert,$type='error'){
  * @param $type A string containing the type of alert to return
  * @return array
  */
-function IsAlert($type){
-	// Return if there are strings waiting the the session type array
-	return (is_array($_SESSION[$type]) && count($_SESSION[$type]) > 0);
+if (!function_exists('IsAlert')){
+	function IsAlert($type){
+		// Return if there are strings waiting the the session type array
+		return (is_array($_SESSION[$type]) && count($_SESSION[$type]) > 0);
+	}
 }
 
 /**
@@ -52,13 +58,15 @@ function IsAlert($type){
  * @param $type A string containing the type of alert to return
  * @return array
  */
-function GetAlert($type){
-	// Get the array
-	$return = $_SESSION[$type];
-	// Reset the array
-	$_SESSION[$type] = array();
-	// Return the array
-	return $return;
+if (!function_exists('GetAlert')){
+	function GetAlert($type){
+		// Get the array
+		$return = $_SESSION[$type];
+		// Reset the array
+		$_SESSION[$type] = array();
+		// Return the array
+		return $return;
+	}
 }
 
 /**
@@ -67,10 +75,12 @@ function GetAlert($type){
 * @param $text A mixed set, anything with a predefined format
 * @return null
 */
-function Pre($text){
-	echo '<pre>';
-	print_r($text);
-	echo '</pre>';
+if (!function_exists('Pre')){
+	function Pre($text){
+		echo '<pre>';
+		print_r($text);
+		echo '</pre>';
+	}
 }
 
 /**
@@ -79,26 +89,28 @@ function Pre($text){
 * @param $array An array or class that needs to be formatted to a string
 * @return string
 */
-function arraytostring($array){
-	// Start the output
-	$text.="array(";
-	// Get the numver of array items
-	$count=count($array);
-	$x=0;
-	// Loop through each item
-	foreach ($array as $key=>$value){
-		$x++;
-		// If there is an array within the array recursive it.
-		if (is_array($value)) {$text.="\"" . $key . "\"=>".arraytostring($value); continue;}
-		if (is_object($value)){$text.="\"" . $key . "\"=>'".serialize($value) . "',\n"; continue;}
-		// Add more the output
-		$text.="\"$key\"=>\"" . urlencode($value) . "\"";
-		if ($count!=$x) $text.=",";
+if (!function_exists('arraytostring')){
+	function arraytostring($array){
+		// Start the output
+		$text.="array(";
+		// Get the numver of array items
+		$count=count($array);
+		$x=0;
+		// Loop through each item
+		foreach ($array as $key=>$value){
+			$x++;
+			// If there is an array within the array recursive it.
+			if (is_array($value)) {$text.="\"" . $key . "\"=>".arraytostring($value); continue;}
+			if (is_object($value)){$text.="\"" . $key . "\"=>'".serialize($value) . "',\n"; continue;}
+			// Add more the output
+			$text.="\"$key\"=>\"" . urlencode($value) . "\"";
+			if ($count!=$x) $text.=",";
+		}
+		// End this complete array
+		$text.="),";
+		// Return the final result
+		return $text;
 	}
-	// End this complete array
-	$text.="),";
-	// Return the final result
-	return $text;
 }
 
 /**
@@ -107,11 +119,13 @@ function arraytostring($array){
 * @param $output A mixed variable that needs to be outputted with predefined formatting
 * @return NULL
 */
-function Debug($output){
-	if (DEBUG === true){
-		echo '<pre class="debug">DEBUG:' . "\n";
-		print_r($output);
-		echo '</pre>';
+if (!function_exists('Debug')){
+	function Debug($output){
+		if (DEBUG === true){
+			echo '<pre class="debug">DEBUG:' . "\n";
+			print_r($output);
+			echo '</pre>';
+		}
 	}
 }
 
