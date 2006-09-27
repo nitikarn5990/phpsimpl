@@ -824,7 +824,12 @@ class DbTemplate extends Form {
 							  button      : "'.$key.'_b"       // ID of the button
 							}
 						);					
-					</script>';					
+					</script>';
+				}elseif($this->fields[$key]->name == 'password'){					
+					// Set the display size, if it is a small field then limit it
+					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
+					// Display the Input Field
+					echo '<input name="' . $key . '" id="' . $key . '" type="password" size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';					
 				}else{
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
