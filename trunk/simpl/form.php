@@ -332,7 +332,7 @@ class Form {
 		return $output;
 	}
 	
-	function DisplayForm($display='', $hidden=array(), $options=array()){ 
+	function DisplayForm($display='', $hidden=array(), $options=array(), $config=array()){ 
 		// Rearrange the Fields if there is a custom display
 		$show = array();
 		if(is_array($display)){
@@ -381,7 +381,7 @@ class Form {
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
 					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="' . $size . '" maxlength="64" value="' . stripslashes($this->fields[$key]->value) . '" />';
+					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';
 				}
 				// If there is an error show it and end the field div
 				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";

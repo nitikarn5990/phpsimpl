@@ -619,7 +619,7 @@ class DbTemplate extends Form {
 				$extra .= ' (';
 				foreach($this->fields as $key=>$data){
 						// Determine how to search in the database
-						if ($this->Get('blob',$key) == 1)
+						if ($this->Get('type',$key) == 'string')
 							$extra .= ' `' . $key . '` LIKE \'%' . $this->search . '%\' OR';
 						else		
 							$extra .= ' `' . $key . '` = \'' . $this->search . '\' OR';
@@ -819,22 +819,17 @@ class DbTemplate extends Form {
 					echo '<script type="text/javascript">
 						Calendar.setup(
 							{
-							  inputField  : "'.$key.'",         // ID of the input field
+							  inputField  : "'.$key.'",     // ID of the input field
 							  ifFormat    : "%B %e, %Y",    // the date format
-							  button      : "'.$key.'_b"       // ID of the button
+							  button      : "'.$key.'_b"    // ID of the button
 							}
-						);					
+						);
 					</script>';
-				}elseif($this->fields[$key]->name == 'password'){					
-					// Set the display size, if it is a small field then limit it
-					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
-					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="password" size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';					
 				}else{
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
 					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';
+					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';
 				}
 				// If there is an error show it and end the field div
 				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";
