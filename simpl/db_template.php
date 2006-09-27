@@ -963,7 +963,7 @@ class DbTemplate extends Form {
 			echo '</table>';
 		}else{
 			// If there is not items in the list
-			echo '<p>Currently there is no Items, please try again later.</p>' . "\n";
+			echo '<p>Currently there are no items, please try again later.</p>' . "\n";
 		}
 	}
 }
