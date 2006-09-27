@@ -4,7 +4,7 @@
 		session_start();
 
 	// Include the Config
-	if (defined(FS_SIMPL))
+	if (defined('FS_SIMPL'))
 		include_once(FS_SIMPL . 'config.php');
 	else
 		include_once(DIR_ABS . 'simpl/config.php');
