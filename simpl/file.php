@@ -186,11 +186,11 @@ class File extends Folder {
 		if(is_file($this->directory . $this->filename)) {
 			//delete the file
 			Debug('Delete(), Deleting file ' . $this->directory . $this->filename);
-			if(unlink($this->directory . $this->filename)){
-				return true;
+			if(!unlink($this->directory . $this->filename)){
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	/**
