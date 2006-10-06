@@ -536,7 +536,7 @@ class DbTemplate extends Form {
 	
 		$rows = array();
 	
-		$result = $db->Query($sql);
+		$result = $db->Query($sql, $this->database);
 		while($row = $db->FetchArray($result)){
 			$row[score] = 0;
 			foreach($terms_rx as $term_rx){
