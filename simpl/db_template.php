@@ -894,7 +894,7 @@ class DbTemplate extends Form {
 	function DisplayList($display='',$format=array(),$options=array(),$force_check=true){
 		// Setup the Sort Sessions
 		$_SESSION[$this->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
-		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . 'order'];
+		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . '_order'];
 		
 		// Get the List of Items If they are not already set
 		if (count($this->results) == 0 && $force_check == true )
@@ -919,8 +919,16 @@ class DbTemplate extends Form {
 			}
 			// Display the Header
 			echo "\n" . '<tr>';
-			foreach($show as $key=>$column)
-				echo "\t" . '<th scope="col"><a href="' . $_SERVER['PHP_SELF'] . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">' . $column . (($_SESSION[$this->table . '_sort'] == $key)? '<img src="' . WS_SIMPL . WS_SIMPL_IMAGE . $_SESSION[$this->table . '_order'] . '.gif" align="top" width="17" height="17" alt="' . $_SESSION[$this->table . '_order'] . '" />' : '') . '</a></th>' . "\n";
+			foreach($show as $key=>$column){
+				echo "\t" . '<th scope="col"><a href="' . $_SERVER['PHP_SELF'] . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">' . $column;
+				if ($_SESSION[$this->table . '_sort'] == $key){
+					if ($_SESSION[$this->table . '_order'] == 'asc')
+						echo ' &uarr;';
+					else if ($_SESSION[$this->table . '_order'] == 'desc')
+						echo ' &darr;';
+				}
+				echo '</a></th>' . "\n";
+			}
 			echo '</tr>' . "\n";
 			
 			// Loop through all the items
