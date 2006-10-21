@@ -935,6 +935,7 @@ class DbTemplate extends Form {
 			$i=1;
 			foreach($this->results as $field=>$data){
 				echo '<tr' . (($i%2 == 0)?' class="odd"':'') . '>' . "\n";
+				$j=1;
 				foreach($show as $key=>$column){
 					// Overwrite the DB data with usable data
 					if (is_array($options[$key])){
@@ -946,7 +947,7 @@ class DbTemplate extends Form {
 						$data[$key] = '<div class="center">' . (($i != 1)?'<a href="?item=' . $data[$this->primary] . '&amp;move=up"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'asc.gif" align="top" width="17" height="17" alt="Move Item Up" /></a>':'') . (($i != count($this->results))?'<a href="?item=' . $data[$this->primary] . '&amp;move=down"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'desc.gif" align="top" width="17" height="17" alt="Move Item Down" /></a>':'') . '</div>'; 
 					}
 					// Display the Data
-					echo "\t" . '<td>';
+					echo "\t" . '<td' . (($j == count($show))?' class="last"':'') . '>';
 					$end = '';
 					// If there is links
 					if (is_array($format) && $format[$key] != ''){
@@ -957,6 +958,7 @@ class DbTemplate extends Form {
 					}
 					echo $end;
 					echo '</td>' . "\n";
+					$j++;
 				}
 				
 				echo '</tr>' . "\n";
