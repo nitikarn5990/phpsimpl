@@ -75,6 +75,12 @@ class DB {
 			$this->Change($db);
 		}
 		
+		if (DEBUG_QUERY === true){
+			echo '<pre class="debug query">QUERY:' . "\n";
+			print_r($query);
+			echo '</pre>';
+		}
+		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
     	// Increment the query counter
