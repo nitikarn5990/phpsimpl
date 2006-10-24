@@ -317,7 +317,8 @@ class DbTemplate extends Form {
 		$infoArray = array();
 		if (is_array($this->fields))
 			foreach($this->fields as $key=>$data)
-				$infoArray[$key] = $this->GetValue($key);
+				if ($data->table != '')
+					$infoArray[$key] = $this->GetValue($key);
 		
 		if (DB_STATUS != false){
 			Debug('Save(), Database Found');
