@@ -906,7 +906,7 @@ class DbTemplate extends Form {
 			// Simplify the order
 			$order = ($_SESSION[$this->table . '_order'] == 'desc')?'asc':'desc';
 			// Start the table
-			echo '<table border="0" cellspacing="0" cellpadding="2" width="99%" class="small" summary="List of Records from ' . htmlspecialchars(stripslashes($this->table)) . '">' . "\n";
+			echo '<table border="0" cellspacing="0" cellpadding="2" width="99%" class="small" summary="List of Records from ' . htmlspecialchars(stripslashes($this->table)) . '" id="table_' . htmlspecialchars(stripslashes($this->table)) . '">' . "\n";
 			
 			// Rearrange the Fields if there is a custom display
 			$show = array();
