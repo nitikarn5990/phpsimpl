@@ -813,7 +813,7 @@ class DbTemplate extends Form {
 					}
 				}elseif($this->fields[$key]->type == 'blob'){
 					// If it is a blob or text in the DB then make it a text area
-					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->GetValue($key)) . '</textarea><br />' . "\n";
+					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . htmlspecialchars(stripslashes($this->GetValue($key))) . '</textarea><br />' . "\n";
 				}elseif($this->fields[$key]->type == 'date'){
 					// Display the Input Field
 					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($key) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($key)))):'') . '" /><button type="reset" id="' . $key . '_b">...</button>';					
