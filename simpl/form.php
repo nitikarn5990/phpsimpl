@@ -303,6 +303,25 @@ class Form {
 	}
 	
 	/**
+	* Get Values
+	*
+	* Get a list of all the fields and values in the class
+	*
+	* @return array
+	*/
+	function GetValues(){
+		// Make sure there is fields and return the value
+		if (is_array($this->fields)){
+			$list = array();
+			foreach($this->fields as $key=>$data)
+				$list[$key] = $data->value;
+			return $list;
+		}
+		
+		return 0;
+	}
+	
+	/**
 	 * Simple Format
 	 * Formats $this is a easy to read compact way to be used for Debug
 	 * 
