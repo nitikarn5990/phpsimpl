@@ -85,7 +85,8 @@ class DbTemplate extends Form {
 		
 		// Set the Table that we are going to be mirroring as a class
 		$this->table = $table;
-		$this->database = $database;
+		if ($database != '')
+			$this->database = $database;
 		
 		// If there is fields already set, set them.
 		if (is_array($fields))
@@ -757,7 +758,7 @@ class DbTemplate extends Form {
 			// If the field is not in the hidden array
 			if (!in_array($key,$hidden)){
 				// Create the Field Div with the example, label and error if need be
-				echo '<div class="field_' . $key . '">' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
+				echo '<div class="field_' . $key . '">' . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
 				
 				// If there is specialty options
 				if(is_object($options[$key])){
@@ -832,6 +833,8 @@ class DbTemplate extends Form {
 					// Display the Input Field
 					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="' . $this->fields[$key]->length . '" value="' . stripslashes($this->GetValue($key)) . '" />';
 				}
+				// Display the example if there is one
+				echo ($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'';
 				// If there is an error show it and end the field div
 				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";
 			}
