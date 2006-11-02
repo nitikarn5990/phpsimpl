@@ -62,7 +62,7 @@ class Folder {
 			//if no folder with the same name exists in the new directory
 			if(!is_dir($new_directory . $this->folder_name) ) {
 				//move the folder to the new directory
-				if( rename($this->directory . $this->folder_name, $new_directory . $this->folder_name) ) {
+				if(rename($this->directory . $this->folder_name, $new_directory . $this->folder_name) ) {
 					Debug('Move(), Moving the folder from ' . $this->directory . ' to ' . $new_directory);
 					if(chmod($new_directory . $this->folder_name, 0775)) {
 						Debug('Move(), Changing permissions for folder ' . $this->folder . ' in directory ' . $new_directory);
@@ -95,6 +95,28 @@ class Folder {
 		return false;
 	}
 	
+	/**
+	 * Format the Folder
+	 * 
+	 * @return bool
+	 */
+	function Format(){
+		// Remove the ending slash
+		$folder_name = (substr($this->folder_name,-1) == '/')?substr($this->folder_name,0,-1):$this->folder_name;
+			
+		// Make sure there is a folder name set
+		if (trim($folder_name) == '')
+			return false;
+		
+		// Cut out bad chars
+		$bad_chars = array(' ', "'", '\'', '(', ')', '*', '!', '/', ',', '&', '|', '{', '}', '[', ']', '+', '=', '<', '>');
+		$folder_name = str_replace($bad_chars, '_', trim($folder_name));
+		
+		// Remove doubles
+		$this->folder_name = str_replace('__', '', $folder_name);
+		
+		return true;
+	}
 	
 	/**
 	 * Make the folder writable
@@ -104,14 +126,14 @@ class Folder {
 	 */
 	function MakeWritable(){
 		//if the folder exists
-		if(is_dir($this->directory . $this->folder_name)) {
+		if(@is_dir($this->directory . $this->folder_name)) {
 			//if it is already writable return true
-			if(is_writable($this->directory . $this->folder_name)){
+			if(@is_writable($this->directory . $this->folder_name)){
 				Debug('MakeWritable(), The folder ' . $this->directory . $this->folder . ' is already writable.');
 				return true;
 			} else {
 				//change permissions of the folder
-				if(chmod($this->directory . $this->folder_name, 0755)){
+				if(@chmod($this->directory . $this->folder_name, 0775)){
 					Debug('MakeWritable(), Changing permissions of folder ' . $this->directory . $this->folder);
 					return true;
 				}
@@ -125,27 +147,29 @@ class Folder {
 	 * 
 	 * Private function that deletes the sub files and sub-folders. the function is called from Delete function
 	 * 
+	 * @todo make sure this is a valid directory first
+	 * @todo double check that the directory has really been deleted
 	 * @param $directory directory to be deleted
 	 * @return bool
 	 */
 	private function delete_recursive($directory) {
-   	  	//loop through for each directory/file that the function scandir returns
+   	  	// Lloop through for each directory/file that the function scandir returns
    	  	foreach (scandir($directory) as $folderItem) {
        		Debug('delete_recursive(), Looping through directory ' . $directory);
-       		//skip for these two cases
+       		// Skip for these two cases
        		if ($folderItem != "." AND $folderItem != "..") {
-           		//if 'file' is a directory
-           		if (is_dir($directory.$folderItem.'/')) {
-               		//call the function recursively 
-               		$this->delete_recursive( $directory.$folderItem.'/');
-           		} else {
-            		//delete the files within the directory
+           		// If 'file' is a directory
+           		if (is_dir($directory. $folderItem . '/')) {
+               		// Call the function recursively 
+               		$this->delete_recursive($directory . $folderItem . '/');
+           		}else{
+            		// Delete the files within the directory
             		Debug('delete_recursive(), Deleting file ' . $directory . $folderItem);
             		unlink($directory . $folderItem);
            		}
        		}
    		}
-   		//delete the sub-directories and the directory itself
+   		// Delete the sub-directories and the directory itself
    		Debug('delete_recursive(), Deleting directory ' . $directory);
 		rmdir($directory);
    		return true;
@@ -162,7 +186,7 @@ class Folder {
 	function Delete($force=false){
 		if($force == false) {
 			//delete the directory
-			if(rmdir($this->directory . $this->folder_name)) {
+			if(@rmdir($this->directory . $this->folder_name)) {
 				Debug('Delete(), Deleting directory ' . $this->directory . $this->folder_name);
 				return true;
 			}
@@ -234,7 +258,7 @@ class Folder {
 	function Exists() {
 		//if the folder exists
 		Debug('Exists(), Checking if the folder ' . $this->folder_name . ' exists in the directory ' . $this->directory);
-		if(is_dir($this->directory . $this->folder_name)) {
+		if(@is_dir($this->directory . $this->folder_name)) {
 			return true;
 		}
 		return false;
@@ -250,18 +274,18 @@ class Folder {
 	 */
 	function Create() {
 		//if the folder exists make it writable 
-		if(is_dir($this->directory . $this->folder_name)) {
+		if(@is_dir($this->directory . $this->folder_name)) {
 			Debug('Create(), The folder ' . $this->folder_name . ' already exists in the directory ' .$this->directory);
 			//change persmissions of folder
-			if(chmod($this->directory . $this->folder_name, 0775)){
-					return true;
+			if(@chmod($this->directory . $this->folder_name, 0775)){
+				return true;
 			}
 		} else {
 			//create the folder
-			if(mkdir($this->directory . $this->folder_name)) {
+			if(@mkdir($this->directory . $this->folder_name)) {
 				Debug('Create(), Created folder ' . $this->folder_name . ' in directory ' . $this->directory);
 				//change persmissions of the folder
-				if(chmod($this->directory . $this->folder_name, 0775)) {
+				if(@chmod($this->directory . $this->folder_name, 0775)) {
 					return true;
 				}
 			}
