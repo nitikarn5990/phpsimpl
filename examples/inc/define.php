@@ -16,7 +16,7 @@ define('CLEAR_CACHE',true);
 
 // Directories
 // Always Include trailing slash "/" in Direcories
-define('DIR_ABS','/usr/local/www/sites/wcs/www.80/dev/cms/');
+define('DIR_ABS','/users/nick/Sites/example/');
 define('FS_SIMPL',DIR_ABS . 'simpl/');
 define('DIR_INC','inc/');
 define('DIR_CSS','css/');
