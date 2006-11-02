@@ -6,22 +6,13 @@
 // Prerequisites
 include_once('application_top.php');
 
-// Create the Template Class
-$myTemplate = new Template;
+// Header
+include_once('inc/header.php');
+?>
 
-// Setup the Display
-$display = array('title','mode','is_public');
+<p>Welcome to the Blog Manager, Please select an option on the left.</p>
 
-// Set the Default Values
-$myTemplate->SetValue('site_id',$mySite->GetPrimary());
-
-// Add some Filtering
-if (trim($_GET['q']) != '')
-	$myTemplate->search = trim($_GET['q']);
-	
-// Get the List
-$myTemplate->GetList($display);
-
-// Close the database connection
-$db->Close();
+<?php
+// Footer
+include_once('inc/footer.php');
 ?>
