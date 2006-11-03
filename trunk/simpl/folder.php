@@ -23,7 +23,7 @@ class Folder {
 	 * @param $directory	The directory where the file is sitting
 	 * @return 				NULL
 	 */
-	function Folder($folder_name,$directory){
+	function Folder($folder_name, $directory=''){
 		Debug('Constructor(), Initializing values');
 		//If the  folder name doesn't end in '/', then append it at the end 
 		if(substr($folder_name,-1) == '/') {
@@ -35,7 +35,7 @@ class Folder {
 		}
 		
 		// If there is directory passed, set the directory
-		if (isset($directory)){
+		if (isset($directory) && $directory != ''){
 			if(substr($directory,-1) == '/') {
 				// Set the Local variables
 				$this->directory = $directory;
@@ -273,23 +273,28 @@ class Folder {
 	 * @return bool
 	 */
 	function Create() {
-		//if the folder exists make it writable 
+		// If the folder exists make it writable 
 		if(@is_dir($this->directory . $this->folder_name)) {
 			Debug('Create(), The folder ' . $this->folder_name . ' already exists in the directory ' .$this->directory);
-			//change persmissions of folder
+			// Change persmissions of folder
 			if(@chmod($this->directory . $this->folder_name, 0775)){
 				return true;
+			}else{
+				Debug('Create(), Cout not change permissions of ' . $this->folder_name . ' in directory ' . $this->directory);
 			}
 		} else {
-			//create the folder
+			// Create the folder
 			if(@mkdir($this->directory . $this->folder_name)) {
 				Debug('Create(), Created folder ' . $this->folder_name . ' in directory ' . $this->directory);
-				//change persmissions of the folder
+				// Change persmissions of the folder
 				if(@chmod($this->directory . $this->folder_name, 0775)) {
 					return true;
+				}else{
+					Debug('Create(), Cout not change permissions of ' . $this->folder_name . ' in directory ' . $this->directory);
 				}
 			}
 		}
+		
 		return false;
 	}
 }
