@@ -97,12 +97,15 @@ class DbTemplate extends Form {
 			$this->required = $required;	
 		
 		// Check to see if there is a cache yet.
-		if (!is_array($this->fields)){
+		if (!is_array($this->fields)){	
+			// Figure out where the cache is
+			$cache_dir = (defined('FS_CACHE'))?FS_CACHE:FS_SIMPL . WS_CACHE;
+			
 			clearstatcache();
-			if (USE_CACHE == true && is_file(FS_SIMPL . WS_CACHE . $this->table . '.cache') && date ("Ymd", filemtime(FS_SIMPL . WS_CACHE . $this->table . '.cache')) >= date ("Ymd")){
+			if (USE_CACHE == true && is_file($cache_dir . $this->table . '.cache') && date ("Ymd", filemtime($cache_dir . $this->table . '.cache')) >= date ("Ymd")){
 				Debug('Contructor(), Create From Cache');
 				// Grab the Cache file
-				$cache = file_get_contents(FS_SIMPL . WS_CACHE . $this->table . '.cache');
+				$cache = file_get_contents($cache_dir . $this->table . '.cache');
 				// Make the nessisary eval line
 				$cache = '$this->fields = ' . substr($cache,0,-1) . ';';
 				eval($cache);
@@ -137,15 +140,15 @@ class DbTemplate extends Form {
 				}// end for each field
 				
 				// Write the Cache
-				if (is_writable(FS_SIMPL . WS_CACHE)){
+				if (is_writable($cache_dir)){
 					$contents = arraytostring($this->fields);
 					$filename = $this->table . '.cache';
 				
 					//Open and Write the File
-					$fp = fopen(FS_SIMPL . WS_CACHE . $filename ,"w");
+					$fp = fopen($cache_dir . $filename ,"w");
 					fwrite($fp,$contents);
 					fclose($fp);
-					chmod (FS_SIMPL . WS_CACHE . $filename, 0777);
+					chmod ($cache_dir . $filename, 0777);
 				}
 			}
 		}
