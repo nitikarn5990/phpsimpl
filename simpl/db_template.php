@@ -100,7 +100,7 @@ class DbTemplate extends Form {
 		if (!is_array($this->fields)){	
 			// Figure out where the cache is
 			$cache_dir = (defined('FS_CACHE'))?FS_CACHE:FS_SIMPL . WS_CACHE;
-			
+
 			clearstatcache();
 			if (USE_CACHE == true && is_file($cache_dir . $this->table . '.cache') && date ("Ymd", filemtime($cache_dir . $this->table . '.cache')) >= date ("Ymd")){
 				Debug('Contructor(), Create From Cache');

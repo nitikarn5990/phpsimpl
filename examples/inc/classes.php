@@ -14,8 +14,8 @@ class Post extends DbTemplate {
 	function __construct($data=''){
 		$this->required = array('title','body');
 		$this->table = TB_POST;
-		$labels = array('is_published'=>'Published:','user_id'=>'Author:','category_id'=>'Category:');
-		$examples = array('category_id'=>'ex. PHP, MySQL, Cars, XML, PHPSIMPL');
+		$labels = array('is_published'=>'Published:','user'=>'Author:','category'=>'Category:');
+		$examples = array('category'=>'ex. PHP, MySQL, Cars, XML, PHPSIMPL');
 		
 		$this->DbTemplate($data, $this->required, $labels, $examples, $this->table);
 	}
