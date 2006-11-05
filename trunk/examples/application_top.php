@@ -21,4 +21,9 @@ $mySimpl->Load('DbTemplate');
 // Custom Functions and Classes
 include_once(DIR_INC . 'functions.php');
 include_once(DIR_INC . 'classes.php');
+
+// Make the DB Connection
+$db = new DB;
+if (!$db->Connect())
+	define('DB_STATUS',false);
 ?>

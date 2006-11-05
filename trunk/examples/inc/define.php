@@ -6,24 +6,24 @@
  
 // Basic Information
 define('ADDRESS','http://' . $_SERVER['SERVER_NAME'] . '/');
+define('TITLE','My Blog');
 
 // Config
-define('LOGGING',true);
 define('DEBUG',false);
 define('DEBUG_QUERY',false);
 define('USE_CACHE',true);
-define('CLEAR_CACHE',true);
+define('CLEAR_CACHE',false);
 
 // Directories
 // Always Include trailing slash "/" in Direcories
-define('DIR_ABS','/users/nick/Sites/example/');
+define('DIR_ABS','/public_html/example/');
 define('FS_SIMPL',DIR_ABS . 'simpl/');
+define('FS_CACHE',DIR_ABS . 'examples/cache/');
 define('DIR_INC','inc/');
 define('DIR_CSS','css/');
 
 // Tables
-define('TB_ABBR','abbreviation');
-define('TB_BUG','bugs');
+define('TB_POST','post');
 
 // Basic Elements
 $yesno = array('1' => 'Yes','0' => 'No');
@@ -32,5 +32,5 @@ $yesno = array('1' => 'Yes','0' => 'No');
 define('DB_USER','');
 define('DB_HOST','');
 define('DB_PASS','');
-define('DB_DEFAULT','wcs_tool');
+define('DB_DEFAULT','simpl_example');
 ?>
