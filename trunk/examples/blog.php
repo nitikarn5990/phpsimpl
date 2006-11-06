@@ -28,8 +28,8 @@
 ?>
 <h1>My Blog</h1>
 <?php
-	if (is_array($myPost->results)){
-		echo '<dl>' . "\n";
+	if (is_array($myPost->results) && count($myPost->results) > 0){
+		echo '<dl id="posts">' . "\n";
 		
 		foreach($myPost->results as $post){
 			echo '<dt><a href="view.php?id=' . $post['post_id'] . '" title="' . htmlspecialchars($post['title']) . '">' . htmlspecialchars($post['title']) . '</a></dt>' . "\n";

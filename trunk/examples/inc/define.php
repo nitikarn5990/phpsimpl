@@ -3,7 +3,6 @@
  * Created on Nov 1, 2006
  * Filename define.php
  */
- 
 // Basic Information
 define('ADDRESS','http://' . $_SERVER['SERVER_NAME'] . '/');
 define('TITLE','My Blog');
@@ -16,7 +15,7 @@ define('CLEAR_CACHE',false);
 
 // Directories
 // Always Include trailing slash "/" in Direcories
-define('DIR_ABS','/public_html/example/');
+define('DIR_ABS','/users/nick/Sites/example/');
 define('FS_SIMPL',DIR_ABS . 'simpl/');
 define('FS_CACHE',DIR_ABS . 'examples/cache/');
 define('DIR_INC','inc/');

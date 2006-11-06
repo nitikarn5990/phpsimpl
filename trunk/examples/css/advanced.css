@@ -1,0 +1,233 @@
+.clearboth { clear: both; }
+
+/* Header */
+#header {
+	margin-bottom: 1.0em;
+	background-color: #222222;
+	border-bottom: 4px solid #273f85;
+}
+#header h1 {
+	padding: 0.3em 1.4em;
+	font-size: 1.4em;
+	color: #FFF;
+}
+
+/* Main Menu */
+#left-column {
+	clear: both;
+	float: left;
+	width: 150px;
+	font-size: 0.8em;
+	margin-left: 10px;
+}
+#left-column ul {
+	margin: 0px;
+	padding: 5px 0px;
+	list-style: none;
+	background-color: #CCCCCC;
+}
+#left-column li {
+	display: inline;
+}
+#left-column li a {
+	display: block;
+	padding: 4px 10px;
+	margin: 1px;
+	background-color: #CCCCCC;
+	border-bottom: 1px solid #EEE;
+	text-decoration: none;
+	color: #1d2f64;
+}
+#left-column li a.last {
+	border-bottom: 0px;
+}
+#left-column li a:hover {
+	background-color: #999999;
+}
+
+/* Content */
+#content {
+	margin: 0px 15px 10px 170px;
+	font-size: 0.9em;
+	position: relative;
+	background-color: #FFF;
+}
+#content h1 {
+	font-size: 1.3em;
+	border-bottom: 1px solid #333333;
+	margin-bottom: 10px;
+}
+#content form {
+	margin: 0px 0px 10px 0px;
+}
+dl#posts {
+	margin: 0px;
+	padding: 0px;
+}
+dl#posts dt, #view-post h1 {
+	font-family: Georgia;
+	font-size: 1.3em;
+	margin-bottom: 3px;
+}
+dl#posts dt a {
+	color: #000;
+	text-decoration: none;
+}
+dl#posts dt a:hover {
+	background-color: #4d76e0;
+	color: #FFF;
+}
+dl#posts dd {
+	padding: 0px;
+	color: #222;
+}
+dl#posts dd .details, #view-post .details {
+	margin: 2px 0px 15px;
+	font-size: 0.8em;
+	color: #666;
+}
+#view-post {
+	padding: 0px 0px 10px;
+}
+table.small {
+	clear: right;
+	font-size: 0.9em;
+	margin-top: 3px;
+}
+table.small th {
+	padding: 3px;
+	text-align: left;
+	font-weight: bold;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+	color: #1d2f64;
+	font-size: 1.2em;
+	border-bottom: 1px solid #CCC;
+}
+table.small th a, table.small th a:visited  {
+	color: #1d2f64;
+}
+table.small td {
+	border-bottom: 1px solid #DDD;
+	border-right: 1px solid #EEE;
+	padding: 4px 0px 4px 5px;
+}
+table.small td.last, table.small th.last {
+	border-right: 0px;
+}
+ul.options {
+	margin: 0px;
+	padding: 7px 0px;
+	list-style: none;
+}
+
+/* Form Stuff */
+label {
+	float: left;
+	width: 150px;
+	text-align: right;
+	margin: 0px 4px 0px 0px;
+}
+input, textarea {
+	border: 1px solid #999999;
+	padding: 2px;
+}	
+fieldset {
+	border: 1px solid #92a0c4;
+}
+fieldset em {
+	color: #FF0000;
+	font-size: 1.1em;
+	margin-right: 3px;
+	font-weight: bold;
+}
+fieldset.submit_button {
+	border-top: 0px;
+	background-color: #c8cfe1;
+	padding: 4px 0px;
+}
+fieldset .error {
+	border: 1px solid #FFCC99;
+	background-color: #FFCC99;
+	color: #FF0000;
+	font-style: italic;
+	margin: 2px 0px 2px 153px;
+}
+fieldset .error label {
+	font-style: normal;
+	color: #000;
+}
+fieldset .error input {
+	background-color: #FFFFCC;
+}
+fieldset .error p {
+	margin: 0px 0px 5px 0px;
+}
+fieldset div {
+	margin: 0px 0px 2px 0px;
+}
+fieldset .example {
+	padding: 3px;
+	margin: 0px 0px 0px 153px;
+	border: 1px solid #EEEEEE;
+	font-size: 0.8em;
+	background: url(../images/example_bg.png) repeat left top;
+}
+fieldset .example p {
+	margin: 0px;
+	padding: 0px;
+	background: url(../images/arrow.gif) no-repeat left top;
+}
+input.submit {
+	border: 3px double #999999;
+	border-top-color: #CCCCCC;
+	border-left-color: #CCCCCC;
+	padding: 0.25em;
+	background-color: #FFFFFF;
+	color: #333333;
+	font-size: 75%;
+	font-weight: bold;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+/* Alerts */
+.formError, .formSuccess {
+	margin: 3px 10%;
+}
+.formError p{
+	font-style: italic;
+	font-weight: bold;
+	background-color: #8B2145;
+	color: #FFCC33;
+	text-align: center;
+	margin: 0px;
+	padding: 3px;
+}
+.formSuccess p{
+	font-style: italic;
+	font-weight: bold;
+	background-color: #D1E1E3;
+	color: #0C5449;
+	margin: 0px;
+	padding: 3px;
+	text-align: center;
+}
+pre.debug {
+	font-size: 0.8em;
+	margin: 5px 0px 5px 15px;
+	border-left: 5px solid #cc5533;
+	padding: 5px 10px;
+}
+
+/* Footer */
+#footer {
+	clear: both;
+	margin-top: 15px;
+	background-color: #222222;
+	border-top: 1px solid #273f85;
+}
+#footer p {
+	padding: 0.3em 1.8em;
+	font-size: 0.8em;
+	margin: 0px;
+	color: #FFF;
+}

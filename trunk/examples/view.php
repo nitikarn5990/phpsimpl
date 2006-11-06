@@ -46,9 +46,11 @@
 <?php
 	// Make sure there is a post to view
 	if ($myPost->GetPrimary() != ''){
+		echo '<div id="view-post">' . "\n";
 		echo '<h1>' . htmlspecialchars($myPost->GetValue('title')) . '</h1>';
 		echo '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($myPost->GetValue('date_entered'))) . (($myPost->GetValue('category') != '')?' in ' . htmlspecialchars($myPost->GetValue('category')):'') . (($myPost->GetValue('author') != '')?' by ' . htmlspecialchars($myPost->GetValue('author')):'') . '</div>';
 		echo '<div id="post">' . htmlspecialchars($myPost->GetValue('body')) . '</div>';
+		echo '</div>' . "\n";
 	}
 	
 	// Footer
