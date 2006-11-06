@@ -3,7 +3,6 @@
  * Created on Nov 1, 2006
  * Filename classes.php
  */
- 
 class Post extends DbTemplate {
 	/**
 	 * Class Constuctor
