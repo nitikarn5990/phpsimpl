@@ -800,7 +800,7 @@ class DbTemplate extends Form {
 							echo '<div class="checkbox">' . "\n";
 							// Loop though each option
 							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<div><input name="' . $key . '[]" type="checkbox" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (is_array($split) && in_array((string)$opt_key,$split)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
+								echo "\t" . '<div><input name="' . $key . '[]" type="checkbox" value="' . $opt_key . '" class="' . $key . '_' . $opt_key . '"' . (is_array($split) && in_array((string)$opt_key,$split)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
 							}
 							echo '</div>';
 							break;
