@@ -64,6 +64,18 @@ class DbTemplate extends Form {
 	* @var array 
 	*/
 	var $results = array();
+	/**
+	 * @var class DbTemplate
+	 */
+	var $join_class;
+	/**
+	 * @var string
+	 */
+	var $join_type;
+	/**
+	 * @var string
+	 */
+	var $join_on;
 	
 	/**
 	* Class Constructor
@@ -497,6 +509,22 @@ class DbTemplate extends Form {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Join this table with another
+	 * 
+	 * @param $join_class A DbTemplate class to join with
+	 * @param $type A type of join "INNER,LEFT"
+	 * @return bool
+	 */
+	function Join($join_class, $join_on, $type='INNER'){
+		if (is_object($join_class)){
+			$this->join_class = $join_class;
+			$this->join_type = $type;
+			$this->join_on = $join_on;
+			return true;
+		}
 	}
 	
 	/**
