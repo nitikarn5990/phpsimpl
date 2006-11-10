@@ -65,17 +65,17 @@ class DbTemplate extends Form {
 	*/
 	var $results = array();
 	/**
-	 * @var class DbTemplate
+	 * @var array
 	 */
-	var $join_class;
+	var $join_class = array();
 	/**
-	 * @var string
+	 * @var array
 	 */
-	var $join_type;
+	var $join_type = array();
 	/**
-	 * @var string
+	 * @var array
 	 */
-	var $join_on;
+	var $join_on = array();
 	
 	/**
 	* Class Constructor
@@ -520,9 +520,9 @@ class DbTemplate extends Form {
 	 */
 	function Join($join_class, $join_on, $type='INNER'){
 		if (is_object($join_class)){
-			$this->join_class = $join_class;
-			$this->join_type = $type;
-			$this->join_on = $join_on;
+			$this->join_class[] = $join_class;
+			$this->join_type[] = $type;
+			$this->join_on[] = $join_on;
 			return true;
 		}
 	}
@@ -605,15 +605,92 @@ class DbTemplate extends Form {
 	function GetList($fields='', $order_by='', $sort='', $offset='', $limit=''){
 		// Use the global mysql class
 		global $db;
+		$return = array();
+		
+		// Push $this into the array
+		array_unshift($this->join_class, $this);
+		array_unshift($this->join_type, '');
+		array_unshift($this->join_on, '');
+		
+		// Transform the $fields for backwards compatibility
+		if (!is_array($fields) && !is_array($fields[0]))
+			$return[] = $fields;
+		else
+			$return = $fields;
+		
+		// Clear all temp fields
+		$query = '';
+		$join = '';
+		$where = '';
+		
+		// Figure out the Join situation
+		if (is_array($this->join_class)){
+			foreach($this->join_class as $key=>$class){
+				// Limit each WHERE
+				if(is_array($class->fields))
+					foreach($class->fields as $key2=>$data){
+						// Make sure the variable has something in it
+						if ((string)$class->GetValue($key2) != ''){
+							Debug('GetList(), Filter Item: ' . $key2 . ', Value: ' . $class->GetValue($key2));
+							// Determine how to search in the database
+							if ($class->Get('blob',$key2) == 1)
+								$where .= " `" . $class->table . "`." . $key2 . " LIKE '" . $class->GetValue($key2) . "' AND";
+							else		
+								$where .= " `" . $class->table . "`." . $key2 . " = '" . $class->GetValue($key2) . "' AND";
+						}
+					}
+				
+				// If there is a search
+				if ($class->search != ''){
+					if(is_array($class->fields)){
+						$extra .= ' (';
+						foreach($class->fields as $key3=>$data){
+							// Determine how to search in the database
+							if ($class->Get('type',$key3) == 'string')
+								$where .= ' `' . $class->table . '`.' . $key3 . '` LIKE \'%' . $class->search . '%\' OR';
+							else		
+								$where .= ' `' . $class->table . '`.' . $key3 . '` = \'' . $class->search . '\' OR';
+						}
+						$where = ($where != '')?substr($where,0,-3):'';
+						$where .= ') AND';
+					}
+				}
+				
+				// If there is a limiting field
+				if (is_array($return[$key])){
+					// Always get the primary key	
+					if (!in_array($class->primary,$return[$key]))
+						$query .= '`' . $class->table . '`.' . $class->primary . ', ';
+					// Add the list up of fields
+					foreach($return[$key] as $data2)
+						$query .= '`' . $class->table . '`.' . $data2 . ', ';
+				}else{
+					$query .= '`' . $class->table . '`.*, '; 
+				}
+				
+				// Create the Joins
+				if ($key > 0){
+					$join .= $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->table . '`.' . $this->join_on[$key] . ') ';
+				}
+			}
+		}
+		
+		// If we are getting count then reset the query
+		if ($return[0] == 'count')
+			$query = 'count(*) as `count`, ';
+		
+		// Trim off the last comma
+		$query = 'SELECT ' . substr($query,0,-2) . ' ';
+		$where = ($where != '')?'WHERE' . substr($where,0,-4):'';
 		
 		// If they request an order build the query
-		if ( isset($order_by) && $order_by != '' ){
+		if (isset($order_by) && $order_by != '' ){
 			// If its an array handle the order_by and sort together
 			if(is_array($order_by)) {
 				$i = 0;
 				$order = 'ORDER BY'; 
 				foreach($order_by as $item) {
-					$order .= ' `'.$item.'`';
+					$order .= ' `' . $this->table . '`.' . $item;
 					(is_array($sort) && isset($sort[$i])) ? $order .= ' ' . $sort[$i] : '' ;
 					$order .= ',';
 					$i++; 
@@ -622,71 +699,20 @@ class DbTemplate extends Form {
 				$order = substr($order, 0, -1);
 				// If sort is an array make it nothing in the query string 
 				(is_array($sort)) ? $sort = '' : '';
-			}else
-				$order = 'ORDER BY `' . $order_by . '` ';
+			}else{
+				$order = 'ORDER BY `' . $this->table . '`.' . $order_by . ' ';
+			}
 		}else{
 			// Make sure if order_by is not passed then sort cannot have a value
 			$order = '';
 			$sort = '';
 		}
 		
-		// Limit the Search
-		$extra = '';
-		
-		// Run trough each each field looking for values inside of each variable
-		if(is_array($this->fields))
-			foreach($this->fields as $key=>$data){
-				// Make sure the variable has something in it
-				if ((string)$this->GetValue($key) != ''){
-					Debug('GetList(), Filter Item: ' . $key . ', Value: ' . $this->GetValue($key));
-					// Determine how to search in the database
-					if ($this->Get('blob',$key) == 1)
-						$extra .= " `" . $key . "` LIKE '" . $this->GetValue($key) . "' AND";
-					else		
-						$extra .= " `" . $key . "` = '" . $this->GetValue($key) . "' AND";
-				}
-			}
-			
-		if ($this->search != ''){
-			if(is_array($this->fields)){
-				$extra .= ' (';
-				foreach($this->fields as $key=>$data){
-						// Determine how to search in the database
-						if ($this->Get('type',$key) == 'string')
-							$extra .= ' `' . $key . '` LIKE \'%' . $this->search . '%\' OR';
-						else		
-							$extra .= ' `' . $key . '` = \'' . $this->search . '\' OR';
-				}
-				$extra = ($extra != '')?substr($extra,0,-3):'';
-				$extra .= ') AND';
-			}
-		}
-		
-		// Format it for MySQL
-		$extra = ($extra != '')?'WHERE ' . substr($extra,0,-4):'';
-
-		// Make the Query
-		$query = 'SELECT ';
-		// If there is a limiting field
-		if (is_array($fields)){
-			// Always get the primary key	
-			if (!in_array($this->primary,$fields))
-				$query .= '`' . $this->primary . '`, ';
-			// Add the list up of fields
-			foreach($fields as $data)
-				$query .= '`' . $data . '`, ';
-			// Trim off the last comma
-			$query = substr($query,0,-2) . ' ';
-		}elseif($fields == 'count'){
-			$query .= 'count(*) as `count`'; 
-		}else{
-			$query .= '* '; 
-		}
 		// Finish the query
-		$query .= 'FROM `' . $this->table . '` ' . $extra . ' ' . $order . ' ' . $sort;
+		$query .= 'FROM `' . $this->table . '` ' . $join . $where . ' ' . $order . ' ' . $sort;
 		
 		// Put in the Offset
-		if ($offset >0 || $limit >0)
+		if ($offset > 0 || $limit > 0)
 			$query .= ' LIMIT ' . $offset . ', ' . $limit;
 		
 		// Do the Query
@@ -707,7 +733,7 @@ class DbTemplate extends Form {
 				while ($info = $db->FetchArray($result))
 					$this->results[$info[$this->primary]] = $info;
 			}		
-		}// if there is atleast one template
+		}
 
 		return $this->results;
 	}
