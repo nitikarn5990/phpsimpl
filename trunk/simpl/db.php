@@ -153,7 +153,6 @@ class DB {
 			// Finish off the query
 			$query = substr($query, 0, -2) . ' WHERE ' . $parameters;
 		}
-		
 		return $this->Query($query, $db);
 	}
 	
