@@ -10,7 +10,12 @@
 	$myPost = new Post;
 	
 	// Setup the Display
-	$display = array('title', 'date_entered', 'author', 'category', 'body');
+	$display[] = array('title', 'date_entered', 'author_id', 'category', 'body');
+	
+	// Create the Author Class
+	$myAuthor = new Author;
+	$display[] = array('first_name','last_name','email');
+	$myPost->Join($myAuthor,'author_id','LEFT');
 	
 	// Add some Filtering
 	if (trim($_GET['q']) != '')
@@ -33,7 +38,7 @@
 		
 		foreach($myPost->results as $post){
 			echo '<dt><a href="view.php?id=' . $post['post_id'] . '" title="' . htmlspecialchars($post['title']) . '">' . htmlspecialchars($post['title']) . '</a></dt>' . "\n";
-			echo '<dd>' . htmlspecialchars(substr($post['body'],0,350)) . "\n" . '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($post['date_entered'])) . (($post['category'] != '')?' in ' . htmlspecialchars($post['category']):'') . (($post['author'] != '')?' by ' . htmlspecialchars($post['author']):'') . '</div></dd>' . "\n";
+			echo '<dd>' . htmlspecialchars(substr($post['body'],0,350)) . "\n" . '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($post['date_entered'])) . (($post['category'] != '')?' in ' . htmlspecialchars($post['category']):'') . (($post['first_name'] != '')?' by <a href="mailto:' . htmlspecialchars($post['email']) . '" title="Email this Author">' . htmlspecialchars($post['first_name']) . ' ' . htmlspecialchars($post['last_name']) . '</a>':' by Anonymous') . '</div></dd>' . "\n";
 		}
 		
 		echo '</dl>' . "\n";

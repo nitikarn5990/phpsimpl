@@ -643,13 +643,13 @@ class DbTemplate extends Form {
 				// If there is a search
 				if ($class->search != ''){
 					if(is_array($class->fields)){
-						$extra .= ' (';
+						$where .= ' (';
 						foreach($class->fields as $key3=>$data){
 							// Determine how to search in the database
 							if ($class->Get('type',$key3) == 'string')
-								$where .= ' `' . $class->table . '`.' . $key3 . '` LIKE \'%' . $class->search . '%\' OR';
+								$where .= ' `' . $class->table . '`.' . $key3 . ' LIKE \'%' . $class->search . '%\' OR';
 							else		
-								$where .= ' `' . $class->table . '`.' . $key3 . '` = \'' . $class->search . '\' OR';
+								$where .= ' `' . $class->table . '`.' . $key3 . ' = \'' . $class->search . '\' OR';
 						}
 						$where = ($where != '')?substr($where,0,-3):'';
 						$where .= ') AND';
