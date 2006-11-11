@@ -9,12 +9,21 @@
 	// Create the Post Class
 	$myPost = new Post;
 	
+	// Get a list of all the authors
+	$myAuthor = new Author;
+	$authors = $myAuthor->GetList(array('first_name', 'last_name'),'last_name','DESC');
+	$author_list[] = 'Please Select';
+	
+	if (is_array($authors))
+		foreach($authors as $author_id=>$author)
+			$author_list[$author_id] = $author['first_name'] . ' ' . $author['last_name'];
+	
 	// Setup the Display
-	$display = array('title','author','category','is_published','body');
+	$display = array('title','author_id','category','is_published','body');
 	// Do not show these fields
 	$hidden = array();
 	// Create State Options
-	$options = array('is_published' => $yesno);
+	$options = array('is_published' => $yesno, 'author_id' => $author_list);
 	
 	// If they are saving the Information
 	if ($_POST['submit_button'] == 'Save Post'){

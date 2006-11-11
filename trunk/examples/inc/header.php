@@ -27,6 +27,7 @@
 	<div id="left-column">
 		<ul>
 			<li><a href="index.php" title="Return Home">Home</a></li>
+			<li><a href="authors.php" title="Manage Authors">Manage Authors</a></li>
 			<li><a href="posts.php" title="Manage Posts">Manage Posts</a></li>
 			<li><a href="blog.php" title="View Blog" class="last">View Blog</a></li>
 		</ul>

@@ -8,9 +8,10 @@
 	
 	// Create the Post Class
 	$myPost = new Post;
+	$myAuthor = new Author;
 	
 	// Setup the Display
-	$display = array('title','author','category','is_published','body');
+	$display = array('title','author_id','category','is_published','body');
 	// Do not show these fields
 	$hidden = array();
 	// Create State Options
@@ -22,6 +23,11 @@
 		if (!$myPost->GetInfo()){
 			SetAlert('Invalid Post, please try again');
 			$myPost->ResetValues();
+		}else{
+			// Get the Authors Information (this can eventually be cleaned up to one Query with e GetList)
+			$myAuthor->SetPrimary($myPost->GetValue('author_id'));
+			if (!$myAuthor->GetInfo())
+				$myAuthor->ResetValues();
 		}
 	}
 	
@@ -48,7 +54,7 @@
 	if ($myPost->GetPrimary() != ''){
 		echo '<div id="view-post">' . "\n";
 		echo '<h1>' . htmlspecialchars($myPost->GetValue('title')) . '</h1>';
-		echo '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($myPost->GetValue('date_entered'))) . (($myPost->GetValue('category') != '')?' in ' . htmlspecialchars($myPost->GetValue('category')):'') . (($myPost->GetValue('author') != '')?' by ' . htmlspecialchars($myPost->GetValue('author')):'') . '</div>';
+		echo '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($myPost->GetValue('date_entered'))) . (($myPost->GetValue('category') != '')?' in ' . htmlspecialchars($myPost->GetValue('category')):'') . (($myAuthor->GetValue('author_id') != '')?' by <a href="mailto:' . htmlspecialchars($myAuthor->GetValue('email')) . '" title="Send Email to Author">' . htmlspecialchars($myAuthor->GetValue('first_name')) . ' ' . htmlspecialchars($myAuthor->GetValue('last_name')) . '</a>':' by Anonymous') . '</div>';
 		echo '<div id="post">' . htmlspecialchars($myPost->GetValue('body')) . '</div>';
 		echo '</div>' . "\n";
 	}

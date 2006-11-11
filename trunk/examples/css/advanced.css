@@ -114,6 +114,20 @@ table.small td {
 table.small td.last, table.small th.last {
 	border-right: 0px;
 }
+
+/* Search */
+#search {
+	float: right;
+}
+#search fieldset {
+	border: 0px;
+}
+#search legend {
+	display: none;
+}
+
+
+/* Options */
 ul.options {
 	margin: 0px;
 	padding: 7px 0px;
