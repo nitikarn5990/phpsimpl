@@ -10,8 +10,8 @@ define('TITLE', 'My Blog');
 // Config
 define('DEBUG', false);
 define('DEBUG_QUERY', false);
-define('USE_CACHE', false);
-define('CLEAR_CACHE', true);
+define('USE_CACHE', true);
+define('CLEAR_CACHE', false);
 
 // Directories
 // Always Include trailing slash "/" in Direcories
