@@ -783,6 +783,10 @@ class DbTemplate extends Form {
 	* @return NULL
 	*/
 	function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){
+		// Make sure things are arrays if required
+		if(!is_array($omit))
+			$omit = array($omit);
+		
 		// Rearrange the Fields if there is a custom display
 		$show = array();
 		if(is_array($display)){
