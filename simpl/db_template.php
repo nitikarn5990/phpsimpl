@@ -782,7 +782,7 @@ class DbTemplate extends Form {
 	* @param array, array, array
 	* @return NULL
 	*/
-	function Form($display='', $hidden=array(), $options=array(), $config=array()){
+	function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){
 		// Rearrange the Fields if there is a custom display
 		$show = array();
 		if(is_array($display)){
@@ -793,7 +793,7 @@ class DbTemplate extends Form {
 			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
 			if (is_array($this->fields))
 				foreach($this->fields as $key=>$data)
-					if (!array_key_exists($key,$show) && !in_array($key,$hidden)){
+					if (!array_key_exists($key,$show) && !in_array($key,$hidden) && !in_array($key,$omit)){
 						if ($this->GetError($key) != '')
 							Alert($this->GetError($key));
 						$hidden[] = $key;
@@ -802,7 +802,7 @@ class DbTemplate extends Form {
 			// If there is fields in the db table make the show array
 			if (is_array($this->fields))
 				foreach($this->fields as $key=>$data){
-					if (!in_array($key,$hidden))
+					if (!in_array($key,$hidden) && !in_array($key,$omit))
 						$show[$key] = ($data->label != '')?$data->label:ucfirst(str_replace('_',' ',$key)) . ':';
 				}
 		}
