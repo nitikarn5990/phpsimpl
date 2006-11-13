@@ -888,7 +888,7 @@ class DbTemplate extends Form {
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
 					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="' . $this->fields[$key]->length . '" value="' . stripslashes($this->GetValue($key)) . '" />';
+					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="' . $this->fields[$key]->length . '" value="' . htmlspecialchars(stripslashes($this->GetValue($key))) . '" />';
 				}
 				// Display the example if there is one
 				echo ($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'';
@@ -899,7 +899,7 @@ class DbTemplate extends Form {
 		
 		// Make all the Hidden Fields
 		foreach($hidden as $field)
-			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . stripslashes($this->GetValue($field)) . '" />' . "\n";
+			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . htmlspecialchars(stripslashes($this->GetValue($field))) . '" />' . "\n";
 		
 		// End the Fieldset
 		echo '</fieldset>' . "\n";
