@@ -247,7 +247,7 @@ class File extends Folder {
 	 * Formats the filename
 	 * 
 	 * @param NULL
-	 * @return NULL 
+	 * @return bool 
 	 */
 	function FormatFilename() {
 		// Make Lowercase
@@ -276,6 +276,8 @@ class File extends Folder {
 		Debug('FormatFilename(), Add a number to the end of the filename ' . $this->filename);
 		// Recreate the file name with extention
 		$this->filename = $fname . '.' . $fext;
+		
+		return true;
 	}
 	
 
