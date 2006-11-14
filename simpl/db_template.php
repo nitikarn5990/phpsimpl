@@ -613,7 +613,7 @@ class DbTemplate extends Form {
 		array_unshift($this->join_on, '');
 		
 		// Transform the $fields for backwards compatibility
-		if (!is_array($fields) && !is_array($fields[0]))
+		if (!is_array($fields))
 			$return[] = $fields;
 		else
 			$return = $fields;
@@ -752,7 +752,7 @@ class DbTemplate extends Form {
 	*/
 	function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
 		// Create the Array for the Get List funciton
-		$fields = array($field);
+		$fields[] = array($field);
 		
 		// Call the regular Get List
 		$this->GetList($fields, $order_by, $sort, $offset, $limit);
