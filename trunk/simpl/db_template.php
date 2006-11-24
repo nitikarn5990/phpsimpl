@@ -121,6 +121,7 @@ class DbTemplate extends Form {
 				// Make the nessisary eval line
 				$cache = '$this->fields = ' . substr($cache,0,-1) . ';';
 				eval($cache);
+				
 				// Unserialize the classes
 				foreach($this->fields as $key=>$field){
 					$this->fields[$key] = unserialize($field);
@@ -141,9 +142,9 @@ class DbTemplate extends Form {
 					// Set that info into the field class
 					$key = $field->name;
 					// Set the Label of the Key
-					$field->label = ($labels[$key] != '')?$labels[$key]:'';
+					$field->label = ($labels[$key] != '')?urlencode($labels[$key]):'';
 					// Set the Example of the Key
-					$field->example = ($examples[$key] != '')?$examples[$key]:'';
+					$field->example = ($examples[$key] != '')?urlencode($examples[$key]):'';
 					// Add this field to the list of fields
 					$this->fields[$key] = $field;
 					// If this is the Primary Key Save the field name
@@ -686,7 +687,7 @@ class DbTemplate extends Form {
 		// If they request an order build the query
 		if (isset($order_by) && $order_by != '' ){
 			// If its an array handle the order_by and sort together
-			if(is_array($order_by)) {
+			if(is_array($order_by)){
 				$i = 0;
 				$order = 'ORDER BY'; 
 				foreach($order_by as $item) {
@@ -824,7 +825,7 @@ class DbTemplate extends Form {
 			// If the field is not in the hidden array
 			if (!in_array($key,$hidden)){
 				// Create the Field Div with the example, label and error if need be
-				echo '<div class="field_' . $key . '">' . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
+				echo '<div class="field_' . $key . '">' . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . stripslashes(urldecode($field)) . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
 				
 				// If there is specialty options
 				if(is_object($options[$key])){
@@ -884,15 +885,7 @@ class DbTemplate extends Form {
 				}elseif($this->fields[$key]->type == 'date'){
 					// Display the Input Field
 					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($key) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($key)))):'') . '" /><button type="reset" id="' . $key . '_b">...</button>';					
-					echo '<script type="text/javascript">
-						Calendar.setup(
-							{
-							  inputField  : "'.$key.'",     // ID of the input field
-							  ifFormat    : "%B %e, %Y",    // the date format
-							  button      : "'.$key.'_b"    // ID of the button
-							}
-						);
-					</script>';
+					echo '<script type="text/javascript">Calendar.setup({ inputField : "'.$key.'", ifFormat : "%B %e, %Y", button : "'.$key.'_b"});</script>';
 				}else{
 					// Set the display size, if it is a small field then limit it
 					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
@@ -900,7 +893,7 @@ class DbTemplate extends Form {
 					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="' . $this->fields[$key]->length . '" value="' . htmlspecialchars(stripslashes($this->GetValue($key))) . '" />';
 				}
 				// Display the example if there is one
-				echo ($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'';
+				echo ($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes(urldecode($this->fields[$key]->example)) . '</p></div>':'';
 				// If there is an error show it and end the field div
 				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";
 			}
@@ -940,7 +933,7 @@ class DbTemplate extends Form {
 				// If it is cool to show
 				if($disp == true) { ?>
 					<tr>
-						<th scope="row"><?php echo ($data->label != '')?$data->label:str_replace('_', ' ', ucfirst($key)); ?>: </th>
+						<th scope="row"><?php echo ($data->label != '')?stripslashes(urldecode($data->label)):str_replace('_', ' ', ucfirst($key)); ?>: </th>
 						<td><?php echo stripslashes($data->value); ?></td>
 					</tr>
 				<?php }
@@ -990,7 +983,7 @@ class DbTemplate extends Form {
 			// Display the Header
 			echo "\n" . '<tr>';
 			foreach($show as $key=>$column){
-				echo "\t" . '<th scope="col"><a href="' . $_SERVER['PHP_SELF'] . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">' . $column;
+				echo "\t" . '<th scope="col"><a href="' . $_SERVER['PHP_SELF'] . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">' . stripslashes(urldecode($column));
 				if ($_SESSION[$this->table . '_sort'] == $key){
 					if ($_SESSION[$this->table . '_order'] == 'asc')
 						echo ' &uarr;';
@@ -1014,7 +1007,7 @@ class DbTemplate extends Form {
 						// Get the Option Value
 						$data[$key] = $options[$key][$value];
 					}else if ($options[$key] == 'move'){
-						$data[$key] = '<div class="center">' . (($i != 1)?'<a href="?item=' . $data[$this->primary] . '&amp;move=up"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'asc.gif" align="top" width="17" height="17" alt="Move Item Up" /></a>':'') . (($i != count($this->results))?'<a href="?item=' . $data[$this->primary] . '&amp;move=down"><img src="' . ADDRESS . WS_SIMPL . WS_SIMPL_IMAGE . 'desc.gif" align="top" width="17" height="17" alt="Move Item Down" /></a>':'') . '</div>'; 
+						$data[$key] = '<div class="center">' . (($i != 1)?'<a href="?item=' . $data[$this->primary] . '&amp;move=up">&uarr;</a>':'') . (($i != count($this->results))?'<a href="?item=' . $data[$this->primary] . '&amp;move=down">&darr;</a>':'') . '</div>'; 
 					}
 					// Display the Data
 					echo "\t" . '<td' . (($j == count($show))?' class="last"':'') . '>';
