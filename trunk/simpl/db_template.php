@@ -672,7 +672,7 @@ class DbTemplate extends Form {
 						$query .= '`' . $class->table . '`.' . $class->primary . ', ';
 					// Add the list up of fields
 					foreach($return[$key] as $data2)
-						$query .= '`' . $class->table . '`.' . $data2 . ', ';
+						$query .= (trim($data2) != '')?'`' . $class->table . '`.' . $data2 . ', ':'';
 				}else{
 					$query .= '`' . $class->table . '`.*, '; 
 				}
