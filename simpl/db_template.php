@@ -128,6 +128,10 @@ class DbTemplate extends Form {
 					// Define the Primary Key
 					if ($this->fields[$key]->primary_key == 1)
 						$this->primary = $key;
+					
+					// Decode the Label and Example from the cache
+					$this->fields[$key]->label = urldecode($this->fields[$key]->label);
+					$this->fields[$key]->example = urldecode($this->fields[$key]->example);
 				}
 			}else{
 				Debug('Contructor(), Create From Database');
