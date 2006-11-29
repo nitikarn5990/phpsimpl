@@ -616,16 +616,7 @@ class DbTemplate extends Form {
 		array_unshift($this->join_class, $this);
 		array_unshift($this->join_type, '');
 		array_unshift($this->join_on, '');
-		
-		// Transform the $fields for backwards compatibility
-		if (!is_array($fields)){
-			$return[][] = $fields;
-		}else{
-			if (!is_array($fields[0]))
-				$return[] = $fields;
-			else
-				$return = $fields;
-		}
+		array_unshift($return, $fields);
 		
 		// Clear all temp fields
 		$query = '';
@@ -671,8 +662,9 @@ class DbTemplate extends Form {
 					if (!in_array($class->primary,$return[$key]))
 						$query .= '`' . $class->table . '`.' . $class->primary . ', ';
 					// Add the list up of fields
-					foreach($return[$key] as $data2)
+					foreach($return[$key] as $data2){
 						$query .= (trim($data2) != '')?'`' . $class->table . '`.' . $data2 . ', ':'';
+					}
 				}else{
 					$query .= '`' . $class->table . '`.*, '; 
 				}
@@ -766,10 +758,11 @@ class DbTemplate extends Form {
 	*/
 	function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
 		// Create the Array for the Get List funciton
-		$fields[] = array($field);
+		$return = array();
+		array_unshift($return, $field);
 		
 		// Call the regular Get List
-		$this->GetList($fields, $order_by, $sort, $offset, $limit);
+		$this->GetList($return, $order_by, $sort, $offset, $limit);
 		
 		// If there are results returned
 		if (is_array($this->results)){
