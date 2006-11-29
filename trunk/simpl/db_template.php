@@ -614,10 +614,14 @@ class DbTemplate extends Form {
 		array_unshift($this->join_on, '');
 		
 		// Transform the $fields for backwards compatibility
-		if (!is_array($fields))
-			$return[] = $fields;
-		else
-			$return = $fields;
+		if (!is_array($fields)){
+			$return[][] = $fields;
+		}else{
+			if (!is_array($fields[0]))
+				$return[] = $fields;
+			else
+				$return = $fields;
+		}
 		
 		// Clear all temp fields
 		$query = '';
