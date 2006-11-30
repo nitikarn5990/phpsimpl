@@ -616,7 +616,11 @@ class DbTemplate extends Form {
 		array_unshift($this->join_class, $this);
 		array_unshift($this->join_type, '');
 		array_unshift($this->join_on, '');
-		array_unshift($return, $fields);
+		
+		if (!isMultiArray($fields))
+			array_unshift($return, $fields);
+		else
+			$return = $fields;
 		
 		// Clear all temp fields
 		$query = '';
@@ -658,12 +662,18 @@ class DbTemplate extends Form {
 				
 				// If there is a limiting field
 				if (is_array($return[$key])){
+					Pre($return);
 					// Always get the primary key	
 					if (!in_array($class->primary,$return[$key]))
 						$query .= '`' . $class->table . '`.' . $class->primary . ', ';
 					// Add the list up of fields
 					foreach($return[$key] as $data2){
-						$query .= (trim($data2) != '')?'`' . $class->table . '`.' . $data2 . ', ':'';
+						if (is_array($data2)){
+							foreach($data2 as $data3)
+								$query .= (trim($data3) != '')?'`' . $class->table . '`.' . $data3 . ', ':'';
+						}else{
+							$query .= (trim($data2) != '')?'`' . $class->table . '`.' . $data2 . ', ':'';
+						}
 					}
 				}else{
 					$query .= '`' . $class->table . '`.*, '; 
