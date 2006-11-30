@@ -251,20 +251,24 @@ class File extends Folder {
 	 */
 	function FormatFilename() {
 		// Make Lowercase
-		$this->filename = strtolower($this->filename);
+		//$this->filename = strtolower($this->filename);
 		$pieces = explode('.', $this->filename);
 		$fext  = array_pop($pieces);
 		$fname = basename($this->filename, '.'.$fext);
 
 		// Cut out bad chars
+		$fname = preg_replace("/[^A-Za-z0-9-]/i","_",$fname);
+		
+		/*
 		$bad_chars = array(' ', "'", '\'', '(', ')', '*', '!', '/', ',', '&', '|', '{', '}', '[', ']', '+', '=', '<', '>');
 		$fname = str_replace($bad_chars, '_', $fname);
 		// remove doubles
 		$fname = str_replace('__', '', $fname);
+		*/
 		Debug('FormatFilename(), Removing bad characters from the filename ' . $this->filename);
 		
 		$i = 1;
-		while ( file_exists($this->directory . $fname . '.' . $fext) ){
+		while (file_exists($this->directory . $fname . '.' . $fext) ){
 			// if already had a number appended cut it off
 			if ($i > 1)
 				$fname = substr($fname, 0, -2);
