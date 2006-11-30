@@ -199,4 +199,16 @@ function search_pretty_terms($terms_html){
 	$last = array_pop($terms_html);
 	return implode(', ', $terms_html)." and $last";
 }
+
+// checks for multiarray (2 or more levels deep)
+function isMultiArray($multiarray) {
+  if (is_array($multiarray)) {  // confirms array
+   foreach ($multiarray as $array) {  // goes one level deeper
+     if (is_array($array)) {  // is subarray an array
+       return true;  // return will stop function
+     }  // end 2nd check
+   }  // end loop
+  }  // end 1st check
+  return false;  // not a multiarray if this far
+}
 ?>
