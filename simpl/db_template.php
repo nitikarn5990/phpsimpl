@@ -662,7 +662,6 @@ class DbTemplate extends Form {
 				
 				// If there is a limiting field
 				if (is_array($return[$key])){
-					Pre($return);
 					// Always get the primary key	
 					if (!in_array($class->primary,$return[$key]))
 						$query .= '`' . $class->table . '`.' . $class->primary . ', ';
