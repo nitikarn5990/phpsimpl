@@ -789,6 +789,91 @@ class DbTemplate extends Form {
 		return array();
 	}
 	
+	function FormField($field, $hidden=false, $options='', $config=''){
+		// Make sure this field is in the field list
+		if (!$this->IsField($field))
+			return;
+		
+		// If the field is not in the hidden array
+		if ($hidden != true){
+			// Create the Field Div with the example, label and error if need be
+			echo '<div class="field_' . $field . '">';
+			echo '<label for="' . $field . '">';
+			echo (in_array($field,$this->required))?'<em>*</em>':'';
+			echo ($this->Get('label', $field) != '')?stripslashes($this->Get('label', $field)):ucfirst(str_replace('_',' ',$field)) . ':';
+			echo '</label>';
+			echo ($this->GetError($field) != '')?'<div class="error">':'';
+			
+			// If there is specialty options
+			if(is_object($options)){
+				switch(get_class($options)){
+					// If we are uploading a file
+					case 'Upload':
+						// If there is something in the field
+						// TODO: Fix the delete and view
+						if ($this->GetValue($field) != ''){
+							echo '<p id="form_' . $field . '">' . $this->GetValue($field) . ' <a href="' . $options->address . $this->GetValue($field) . '" target="_blank"><img src="' . DIR_IMAGES . 'picture_go.png" width="16" height="16" alt="View ' . $this->GetValue($field) . '" align="top" /></a> <a href="?id=' . $this->GetPrimary() . '&amp;remove=image" class="funcDeleteImage()"><img src="' . DIR_IMAGES . 'picture_delete.png" width="16" height="16" alt="Remove ' . $this->GetValue($field) . '" align="top" /></a></p>';
+							echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . htmlspecialchars(stripslashes($this->GetValue($field))) . '" />' . "\n";
+						}else{
+							echo '<input name="' . $field . '" id="' . $field . '" type="file" />';
+						}
+						break;
+					default:
+						echo '<p>Unknown</p>';
+						break;
+				}
+			}elseif (is_array($options)){
+				switch($config){
+					// Create Radio Buttons
+					case 'radio':
+						echo '<div class="radio">' . "\n";
+						foreach($options as $opt_key=>$opt_value)
+							echo "\t" . '<div><input name="' . $field . '" type="radio" value="' . $opt_key . '" id="' . $field . '_' . $opt_key . '"' . (((string)$this->GetValue($field) == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $field . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
+						echo '</div>';
+						break;
+					// Create Checkboxes
+					case 'checkbox':
+						// Get all the values from the DB
+						$split = split(',',$this->GetValue($field));
+												
+						echo '<div class="checkbox">' . "\n";
+						foreach($options as $opt_key=>$opt_value)
+							echo "\t" . '<div><input name="' . $field . '[]" type="checkbox" value="' . $opt_key . '" class="' . $field . '_' . $opt_key . '"' . (is_array($split) && in_array((string)$opt_key,$split)?' checked="checked"':'') . ' /> <label for="' . $field . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
+						echo '</div>';
+						break;
+					// Create a Dropdown
+					default:
+						echo '<select name="' . $field . '" id="' . $field . '">' . "\n";
+						foreach($options as $opt_key=>$opt_value)
+							echo "\t" . '<option value="' . $opt_key . '"' . (((string)$this->GetValue($field) == (string)$opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
+						echo '</select><br />' . "\n";
+						break;
+				}
+			}elseif($this->Get('type', $field) == 'blob'){
+				// If it is a blob or text in the DB then make it a text area
+				echo '<textarea name="' . $field . '" id="' . $field . '" cols="50" rows="4">' . htmlspecialchars(stripslashes($this->GetValue($field))) . '</textarea><br />' . "\n";
+			}elseif($this->Get('type', $field) == 'date'){
+				// Display the Input Field
+				echo '<input name="' . $field . '" id="' . $field . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($field) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($field)))):'') . '" /><button type="reset" id="' . $field . '_b">...</button>';					
+				echo '<script type="text/javascript">Calendar.setup({ inputField : "' . $field . '", ifFormat : "%B %e, %Y", button : "' . $field . '_b"});</script>';
+			}else{
+				// Set the display size, if it is a small field then limit it
+				$size = $this->Get('length', $field);
+				if ($size>30)
+					$size = 30;
+				// Display the Input Field
+				echo '<input name="' . $field . '" id="' . $field . '" type="' . ((is_string($config[$field]) && trim(strtolower($config[$field])) == 'password')?$config[$field]:'text') . '"' . ((is_string($config[$field]) && trim(strtolower($config[$field])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="' . $this->Get('length', $field) . '" value="' . htmlspecialchars(stripslashes($this->GetValue($field))) . '" />';
+			}
+			
+			// Display the example if there is one
+			echo ($this->Get('example', $field) != '')?'<div class="example"><p>' . stripslashes($this->Get('example', $field)) . '</p></div>':'';
+			echo ($this->GetError($field) != '')?'<p>' . stripslashes($this->GetError($field)) . '</p></div>':'';
+			echo '</div>' . "\n";
+		}else{
+			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . htmlspecialchars(stripslashes($this->GetValue($field))) . '" />' . "\n";
+		}
+	}
+	
 	/**
 	* Create a Form with the Data
 	*
@@ -808,12 +893,12 @@ class DbTemplate extends Form {
 		if(is_array($display)){
 			// If there is a custome Display make the array
 			foreach($display as $key=>$data)
-				$show[$data] = ($this->fields[$data]->label != '')?$this->fields[$data]->label:ucfirst(str_replace('_',' ',$data)) . ':';
-			
+				$show[] = $data;
+				
 			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
 			if (is_array($this->fields))
 				foreach($this->fields as $key=>$data)
-					if (!array_key_exists($key,$show) && !in_array($key,$hidden) && !in_array($key,$omit)){
+					if (!in_array($key,$show) && !in_array($key,$hidden) && !in_array($key,$omit)){
 						if ($this->GetError($key) != '')
 							Alert($this->GetError($key));
 						$hidden[] = $key;
@@ -821,97 +906,19 @@ class DbTemplate extends Form {
 		}else{
 			// If there is fields in the db table make the show array
 			if (is_array($this->fields))
-				foreach($this->fields as $key=>$data){
+				foreach($this->fields as $key=>$data)
 					if (!in_array($key,$hidden) && !in_array($key,$omit))
-						$show[$key] = ($data->label != '')?$data->label:ucfirst(str_replace('_',' ',$key)) . ':';
-				}
+						$show[] = $key;
 		}
 		
 		// Start the Fieldset
 		echo '<fieldset id="table_' . $this->table . '"><legend>' . ucfirst(str_replace('_',' ',$this->table)) . ' Information</legend>' . "\n";
 		
-		// Show all the Visible Fields
-		foreach($show as $key=>$field){
-			// If the field is not in the hidden array
-			if (!in_array($key,$hidden)){
-				// Create the Field Div with the example, label and error if need be
-				echo '<div class="field_' . $key . '">' . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . stripslashes(urldecode($field)) . '</label>' . (($this->error[$key] != '')?'<div class="error">':'');
-				
-				// If there is specialty options
-				if(is_object($options[$key])){
-					switch(get_class($options[$key])){
-						case 'Upload':
-							// Check to see if it is set or not
-							if (stripslashes($this->fields[$key]->value) != ''){
-								// If there is something in the field
-								echo '<p id="form_' . $key . '">' . $this->GetValue($key) . ' <a href="' . $options[$key]->directory . $this->GetValue($key) . '" target="_blank"><img src="' . DIR_IMAGES . 'picture_go.png" width="16" height="16" alt="View ' . $this->GetValue($key) . '" align="top" /></a> <a href="?id=' . $this->GetPrimary() . '&amp;remove=image" class="funcDeleteImage()"><img src="' . DIR_IMAGES . 'picture_delete.png" width="16" height="16" alt="Remove ' . $this->GetValue($key) . '" align="top" /></a></p>';
-								// Add this field to the Hidden List
-								if (!in_array($key,$hidden))
-									$hidden[]=$key;
-							}else{
-								// If there not anything uploaded yet
-								echo '<input name="' . $key . '" id="' . $key . '" type="file" />';
-							}
-							break;
-						default:
-							echo '<p>Unknown</p>';
-							break;
-					}
-				}elseif (is_array($options[$key])){
-					switch($config[$key]){
-						case 'radio':
-							echo '<div class="radio">' . "\n";
-							// Loop though each option
-							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<div><input name="' . $key . '" type="radio" value="' . $opt_key . '" id="' . $key . '_' . $opt_key . '"' . (((string)$this->GetValue($key) == (string)$opt_key)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
-							}
-							echo '</div>';
-							break;
-						case 'checkbox':
-							// Split values
-							$split = split(',',$this->GetValue($key));
-													
-							echo '<div class="checkbox">' . "\n";
-							// Loop though each option
-							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<div><input name="' . $key . '[]" type="checkbox" value="' . $opt_key . '" class="' . $key . '_' . $opt_key . '"' . (is_array($split) && in_array((string)$opt_key,$split)?' checked="checked"':'') . ' /> <label for="' . $key . '_' . $opt_key . '">' . stripslashes($opt_value) . '</label></div>' . "\n";
-							}
-							echo '</div>';
-							break;
-						default:
-							// Start the Select Box
-							echo '<select name="' . $key . '" id="' . $key . '">' . "\n";
-							// Loop though each option
-							foreach($options[$key] as $opt_key=>$opt_value){
-								echo "\t" . '<option value="' . $opt_key . '"' . (((string)$this->GetValue($key) == (string)$opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
-							}
-							// End the Select Box
-							echo '</select><br />' . "\n";
-							break;
-					}
-				}elseif($this->fields[$key]->type == 'blob'){
-					// If it is a blob or text in the DB then make it a text area
-					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . htmlspecialchars(stripslashes($this->GetValue($key))) . '</textarea><br />' . "\n";
-				}elseif($this->fields[$key]->type == 'date'){
-					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($key) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($key)))):'') . '" /><button type="reset" id="' . $key . '_b">...</button>';					
-					echo '<script type="text/javascript">Calendar.setup({ inputField : "'.$key.'", ifFormat : "%B %e, %Y", button : "'.$key.'_b"});</script>';
-				}else{
-					// Set the display size, if it is a small field then limit it
-					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
-					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="' . $this->fields[$key]->length . '" value="' . htmlspecialchars(stripslashes($this->GetValue($key))) . '" />';
-				}
-				// Display the example if there is one
-				echo ($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes(urldecode($this->fields[$key]->example)) . '</p></div>':'';
-				// If there is an error show it and end the field div
-				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";
-			}
-		}
-		
-		// Make all the Hidden Fields
+		foreach($show as $field)
+			$this->FormField($field, false, $options[$field], $config[$field]);
+			
 		foreach($hidden as $field)
-			echo '<input name="' . $field . '" id="' . $field . '" type="hidden" value="' . htmlspecialchars(stripslashes($this->GetValue($field))) . '" />' . "\n";
+			$this->FormField($field, true, $options[$field], $config[$field]);
 		
 		// End the Fieldset
 		echo '</fieldset>' . "\n";
