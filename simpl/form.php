@@ -253,6 +253,10 @@ class Form {
 		return 0;
 	}
 	
+	function IsField($field){
+		return (is_object($this->fields[trim($field)]));
+	}
+	
 	/**
 	* Set Values
 	*
