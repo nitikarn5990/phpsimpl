@@ -11,7 +11,11 @@ class Simpl {
 	*
 	* @return NULL
 	*/
-    function Simpl(){ }
+    function Simpl(){
+    	// Setup all the Default Directories
+    	
+    	
+    }
     
 	/**
 	 * Load a class file when needed.

@@ -295,7 +295,7 @@ class DbTemplate extends Form {
 		global $db;
 		
 		// Do not save if there are errors
-		if (is_array($this->error))
+		if (is_array($this->error) && count($this->error) > 0)
 			return false;
 		
 		// Decide to Insert or Update
