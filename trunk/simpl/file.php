@@ -25,13 +25,8 @@ class File extends Folder {
 		$this->filename = $filename;
 		// If there is directory passed, set the directory
 		if (isset($directory)) {
-			if(substr($directory,-1) == '/') {
-				// Set the Local variables
-				$this->directory = $directory;
-			} else {
-				//append '/' at the end
-				$this->directory = $directory . '/';
-			}
+			// Set the Local variables
+			$this->directory = $directory . ((substr($directory,-1) != '/')?'/':'');
 		}
 	}
 	
@@ -90,7 +85,6 @@ class File extends Folder {
 				}
 			}
 		}
-		//return any issues
 		return false;
 	}
 	
@@ -111,9 +105,8 @@ class File extends Folder {
 			$this->FormatFilename();
 			//rename the file
 			Debug('Rename(), From: "' . $old_filename . '" To: "' . $this->filename . '"');
-			if ( rename($this->directory . $old_filename, $this->directory . $this->filename) ) {
-					return true;
-				}
+			if (rename($this->directory . $old_filename, $this->directory . $this->filename))
+				return true;
 		}
 		return false;
 	}
@@ -148,7 +141,7 @@ class File extends Folder {
 			if(is_writable($this->directory . $this->filename)) {
 				Debug('MakeWritable(), The file ' . $this->directory . $this->filename . ' is already writable.');
 				return true;
-			} else {
+			}else{
 				//change persmissions
 				Debug('MakeWritable(), Changing permissions of file ' . $this->directory . $this->filename);
 				if(chmod($this->directory . $this->filename, 0755)) {
@@ -202,12 +195,11 @@ class File extends Folder {
 	 * @result bool
 	 */
 	function LastModified() {
+		// Make sure the file exists
 		if(is_file($this->directory . $this->filename)) {
-			//return the last modified date in the SQL date time format as Y-m-d H:i:s
 			Debug('LastModified(), Last modified time of file ' . $this->directory . $this->filename);
 			return date("Y-m-d H:i:s",filemtime($this->directory . $this->filename));
 		}
-		//Return Issues
 		return false;
 	}
 	
@@ -219,7 +211,7 @@ class File extends Folder {
 	 * 
 	 */
 	function Exists() {
-		//if the file exists in the current directory
+		// If the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
 			Debug('Esixts(), The file ' . $this->directory . $this->filename . ' exists.');
 			return true;
@@ -234,9 +226,9 @@ class File extends Folder {
 	 * @return bool
 	 */
 	function GetContents() {
-		//if the file exists in the directory
+		// If the file exists in the directory
 		if(is_file($this->directory . $this->filename)) {
-			//return contents of the file in a string
+			// Return contents of the file in a string
 			Debug('GetContents(), Get the contents of the file ' . $this->directory . $this->filename . ' into a string.');
 			return file_get_contents($this->directory . $this->filename);
 		}
@@ -250,8 +242,7 @@ class File extends Folder {
 	 * @return bool 
 	 */
 	function FormatFilename() {
-		// Make Lowercase
-		//$this->filename = strtolower($this->filename);
+		// Rip it apart
 		$pieces = explode('.', $this->filename);
 		$fext  = array_pop($pieces);
 		$fname = basename($this->filename, '.'.$fext);
@@ -259,12 +250,6 @@ class File extends Folder {
 		// Cut out bad chars
 		$fname = preg_replace("/[^A-Za-z0-9-]/i","_",$fname);
 		
-		/*
-		$bad_chars = array(' ', "'", '\'', '(', ')', '*', '!', '/', ',', '&', '|', '{', '}', '[', ']', '+', '=', '<', '>');
-		$fname = str_replace($bad_chars, '_', $fname);
-		// remove doubles
-		$fname = str_replace('__', '', $fname);
-		*/
 		Debug('FormatFilename(), Removing bad characters from the filename ' . $this->filename);
 		
 		$i = 1;
