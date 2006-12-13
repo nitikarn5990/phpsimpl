@@ -29,7 +29,7 @@ class Folder {
 		
 		// If there is directory passed, set the directory
 		if (isset($directory) && $directory != '')
-			$this->$directory = $directory . ((substr($directory,-1) != '/')?'/':'');
+			$this->directory = $directory . ((substr($directory,-1) != '/')?'/':'');
 	}
 	
 	/**
