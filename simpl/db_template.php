@@ -960,6 +960,38 @@ class DbTemplate extends Form {
 	}
 	
 	/**
+	 * Display the results in various formats
+	 * 
+	 * @return string
+	 */
+	function Results($type='array'){
+		switch($type){
+			case 'json':
+				// Use the Global Load Class
+				global $mySimpl;
+				// Make sure JSON is loaded
+				$mySimpl->Load('Json');
+				
+				// Create the JSON class
+				$json = new Services_JSON();
+				
+				// Encode the Results
+				$output = $json->encode($this->results);
+				
+				// Return the JSON string
+				return $output;
+				break;
+			case 'array':
+			default:
+				// Return the raw results
+				return $this->results;
+				break;
+		}
+		
+		return 0;
+	}
+	
+	/**
 	* Display a list of items
 	*
 	* Displays a list of items according the the list criteria and sort order

@@ -59,6 +59,9 @@ class Simpl {
 	 			case 'Image':
 	 				include_once(FS_SIMPL . 'image.php');
 	 				break;
+	 			case 'Json':
+	 				include_once(FS_SIMPL . 'json.php');
+	 				break;
 	 		}
 	 	}
 	 	
