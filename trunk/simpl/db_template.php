@@ -167,6 +167,13 @@ class DbTemplate extends Form {
 					fclose($fp);
 					chmod ($cache_dir . $filename, 0777);
 				}
+				
+				if (is_array($this->fields))
+					foreach($this->fields as $key=>$field){
+						// Decode the Label and Example from the cache
+						$this->Set('label',$key,urldecode($this->Get('label',$key)));
+						$this->Set('example',$key,urldecode($this->Get('example',$key)));
+					}
 			}
 		}
 		
