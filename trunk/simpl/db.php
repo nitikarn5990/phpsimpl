@@ -15,6 +15,10 @@ class DB {
 	* @var int 
 	*/
     var $query_count;
+	/**
+     * @var bool
+     */
+    var $connected;
     
     /**
 	* Class Constructor
@@ -23,7 +27,10 @@ class DB {
 	*
 	* @return NULL
 	*/
-    function DB(){ }
+    function DB(){
+		$this->connected = false;	
+    	$this->query_count = 0;
+    }
     
     /**
 	 * Connect to DB
@@ -42,7 +49,6 @@ class DB {
 		
 		// Set all the local variables
 		$this->database = $database;
-		$this->query_count = 0;
 		
 		// Connect to MySQL
 		$db_link = @mysql_connect($server, $username, $password);
@@ -50,6 +56,7 @@ class DB {
 		// If there is a link
     	if ($db_link){
 			mysql_select_db($database);
+			$this->connected = true;
     		return true;
     	}
 		
