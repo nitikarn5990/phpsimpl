@@ -114,6 +114,31 @@ if (!function_exists('arraytostring')){
 }
 
 /**
+* Make a string into an array
+*
+* @param $string A string that needs to be formatted to an array
+* @return array
+*/
+if (!function_exists('stringtoarray')){
+	function stringtoarray($string){
+		// Always Return an array
+		$files = array();
+		
+		// If the string is NULL return empty array
+		if (trim($string) != ''){
+			// Format the String to an array
+			$data = '$files = ' . substr(trim($string),0,-1) . ';';
+			
+			// Evaluate the Array
+			eval($data);
+		}
+		
+		// Return the files array
+		return $files;
+	}
+}
+
+/**
 * Display Debug Information if set
 *
 * @param $output A mixed variable that needs to be outputted with predefined formatting
