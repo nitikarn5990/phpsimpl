@@ -19,6 +19,10 @@ class DB {
      * @var bool
      */
     var $connected;
+    /**
+     * @var array
+     */
+    var $results;
     
     /**
 	* Class Constructor
@@ -72,7 +76,7 @@ class DB {
 	 * @param $db THe optional alternative database
 	 * 
 	 */
-	function Query($query, $db = '') {
+	function Query($query, $db = '', $cache = true) {
    		// Use the Global Link
 		global $db_link;
 		
@@ -88,6 +92,19 @@ class DB {
 			echo '</pre>';
 		}
 		
+		$is_cache = false;
+		
+		// Check for Query Cache
+		if ($cache && QUERY_CACHE && strtolower(substr($query,0,6)) == 'select'){
+			$cache_file = FS_CACHE . 'query_' . bin2hex(md5($query, TRUE)) . '.cache.php';
+			$is_cache = true;
+			
+			if (is_file($cache_file)){
+				$this->results = unserialize(file_get_contents($cache_file));
+				return $this->results;
+			}
+		}
+		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
     	// Increment the query counter
@@ -96,6 +113,19 @@ class DB {
     	// Change the DB back is needed
     	if ($db != '' && $db != $this->database)
     		$this->Change($old_db);
+    		
+    	// Cache the Query if possible
+    	if ($is_cache){
+    		// Create the results array
+    		while($info = mysql_fetch_array($result))
+    			$this->results[] = $info;
+    		
+    		$cache = serialize($this->results);
+    		$fp = fopen($cache_file ,"w");
+			fwrite($fp,$cache);
+			fclose($fp);
+			chmod ($cache_file, 0777);
+    	}
     	
     	// Return the query results
     	return $result;
@@ -116,6 +146,10 @@ class DB {
 	function Perform($table, $data, $action = 'insert', $parameters = '', $db = '') {
 		// Use the Global Link
 		global $db_link;
+		global $mySimpl;
+		
+		// Clear the Query Cache
+		$mySimpl->Cache('clear');
 		
 		// Decide how to create the query
 		if ($action == 'insert'){
@@ -221,7 +255,10 @@ class DB {
 	 * @return array
 	 */
 	function FetchArray($result) {
-		return mysql_fetch_array($result, MYSQL_ASSOC);
+		if (QUERY_CACHE)
+			return array_shift($this->results);
+		else
+			return mysql_fetch_array($result, MYSQL_ASSOC);
 	}
 
 	/**
@@ -231,7 +268,10 @@ class DB {
 	 * @return int
 	 */
 	function NumRows($result) {
-		return mysql_num_rows($result);
+		if (QUERY_CACHE)
+			return count($this->results);
+		else
+			return mysql_num_rows($result);
 	}
 	
 	/**
