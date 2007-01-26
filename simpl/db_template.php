@@ -97,27 +97,23 @@ class DbTemplate extends Form {
 		
 		// Set the Table that we are going to be mirroring as a class
 		$this->table = $table;
-		if ($database != '')
-			$this->database = $database;
+		if ($database != '') $this->database = $database;
 		
 		// If there is fields already set, set them.
-		if (is_array($fields))
-			$this->fields = $fields;
+		if (is_array($fields)) $this->fields = $fields;
 			
 		// If there are fields that are required to be in the DB, this sets them into the class		
-		if (is_array($required))
-			$this->required = $required;	
+		if (is_array($required)) $this->required = $required;	
 		
 		// Check to see if there is a cache yet.
-		if (!is_array($this->fields)){	
-			// Figure out where the cache is
-			$cache_dir = (defined('FS_CACHE'))?FS_CACHE:FS_SIMPL . WS_CACHE;
+		if (!is_array($this->fields)){
+			$cache_file = FS_CACHE . 'table_' . $this->table . '.cache.php';
 			
 			clearstatcache();
-			if (USE_CACHE == true && is_file($cache_dir . $this->table . '.cache') && date ("Ymd", filemtime($cache_dir . $this->table . '.cache')) >= date ("Ymd")){
+			if (USE_CACHE == true && is_file($cache_file) && date ("Ymd", filemtime($cache_file)) >= date ("Ymd")){
 				Debug('Contructor(), Create From Cache');
 				// Grab the Cache file
-				$cache = file_get_contents($cache_dir . $this->table . '.cache');
+				$cache = file_get_contents($cache_file);
 				// Make the nessisary eval line
 				$cache = '$this->fields = ' . substr($cache,0,-1) . ';';
 				eval($cache);
@@ -128,16 +124,12 @@ class DbTemplate extends Form {
 					// Define the Primary Key
 					if ($this->fields[$key]->primary_key == 1)
 						$this->primary = $key;
-					
-					// Decode the Label and Example from the cache
-					$this->fields[$key]->label = urldecode($this->fields[$key]->label);
-					$this->fields[$key]->example = urldecode($this->fields[$key]->example);
 				}
 			}else{
 				Debug('Contructor(), Create From Database');
 				// Grab the list of fields from the DB
 				$query = "SELECT * FROM `" . $this->table . "` LIMIT 1";
-				$result = $db->Query($query, $this->database);
+				$result = $db->Query($query, $this->database, false);
 				
 				// Get the information about each field
 				while(($field = $db->FetchField($result))){
@@ -154,31 +146,23 @@ class DbTemplate extends Form {
 					// If this is the Primary Key Save the field name
 					if ($field->primary_key == 1)
 						$this->primary = $key;
-				}// end for each field
-				
-				// Write the Cache
-				if (is_writable($cache_dir)){
-					$contents = arraytostring($this->fields);
-					$filename = $this->table . '.cache';
-				
-					//Open and Write the File
-					$fp = fopen($cache_dir . $filename ,"w");
-					fwrite($fp,$contents);
-					fclose($fp);
-					chmod ($cache_dir . $filename, 0777);
 				}
 				
-				if (is_array($this->fields))
-					foreach($this->fields as $key=>$field){
-						// Decode the Label and Example from the cache
-						$this->Set('label',$key,urldecode($this->Get('label',$key)));
-						$this->Set('example',$key,urldecode($this->Get('example',$key)));
-					}
+				// Write the Cache
+				if (USE_CACHE == true && is_writable(FS_CACHE)){
+					$contents = arraytostring($this->fields);
+				
+					//Open and Write the File
+					$fp = fopen($cache_file ,"w");
+					fwrite($fp,$contents);
+					fclose($fp);
+					chmod ($cache_file, 0777);
+				}
 			}
 		}
 		
 		// Set all the Data for the Class
-		if (is_array($this->fields))
+		if (is_array($this->fields)){
 			foreach($this->fields as $key=>$field){
 				if ($field->type == 'date' && trim($data[$key]) != ''){
 					$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
@@ -190,7 +174,12 @@ class DbTemplate extends Form {
 					else
 						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
 				}
+				
+				// Decode the Label and Example from the cache
+				$this->Set('label',$key,urldecode($this->Get('label',$key)));
+				$this->Set('example',$key,urldecode($this->Get('example',$key)));
 			}
+		}
 				
 		Debug($this->SimpleFormat());
 		
@@ -351,7 +340,7 @@ class DbTemplate extends Form {
 		if (DB_STATUS != false){
 			Debug('Save(), Database Found');
 			// Check to see if there is any items that were left without a database
-			$orphans = glob(FS_SIMPL . WS_CACHE . "*.db.php");
+			$orphans = glob(FS_SIMPL . WS_CACHE . "backup_*.php");
 			if (is_array($orphans)){
 				Debug('Save(), Found ' . count($orphans) . ' Orphans');
 				// Create an array to hold them all
@@ -386,7 +375,7 @@ class DbTemplate extends Form {
 		}else{
 			// Write to File if DB is down
 			$contents = urlencode(serialize($this));
-			$filename = $this->table . '_' . date("YmdHis") . '.db.php';
+			$filename = 'backup_' . $this->table . '_' . date("YmdHis") . '.php';
 			
 			Debug('Save(), Database Down, Saving to File: ' . $filename);
 			
