@@ -13,8 +13,12 @@ class Simpl {
 	*/
     function Simpl(){
     	// Setup all the Default Directories
+    	// Currently In Define
     	
     	
+    	// Clear the Cache if needed
+    	if (isset($_GET['clear']))
+    		$this->Cache('clear');
     }
     
 	/**
@@ -66,6 +70,24 @@ class Simpl {
 	 	}
 	 	
 	 	return false;
+	 }
+	 
+	 /**
+	  * Does various Actions with the Cache
+	  * 
+	  * @param string $action
+	  * @return bool
+	  */
+	 function Cache($action){
+	 	switch($action){
+	 		case 'clear':
+	 			$files = glob(FS_CACHE . "*.cache.php");
+	 			foreach($files as $file)
+	 				unlink($file);
+	 			break;
+	 	}
+	 	
+	 	return true;
 	 }
 }
 ?>
