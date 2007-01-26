@@ -82,10 +82,18 @@ class Simpl {
 	 	switch($action){
 	 		case 'clear':
 	 			$files = glob(FS_CACHE . "*.cache.php");
-	 			foreach($files as $file)
-	 				unlink($file);
+	 			break;
+	 		case 'clear_query':
+	 			$files = glob(FS_CACHE . "query_*.cache.php");
+	 			break;
+	 		case 'clear_table':
+	 			$files = glob(FS_CACHE . "table_*.cache.php");
 	 			break;
 	 	}
+	 	
+	 	if (is_array($files)) 
+		 	foreach($files as $file)
+		 		unlink($file);
 	 	
 	 	return true;
 	 }
