@@ -149,7 +149,7 @@ class DB {
 		global $mySimpl;
 		
 		// Clear the Query Cache
-		$mySimpl->Cache('clear');
+		$mySimpl->Cache('clear_query');
 		
 		// Decide how to create the query
 		if ($action == 'insert'){
