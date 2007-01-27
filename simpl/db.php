@@ -23,6 +23,10 @@ class DB {
      * @var array
      */
     var $results;
+    /**
+     * @var string
+     */
+    var $config;
     
     /**
 	* Class Constructor
@@ -48,21 +52,36 @@ class DB {
 	 * @return bool
 	 */
 	function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
+		// Save the config till we are ready to connect
+		if (!$this->connected)
+			$this->config = array($server,$username,$password,$database);
+		
+		return true;
+	}
+	
+	function DbConnect(){
+		if ($this->connected)
+			return true;
+			
 		// Use the Global Link
 		global $db_link;
 		
-		// Set all the local variables
-		$this->database = $database;
-		
-		// Connect to MySQL
-		$db_link = @mysql_connect($server, $username, $password);
-
-		// If there is a link
-    	if ($db_link){
-			mysql_select_db($database);
-			$this->connected = true;
-    		return true;
-    	}
+		// If we are not connected
+		if (is_array($this->config)){
+			// Set all the local variables
+			$this->database = $this->config[3];
+			
+			// Connect to MySQL
+			$db_link = @mysql_connect($this->config[0], $this->config[1], $this->config[2]);
+	
+			// If there is a link
+	    	if ($db_link){
+				mysql_select_db($this->database);
+				$this->connected = true;
+				unset($this->config);
+	    		return true;
+	    	}
+		}
 		
 		return false;
 	}
@@ -104,6 +123,9 @@ class DB {
 				return $this->results;
 			}
 		}
+		
+		// Make sure we are connected
+		$this->DbConnect();
 		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
@@ -147,6 +169,9 @@ class DB {
 		// Use the Global Link
 		global $db_link;
 		global $mySimpl;
+		
+		// Make sure we are connected
+		$this->DbConnect();
 		
 		// Clear the Query Cache
 		$mySimpl->Cache('clear_query');
@@ -203,10 +228,15 @@ class DB {
 	 * @return bool
 	 */
 	function Close(){
-		// Use the Global Link
-		global $db_link;
- 
-    	return @mysql_close($db_link);
+		// If Connected
+ 		if ($this->connected){
+			// Use the Global Link
+			global $db_link;
+ 		
+    		return @mysql_close($db_link);
+ 		}
+ 		
+    	return true;
 	}
 	
 	/**
