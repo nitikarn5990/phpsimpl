@@ -99,18 +99,11 @@ class DB {
    		// Use the Global Link
 		global $db_link;
 		
-		// Change the DB if needed
-		if ($db != '' && $db != $this->database){
-			$old_db = $this->database;
-			$this->Change($db);
-		}
-		
 		if (DEBUG_QUERY === true){
 			echo '<pre class="debug query">QUERY:' . "\n";
 			print_r($query);
 			echo '</pre>';
 		}
-		
 		$is_cache = false;
 		
 		// Check for Query Cache
@@ -126,6 +119,12 @@ class DB {
 		
 		// Make sure we are connected
 		$this->DbConnect();
+		
+		// Change the DB if needed
+		if ($db != '' && $db != $this->database){
+			$old_db = $this->database;
+			$this->Change($db);
+		}
 		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
