@@ -267,20 +267,29 @@ class Form {
 	*/
 	function SetValues($data = array()){
 		Debug($data);
+		
 		// Set all the Data for the Class
-		if (is_array($this->fields))
+		if (is_array($this->fields)){
 			foreach($this->fields as $key=>$field){
-				if ($field->type == 'date' && trim($data[$key]) != ''){
-					$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
-				}else if ($field->type == 'time' && trim($data[$key]) != ''){
-					$this->SetValue($key,date("H:i",strtotime($data[$key])));
-				}else{
-					if (is_array($data[$key]))
-						$this->SetValue($key,implode(',', $data[$key]));
-					else
-						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
+				// Set the Field Values
+				switch($field->type){
+					case 'date':
+						if ($data[$key] != '')
+							$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
+						break;
+					case 'time':
+						if ($data[$key] != '')
+							$this->SetValue($key,date("H:i",strtotime($data[$key])));
+						break;
+					default:
+						if (is_array($data[$key]))
+							$this->SetValue($key,implode(',', $data[$key]));
+						else
+							$this->SetValue($key,$data[$key]);
+						break;
 				}
 			}
+		}
 		
 		return true;
 	}

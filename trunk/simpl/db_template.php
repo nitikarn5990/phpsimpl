@@ -106,84 +106,84 @@ class DbTemplate extends Form {
 		if (is_array($required)) $this->required = $required;	
 		
 		// Check to see if there is a cache yet.
-		if (!is_array($this->fields)){
-			$cache_file = FS_CACHE . 'table_' . $this->table . '.cache.php';
+		$cache_file = FS_CACHE . 'table_' . $this->table . '.cache.php';
+		
+		// Clear the File Stats
+		clearstatcache();
+		
+		// Get the Cache if there is one and it is in timeframe
+		if (USE_CACHE == true && is_file($cache_file) && date ("Ymd", filemtime($cache_file)) >= date ("Ymd")){
+			Debug('Contructor(), Create From Cache');
 			
-			clearstatcache();
-			if (USE_CACHE == true && is_file($cache_file) && date ("Ymd", filemtime($cache_file)) >= date ("Ymd")){
-				Debug('Contructor(), Create From Cache');
-				// Grab the Cache file
-				$cache = file_get_contents($cache_file);
-				// Make the nessisary eval line
-				$cache = '$this->fields = ' . substr($cache,0,-1) . ';';
-				eval($cache);
+			// Grab the Cache file
+			$cache = file_get_contents($cache_file);
+			
+			// Unserialize it
+			$this->fields = unserialize($cache);
+		}else{
+			Debug('Contructor(), Create From Database');
+			
+			// Grab the list of fields from the DB
+			$query = "SELECT * FROM `" . $this->table . "` LIMIT 1";
+			$result = $db->Query($query, $this->database, false);
+			
+			// Get the information about each field
+			while(($field = $db->FetchField($result))){
+				// Get the max length of the field in the DB
+				$field->length = $db->FieldLength($result,count($this->fields));
 				
-				// Unserialize the classes
-				foreach($this->fields as $key=>$field){
-					$this->fields[$key] = unserialize($field);
-					// Define the Primary Key
-					if ($this->fields[$key]->primary_key == 1)
-						$this->primary = $key;
-				}
-			}else{
-				Debug('Contructor(), Create From Database');
-				// Grab the list of fields from the DB
-				$query = "SELECT * FROM `" . $this->table . "` LIMIT 1";
-				$result = $db->Query($query, $this->database, false);
+				// Set the Label of the Key
+				$field->label = ($labels[$field->name] != '')?$labels[$field->name]:'';
+				// Set the Example of the Key
+				$field->example = ($examples[$field->name] != '')?$examples[$field->name]:'';
 				
-				// Get the information about each field
-				while(($field = $db->FetchField($result))){
-					// Get the max length of the field in the DB
-					$field->length = $db->FieldLength($result,count($this->fields));
-					// Set that info into the field class
-					$key = $field->name;
-					// Set the Label of the Key
-					$field->label = ($labels[$key] != '')?urlencode($labels[$key]):'';
-					// Set the Example of the Key
-					$field->example = ($examples[$key] != '')?urlencode($examples[$key]):'';
-					// Add this field to the list of fields
-					$this->fields[$key] = $field;
-					// If this is the Primary Key Save the field name
-					if ($field->primary_key == 1)
-						$this->primary = $key;
-				}
+				// Add this field to the list of fields
+				$this->fields[$field->name] = $field;
+			}
+			
+			// Check to see if cache dir is writeable
+			if (USE_CACHE == true && is_writable(FS_CACHE)){
+				// Serialize the Fields
+				$cache = serialize($this->fields);
 				
-				// Write the Cache
-				if (USE_CACHE == true && is_writable(FS_CACHE)){
-					$contents = arraytostring($this->fields);
-				
-					//Open and Write the File
-					$fp = fopen($cache_file ,"w");
-					fwrite($fp,$contents);
-					fclose($fp);
-					chmod ($cache_file, 0777);
-				}
+				//Open and Write the File
+				$fp = fopen($cache_file ,"w");
+				fwrite($fp,$cache);
+				fclose($fp);
+				chmod ($cache_file, 0777);
 			}
 		}
 		
 		// Set all the Data for the Class
 		if (is_array($this->fields)){
 			foreach($this->fields as $key=>$field){
-				if ($field->type == 'date' && trim($data[$key]) != ''){
-					$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
-				}else if ($field->type == 'time' && trim($data[$key]) != ''){
-					$this->SetValue($key,date("H:i",strtotime($data[$key])));
-				}else{
-					if (is_array($data[$key]))
-						$this->SetValue($key,implode(',', $data[$key]));
-					else
-						$this->SetValue($key,($data[$key] != '')?$data[$key]:'');
+				// Set the Field Values
+				switch($field->type){
+					case 'date':
+						if ($data[$key] != '')
+							$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
+						break;
+					case 'time':
+						if ($data[$key] != '')
+							$this->SetValue($key,date("H:i",strtotime($data[$key])));
+						break;
+					default:
+						if (is_array($data[$key]))
+							$this->SetValue($key,implode(',', $data[$key]));
+						else
+							$this->SetValue($key,$data[$key]);
+						break;
 				}
 				
-				// Decode the Label and Example from the cache
-				$this->Set('label',$key,urldecode($this->Get('label',$key)));
-				$this->Set('example',$key,urldecode($this->Get('example',$key)));
+				// If this is the Primary Key Save the field name
+				if ($field->primary_key == 1)
+					$this->primary = $field->name;
 			}
 		}
-				
+		
 		Debug($this->SimpleFormat());
 		
-		return true;	
+		return true;
 	}
 	
 	/**
@@ -850,7 +850,7 @@ class DbTemplate extends Form {
 				echo '<textarea name="' . $field . '" id="' . $field . '" cols="50" rows="4">' . htmlspecialchars(stripslashes($this->GetValue($field))) . '</textarea><br />' . "\n";
 			}elseif($this->Get('type', $field) == 'date'){
 				// Display the Input Field
-				echo '<input name="' . $field . '" id="' . $field . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($field) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($field)))):'') . '" /><button type="reset" id="' . $field . '_b">...</button>';					
+				echo '<input name="' . $field . '" id="' . $field . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($field) != '0000-00-00')?date("F j, Y",strtotime(stripslashes($this->GetValue($field)))):'') . '" /><button type="reset" id="' . $field . '_b">...</button>';					
 				echo '<script type="text/javascript">Calendar.setup({ inputField : "' . $field . '", ifFormat : "%B %e, %Y", button : "' . $field . '_b"});</script>';
 			}else{
 				// Set the display size, if it is a small field then limit it
