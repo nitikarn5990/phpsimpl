@@ -3,7 +3,7 @@
 define('DEBUG',false);
 define('DEBUG_QUERY',false);
 define('USE_CACHE',true);
-define('QUERY_CACHE',true);
+define('QUERY_CACHE',false);
 define('CLEAR_CACHE',false);
 
 // Where things are sitting
