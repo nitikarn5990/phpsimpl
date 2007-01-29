@@ -1,0 +1,19 @@
+#summary List and uses of the base classes in Simpl frameword
+#labels Phase-Implementation
+
+= Classes =
+
+[Simpl]
+_Used to load classes and clear the cache_
+
+[Field]
+_Used to store each fields structure, value, error, example, and label_
+
+[Form]
+_Used to store multiple fields and set required fields, examples and labels_
+
+[DB]
+_Used to interact with the MySQL database, has a smart insert/update with display_order abilities_
+
+[DbTemplate]
+_Used to abstract the database with the Form, now the database can be fully interactive to the user without any extra code_
