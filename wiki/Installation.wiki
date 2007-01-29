@@ -1,5 +1,5 @@
 #summary Simple Instructions to install Simpl onto a web server.
-#labels Phase-Deploy,Phase-Implementation
+#labels Phase-Deploy,Phase-Implementation,Featured
 
 = Introduction =
 
