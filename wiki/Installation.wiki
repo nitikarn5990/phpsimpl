@@ -1,0 +1,51 @@
+#summary Simple Instructions to install Simpl onto a web server.
+#labels Phase-Deploy,Phase-Implementation
+
+= Introduction =
+
+  # Download the newest version of Simpl from this site.
+  # Copy the "simpl" directory to your web root (ex. /usr/local/www/). _It is not required to install in a web viewable directory_
+  # Define some basic directories for Simpl (see Code 1.0 below)
+  # Include the Simpl class (see Code 1.1 below)
+  # Load the needed classes (see Code 1.2 below)
+  # Connect to the database  (see Code 1.3 below)
+  # Include your application level classes and you are good to go
+
+= Code Examples =
+
+== Code 1.0 ==
+{{{
+// Directories
+// Always Include trailing slash "/" in Direcories
+define('DIR_ABS', '/usr/local/www/');
+define('FS_SIMPL', DIR_ABS . 'simpl/');
+define('FS_CACHE', DIR_ABS . 'mysite/cache/');
+
+// Database Connection Options
+define('DB_USER', '');
+define('DB_HOST', '');
+define('DB_PASS', '');
+define('DB_DEFAULT', '');
+}}}
+
+== Code 1.1 ==
+{{{
+// Simpl Framework
+include_once(FS_SIMPL . 'simpl.php');
+}}}
+
+== Code 1.2 ==
+{{{
+// Load the Simpl classes
+$mySimpl->Load('Form');
+$mySimpl->Load('Db');
+$mySimpl->Load('DbTemplate');
+}}}
+
+== Code 1.3 ==
+{{{
+// Make the DB Connection
+$db = new DB;
+if (!$db->Connect())
+	define('DB_STATUS',false);
+}}}
