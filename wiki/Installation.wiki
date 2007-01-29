@@ -49,3 +49,6 @@ $db = new DB;
 if (!$db->Connect())
 	define('DB_STATUS',false);
 }}}
+
+== Next Step ==
+Read the [BaseClasses] page to get a full understanding of Simpl's abilities.
