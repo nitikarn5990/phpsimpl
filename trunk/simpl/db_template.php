@@ -337,10 +337,10 @@ class DbTemplate extends Form {
 				if ($data->table != '')
 					$infoArray[$key] = $this->GetValue($key);
 		
-		if ($db->DbConnect){
+		if ($db->DbConnect()){
 			Debug('Save(), Database Found');
 			// Check to see if there is any items that were left without a database
-			$orphans = glob(FS_SIMPL . WS_CACHE . "backup_*.php");
+			$orphans = glob(FS_CACHE . "backup_*.php");
 			if (is_array($orphans)){
 				Debug('Save(), Found ' . count($orphans) . ' Orphans');
 				// Create an array to hold them all
@@ -380,13 +380,13 @@ class DbTemplate extends Form {
 			Debug('Save(), Database Down, Saving to File: ' . $filename);
 			
 			//Open and Write the File
-			$fp = fopen(FS_SIMPL . WS_CACHE . $filename ,"w");
+			$fp = fopen(FS_CACHE . $filename ,"w");
 			fwrite($fp,$contents);
 			fclose($fp);
-			chmod (FS_SIMPL . WS_CACHE . $filename, 0777);
+			chmod (FS_CACHE . $filename, 0777);
 			
 			// If the file is written we did all we can do for now
-			if (is_file(FS_SIMPL . WS_CACHE . $filename))
+			if (is_file(FS_CACHE . $filename))
 				return true;
 		}
 		
