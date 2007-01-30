@@ -107,7 +107,7 @@ class DB {
 		$is_cache = false;
 		
 		// Check for Query Cache
-		if ($cache && QUERY_CACHE && strtolower(substr($query,0,6)) == 'select'){
+		if ($cache && QUERY_CACHE && strtolower(substr($query,0,6)) == 'select' && is_writable(FS_CACHE)){
 			$cache_file = FS_CACHE . 'query_' . bin2hex(md5($query, TRUE)) . '.cache.php';
 			$is_cache = true;
 			
