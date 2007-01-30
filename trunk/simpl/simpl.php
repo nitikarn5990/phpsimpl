@@ -19,11 +19,6 @@
 	$mySimpl = new Simpl;
 	
 	// Clear Cache if need be
-	if (CLEAR_CACHE === true){
-		$current_cache = glob(FS_SIMPL . WS_CACHE . '*.cache');
-		if (is_array($current_cache))
-			foreach ($current_cache as $filename)
-				unlink($filename);
-		unset($current_cache);
-	}
+	if (CLEAR_CACHE === true)
+		$mySimpl->Cache('clear');
 ?>
