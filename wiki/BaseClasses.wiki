@@ -1,4 +1,4 @@
-#summary List and uses of the base classes in Simpl frameword
+#summary List and uses of the base classes in Simpl framework
 #labels Phase-Implementation
 
 = Classes =
@@ -17,3 +17,27 @@ _Used to interact with the MySQL database, has a smart insert/update with displa
 
 [DbTemplate]
 _Used to abstract the database with the Form, now the database can be fully interactive to the user without any extra code_
+
+[Mail]
+_Used to send email in plain text or html and has the ability to attach documents_
+
+[Export]
+_Used to export a list of items into various formats_
+
+[FeedCreator]
+_Used to create a feeds of the data in a class, this is the UniversialFeedCreator class found on the web except optimized for filesize and to work with Simpl_
+
+[File]
+_Used to interact with files on the filesystem_
+
+[Folder]
+_Used to interact with folders on the filesystem_
+
+[Image]
+_Used to manipulate images on the server_
+
+[Json]
+_Used to encode and decode Json strings without the need for an external library_
+
+[Upload]
+_Used to upload files to the server_
