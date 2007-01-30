@@ -337,7 +337,7 @@ class DbTemplate extends Form {
 				if ($data->table != '')
 					$infoArray[$key] = $this->GetValue($key);
 		
-		if (DB_STATUS != false){
+		if ($db->DbConnect){
 			Debug('Save(), Database Found');
 			// Check to see if there is any items that were left without a database
 			$orphans = glob(FS_SIMPL . WS_CACHE . "backup_*.php");
@@ -457,18 +457,12 @@ class DbTemplate extends Form {
 							if ((string)$item->GetValue($key2) != ''){
 								Debug('Move(), Filter Item: ' . $key2 . ', Value: ' . $item->GetValue($key2));
 								// Determine how to search in the database
-								if ($this->Get('blob',$key2) == 1)
-									$extra .= " `" . $key2 . "` LIKE '" . $item->GetValue($key2) . "' AND";
-								else		
-									$extra .= " `" . $key2 . "` = '" . $item->GetValue($key2) . "' AND";
+								$extra .= " `" . $key2 . "` " . (($this->Get('blob',$key2) == 1)?'LIKE':'=') . " LIKE '" . $item->GetValue($key2) . "' AND";
 							}
 						}
 					
 					// Add the Move Variable
-					if ($direction == 'up')
-						$extra .= " `" . $key . "` < '" . $this->GetValue($key) . "' AND";
-					else
-						$extra .= " `" . $key . "` > '" . $this->GetValue($key) . "' AND";
+					$extra .= " `" . $key . "` " . (($direction == 'up')?'<':'>') . " '" . $this->GetValue($key) . "' AND";
 					
 					// Format it for MySQL
 					$extra = ($extra != '')?'WHERE ' . substr($extra,0,-4):'';
