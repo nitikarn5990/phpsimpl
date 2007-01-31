@@ -247,6 +247,9 @@ class DB {
 	function Change($database){
 		// Use the Global Link
 		global $db_link;
+		
+		// Make sure we are connected
+		$this->DbConnect();
  		
     	if ($db_link){
 			@mysql_select_db($database);
