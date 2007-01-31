@@ -1,0 +1,40 @@
+#summary API of the Simpl Class
+#labels Phase-Implementation
+
+= Introduction =
+
+The Simpl class is the main class for Simpl framework, its task is to load classes and to clear the various caches globally.
+
+When including Simpl in your web application this is the only class that is loaded. It is used for loading additional classes during runtime.
+
+= Example =
+
+{{{
+// Simpl Framework
+include_once(FS_SIMPL . 'simpl.php');
+
+// Load the Simpl classes
+$mySimpl->Load('Form');
+$mySimpl->Load('Db');
+$mySimpl->Load('DbTemplate');
+}}}
+
+= Functions =
+
+*Simpl*
+{{{
+Simpl() -> NULL
+}}}
+Main Class Constructor
+
+*Load*
+{{{
+Load(classname) -> Boolean
+}}}
+Load a Simpl Class and returns if it was successfully included or not. Include happens just once so Load() can be called multiple times without conflict.
+
+*Cache*
+{{{
+Cache(action) -> Boolean
+}}}
+Use to clear all the cache, or just the table cache or just the query cache. Returns if the cache was successfully cleared.
