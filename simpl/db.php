@@ -363,6 +363,9 @@ class DB {
 	 * @return object
 	 */
 	function Prepare($string) {
+		if (!$this->connected)
+			$this->DbConnect();
+			
 		return (is_numeric($string))?addslashes($string):mysql_real_escape_string($string);
 	}
 }
