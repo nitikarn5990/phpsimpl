@@ -844,7 +844,7 @@ class DbTemplate extends Form {
 				echo '<textarea name="' . $field . '" id="' . $field . '" cols="50" rows="4">' . htmlspecialchars(stripslashes($this->GetValue($field))) . '</textarea><br />' . "\n";
 			}elseif($this->Get('type', $field) == 'date'){
 				// Display the Input Field
-				echo '<input name="' . $field . '" id="' . $field . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($field) != '0000-00-00')?date("F j, Y",strtotime(stripslashes($this->GetValue($field)))):'') . '" /><button type="reset" id="' . $field . '_b">...</button>';					
+				echo '<input name="' . $field . '" id="' . $field . '" type="text" size="18" maxlength="18" value="' . (($this->GetValue($field) != '0000-00-00' && $this->GetValue($field) != '')?date("F j, Y",strtotime(stripslashes($this->GetValue($field)))):'') . '" /><button type="reset" id="' . $field . '_b">...</button>';					
 				echo '<script type="text/javascript">Calendar.setup({ inputField : "' . $field . '", ifFormat : "%B %e, %Y", button : "' . $field . '_b"});</script>';
 			}else{
 				// Set the display size, if it is a small field then limit it
