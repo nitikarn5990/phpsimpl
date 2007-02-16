@@ -149,7 +149,9 @@ class Mail{
 			$this->sendto[] = $to;
 	
 		if($this->checkAddress == true)
-			$this->CheckAdresses($this->sendto);
+			return $this->CheckAdresses($this->sendto);
+			
+		return true;
 	}
 	
 	/**
@@ -351,8 +353,7 @@ class Mail{
 	function CheckAdresses($aad){
 		for($i=0;$i< count($aad); $i++){
 			if(!$this->ValidEmail($aad[$i])){
-				echo "Class Mail, method Mail : invalid address $aad[$i]";	
-				exit;
+				return false;
 			}
 		}
 		
