@@ -287,7 +287,7 @@ class DB {
 	 * @return array
 	 */
 	function FetchArray($result) {
-		if (QUERY_CACHE)
+		if (QUERY_CACHE && is_array($this->results))
 			return array_shift($this->results);
 		else
 			return mysql_fetch_array($result, MYSQL_ASSOC);
@@ -300,7 +300,7 @@ class DB {
 	 * @return int
 	 */
 	function NumRows($result) {
-		if (QUERY_CACHE)
+		if (QUERY_CACHE && is_array($this->results))
 			return count($this->results);
 		else
 			return mysql_num_rows($result);
