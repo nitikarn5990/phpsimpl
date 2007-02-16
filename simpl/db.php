@@ -300,9 +300,9 @@ class DB {
 	 * @return int
 	 */
 	function NumRows($result) {
-		if (QUERY_CACHE && is_array($this->results))
+		if (QUERY_CACHE){
 			return count($this->results);
-		else
+		}else
 			return mysql_num_rows($result);
 	}
 	
