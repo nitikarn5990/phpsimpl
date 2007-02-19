@@ -1,0 +1,22 @@
+#summary API of the Image Class
+#labels Phase-Implementation
+
+= Introduction =
+
+The field class is used to represent one field in a form, from its value to label to validation type. 
+
+= Example =
+_Need Example_
+
+= Functions =
+*Get*
+{{{
+Get(property) -> Mixed
+}}}
+Returns the value of a property associated with the field.
+
+*Set*
+{{{
+Set(property, value) -> Boolean
+}}}
+Set the value for a certain property for a field and returns if it was successful.
