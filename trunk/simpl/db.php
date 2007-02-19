@@ -138,9 +138,9 @@ class DB {
     	// Cache the Query if possible
     	if ($is_cache){
     		// Create the results array
-    		while($info = mysql_fetch_array($result))
+    		while($info = mysql_fetch_array($result, MYSQL_ASSOC))
     			$this->results[] = $info;
-    		
+    			
     		$cache = serialize($this->results);
     		$fp = fopen($cache_file ,"w");
 			fwrite($fp,$cache);
