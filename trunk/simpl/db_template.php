@@ -730,8 +730,12 @@ class DbTemplate extends Form {
 				$info = $db->FetchArray($result);
 				$this->results['count'] = $info['count'];		
 			}else{
-				while ($info = $db->FetchArray($result))
-					$this->results[$info[$this->primary]] = $info;
+				if ($this->primary != '')
+					while ($info = $db->FetchArray($result))
+						$this->results[$info[$this->primary]] = $info;
+				else
+					while ($info = $db->FetchArray($result))
+						$this->results[] = $info;
 			}		
 		}
 		
