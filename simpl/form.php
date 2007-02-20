@@ -118,7 +118,7 @@ class Form {
 			while ( list($key,$data) = each($this->required) ){
 				switch ($data){
 					case 'email':
-						if ( isset($this->fields[$data]->value) && !ereg("^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,4}$", $this->fields[$data]->value) )
+						if (isset($this->fields[$data]->value) && !eregi("^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $this->fields[$data]->value))
 							$this->error[$data] = 'The Email address you entered is not valid (username@domain.com), Please try again.';
 						break;
 					case 'wsu_phone':
