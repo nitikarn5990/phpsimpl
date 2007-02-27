@@ -766,6 +766,31 @@ class DbTemplate extends Form {
 	}
 	
 	/**
+	 * Display the results in various formats
+	 * 
+	 * @param $type string
+	 * @return mixed
+	 */
+	public function Results($type='array'){
+		switch($type){
+			case 'json':
+				// Create the JSON class
+				$json = new Json();
+
+				// Encode the Results
+				return $json->encode($this->results);
+				break;
+			case 'array':
+			default:
+				// Return the raw results
+				return $this->results;
+				break;
+		}
+		
+		return 0;
+	}
+	
+	/**
 	 * Join this table with another
 	 * 
 	 * @param $join_class A DbTemplate class to join with
