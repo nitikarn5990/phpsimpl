@@ -137,6 +137,9 @@ class DB {
     		
     	// Cache the Query if possible
     	if ($is_cache){
+    		// Clear the array
+    		$this->results = array();
+    		
     		// Create the results array
     		while($info = mysql_fetch_array($result, MYSQL_ASSOC))
     			$this->results[] = $info;
@@ -336,6 +339,15 @@ class DB {
 	}
 	
 	/**
+	 * Get the rows affected
+	 * 
+	 * @return int
+	 */
+	function RowsAffected(){
+		return mysql_affected_rows();
+	}
+	
+	/**
 	 * Get the Field Length
 	 * 
 	 * @param $result The result that was returned from the database
@@ -353,7 +365,7 @@ class DB {
 	 * @return object
 	 */
 	function Output($string) {
-		return htmlspecialchars($string);
+		return htmlspecialchars(stripslashes($string));
 	}
 
 	/**

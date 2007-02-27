@@ -1,11 +1,20 @@
 <?php
 /**
-* Display an array of alerts with a div class
-*
-* @param $alerts An Array with the alerts
-* @param $type A string with the type of alert, usually ("error","success")
-* @return NULL
-*/
+ * Autoload classes (no need to include them one by one)
+ *
+ * @param $className string
+ */
+function __autoload($className){
+	include_once(FS_SIMPL . strtolower($className) . '.php');
+}
+
+/**
+ * Display an array of alerts with a div class
+ *
+ * @param $alerts An Array with the alerts
+ * @param $type A string with the type of alert, usually ("error","success")
+ * @return NULL
+ */
 if (!function_exists('Alert')){
 	function Alert($alerts, $type=''){
 		// Decide what class to display
@@ -32,7 +41,11 @@ if (!function_exists('Alert')){
 if (!function_exists('SetAlert')){
 	function SetAlert($alert,$type='error'){
 		// Set the Alert into the correct session type
-		$_SESSION[$type][] = $alert;
+		if (is_array($alert))
+			foreach($alert as $value)
+				$_SESSION[$type][] = $value;
+		else
+			$_SESSION[$type][] = $alert;
 		
 		return true;
 	}
@@ -70,11 +83,11 @@ if (!function_exists('GetAlert')){
 }
 
 /**
-* Display text or an array in HTML <pre> tags
-*
-* @param $text A mixed set, anything with a predefined format
-* @return null
-*/
+ * Display text or an array in HTML <pre> tags
+ *
+ * @param $text A mixed set, anything with a predefined format
+ * @return null
+ */
 if (!function_exists('Pre')){
 	function Pre($text){
 		echo '<pre>';
@@ -84,66 +97,11 @@ if (!function_exists('Pre')){
 }
 
 /**
-* Make an array into a string
-*
-* @param $array An array or class that needs to be formatted to a string
-* @return string
-*/
-if (!function_exists('arraytostring')){
-	function arraytostring($array){
-		// Start the output
-		$text.="array(";
-		// Get the numver of array items
-		$count=count($array);
-		$x=0;
-		// Loop through each item
-		foreach ($array as $key=>$value){
-			$x++;
-			// If there is an array within the array recursive it.
-			if (is_array($value)) {$text.="\"" . $key . "\"=>".arraytostring($value); continue;}
-			if (is_object($value)){$text.="\"" . $key . "\"=>'".serialize($value) . "',\n"; continue;}
-			// Add more the output
-			$text.="\"$key\"=>\"" . urlencode($value) . "\"";
-			if ($count!=$x) $text.=",";
-		}
-		// End this complete array
-		$text.="),";
-		// Return the final result
-		return $text;
-	}
-}
-
-/**
-* Make a string into an array
-*
-* @param $string A string that needs to be formatted to an array
-* @return array
-*/
-if (!function_exists('stringtoarray')){
-	function stringtoarray($string){
-		// Always Return an array
-		$files = array();
-		
-		// If the string is NULL return empty array
-		if (trim($string) != ''){
-			// Format the String to an array
-			$data = '$files = ' . substr(trim($string),0,-1) . ';';
-			
-			// Evaluate the Array
-			eval($data);
-		}
-		
-		// Return the files array
-		return $files;
-	}
-}
-
-/**
-* Display Debug Information if set
-*
-* @param $output A mixed variable that needs to be outputted with predefined formatting
-* @return NULL
-*/
+ * Display Debug Information if set
+ *
+ * @param $output A mixed variable that needs to be outputted with predefined formatting
+ * @return NULL
+ */
 if (!function_exists('Debug')){
 	function Debug($output){
 		if (DEBUG === true){

@@ -10,11 +10,11 @@ class Folder {
 	/**
 	* @var string 
 	*/
-	var $directory;
+	protected $directory;
 	/**
 	* @var string 
 	*/
-	var $folder_name;
+	protected $folder_name;
 	
 	/**
 	 * Folder Constructor
@@ -23,7 +23,7 @@ class Folder {
 	 * @param $directory	The directory where the file is sitting
 	 * @return 				NULL
 	 */
-	function Folder($folder_name, $directory=''){
+	public function Folder($folder_name, $directory=''){
 		Debug('Constructor(), Initializing values');
 		$this->folder_name = $folder_name . ((substr($folder_name,-1) != '/')?'/':'');
 		
@@ -40,7 +40,7 @@ class Folder {
 	 * @param $new_directory string the directory to which we are moving the folder
 	 * @return bool
 	 */  
-	function Move($new_directory){
+	public function Move($new_directory){
 		// If the new directory exists and is writable
 		if (is_dir($new_directory) && (is_writable($new_directory))){
 			// If no folder with the same name exists in the new directory
@@ -67,7 +67,7 @@ class Folder {
 	 * @param NULL
 	 * @return bool
 	 */
-	function IsWritable(){
+	public function IsWritable(){
 		// If the folder exists
 		if (is_dir($this->directory . $this->folder_name)){
 			// Check if it is writable
@@ -84,7 +84,7 @@ class Folder {
 	 * 
 	 * @return bool
 	 */
-	function Format(){
+	public function Format(){
 		// Remove the ending slash
 		$folder_name = (substr($this->folder_name,-1) == '/')?substr($this->folder_name,0,-1):$this->folder_name;
 			
@@ -111,7 +111,7 @@ class Folder {
 	 * @param NULL
 	 * @return bool
 	 */
-	function MakeWritable(){
+	public function MakeWritable(){
 		// If the folder exists
 		if (@is_dir($this->directory . $this->folder_name)){
 			// If it is already writable return true
@@ -170,7 +170,7 @@ class Folder {
 	 * @param @force bool if the parameter is true the function deletes all the subfiles of the folder also
 	 * @return bool;
 	 */
-	function Delete($force=false){
+	public function Delete($force=false){
 		if ($force == false){
 			//delete the directory
 			if (@rmdir($this->directory . $this->folder_name)){
@@ -195,7 +195,7 @@ class Folder {
 	 * @param NULL
 	 * @return array of the sub-folders and sub-files
 	 */
-	function DirList(){
+	public function DirList(){
 		$files = scandir($this->directory . $this->folder_name);
 		if (is_array($files)){
 			foreach($files as $pos => $file){
@@ -214,7 +214,7 @@ class Folder {
 	 * @param $new_folder string name of the new folder
 	 * @return bool
 	 */
-	function Rename($new_folder){
+	public function Rename($new_folder){
 		// If the folder exists
 		if (is_dir($this->directory . $this->folder_name)){
 			// If folder with the new name doesnt already exist
@@ -240,7 +240,7 @@ class Folder {
 	 * @param NULL
 	 * @return bool 
 	 */
-	function Exists(){
+	public function Exists(){
 		// If the folder exists
 		Debug('Exists(), Checking if the folder ' . $this->folder_name . ' exists in the directory ' . $this->directory);
 		if (@is_dir($this->directory . $this->folder_name)) 
@@ -257,7 +257,7 @@ class Folder {
 	 * @param NULL
 	 * @return bool
 	 */
-	function Create(){
+	public function Create(){
 		// If the folder exists make it writable 
 		if (@is_dir($this->directory . $this->folder_name)){
 			Debug('Create(), The folder ' . $this->folder_name . ' already exists in the directory ' .$this->directory);

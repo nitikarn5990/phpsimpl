@@ -1,431 +1,371 @@
-<?php
+<?php 
 /**
-* Base Field Class
-*
-* Used to create individual fields on a form
-*
-* @author Nick DeNardis <nick.denardis@gmail.com>
-*/
-class Field {
-	/**
-	* @var string 
-	*/
-	var $name;
-	/**
-	* @var int 
-	*/
-	var $max_length;
-	/**
-	* @var int 
-	*/
-	var $numeric;
-	/**
-	* @var int 
-	*/
-	var $blob;
-	/**
-	* @var string 
-	*/
-	var $type;
-	/**
-	* @var int 
-	*/
-	var $length;
-	/**
-	* @var string 
-	*/
-	var $label;
-	/**
-	* @var string 
-	*/
-	var $example;
-	/**
-	* @var various 
-	*/
-	var $value;
-	/**
-	* @var string 
-	*/
-	var $error;
-	
-	/**
-	 * Field Constructor
-	 * 
-	 * @param $data An Array of all the field properties and values
-	 */
-	function Field($data){
-		// Make sure the data for the form fields is in an array
-		if (is_array($data)){
-			// Loop through all the fields
-			foreach($data as $key=>$data){
-				// Setup the form fields
-				$this->$key = $data;
-			}
-			
-			return true;
-		}
-		
-		return false;
-	}
-}
-
-/**
-* Base Class for Forms
-*
-* @author Nick DeNardis <nick.denardis@gmail.com>
-*/
+ * Base Form Class
+ * 
+ * Used to create xhtml and validate forms
+ *
+ * @author Nick DeNardis <nick.denardis@gmail.com>
+ */
 class Form {
 	/**
-	* @var array 
-	*/
-	var $required;
+	 * @var array 
+	 */
+	protected $fields = array();	
+
 	/**
-	* @var array 
-	*/
-	var $error;
-	/**
-	* @var array 
-	*/
-	var $fields;
-	
-	/**
-	* Class Constructor
-	*
-	* Creates a Form Class with all the information to use the Form functions
-	*
-	* @param $data An Array of all the values for the fields
-	* @param $required An Array of all the required keys for the form
-	* @param $labels An Array of all the custom labels for the form
-	* @param $examples An Array of all the exmples for each form element
-	* @return bool
-	*/
-	function Form($data, $required=array(), $labels=array(), $examples=array()){
-		// Create the Combined Array
-		$this->fields = array();
-		foreach($data as $key=>$item){
-			$fields[$key]->value = $item;
+	 * Class Constructor
+	 *
+	 * Creates a Form Class with all the information to use the Form functions
+	 *
+	 * @param $data An Array of all the values for the fields
+	 * @param $required An Array of all the required keys for the form
+	 * @param $labels An Array of all the custom labels for the form
+	 * @param $examples An Array of all the exmples for each form element
+	 * @return bool
+	 */
+	public function __construct($data, $required=array(), $labels=array(), $examples=array()){
+		// Loop through all the data
+		foreach ($data as $key=>$data){
+			// Set all the field info
+			$tmpField = new Field;
+			$tmpField->Set('name', $key);
+			$tmpField->Set('value', $data);
+			$tmpField->Set('required', $required[$key]);
+			$tmpField->Set('label', $labels[$key]);
+			$tmpField->Set('example', $examples[$key]);
 			
+			// Add the field to the list
+			$this->fields[$key] = $tmpField;
 		}
 	}
-	
+
 	/**
-	* Check the Data from the class
-	*
-	* @return array
-	*/
-	function CheckRequired(){
-		if (is_array($this->required)){
-			while ( list($key,$data) = each($this->required) ){
-				switch ($data){
-					case 'email':
-						if (isset($this->fields[$data]->value) && !eregi("^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $this->fields[$data]->value))
-							$this->error[$data] = 'The Email address you entered is not valid (username@domain.com), Please try again.';
-						break;
-					case 'wsu_phone':
-						if ( isset($this->fields[$data]->value) && !ereg("^[0-9]+-[0-9]{4}$", $this->fields[$data]->value) )
-							$this->error[$data] = 'The Phone number you entered is not valid (7-1234), Please try again.';
-						break;
-					case 'phone':
-						if( isset($this->fields[$data]->value) && !ereg("^[0-9]{3}-[0-9]{3}-[0-9]{4}$", $this->fields[$data]->value) )
-							$this->error[$data] = 'The Phone number you entered is not valid (123-456-1234), Please try again.';
-						break;
-					default:
-						if (!isset($this->fields[$data]->value) || (string)$this->fields[$data]->value == '')
-							$this->error[$data] = 'The ' . (($this->fields[$data]->label == '')?ucfirst(str_replace('_', ' ' , $data)):$this->fields[$data]->label) . ' field is required, Please try again.';
-						break;
-				}
-			}
+	 * Validate the Form
+	 *
+	 * @return bool
+	 */
+	public function Validate(){
+		$valid = true;
+
+		// Loop through the fields
+		foreach ($this->fields as $name=>$field){
+			// Validate the Field
+			if (!$field->Validate() && $valid)
+				$valid = false;
 		}
+
+		return $valid;
+	}
+
+	/**
+	 * Check the Data from the class
+	 *
+	 * @return array
+	 */
+	public function CheckRequired(){
+		// Validate the Form
+		$this->Validate();
+
+		// Return the error
+		return $this->GetErrors();
+	}
+
+	/**
+	 * Get Field Property
+	 *
+	 * @param $property string
+	 * @param $field string
+	 * @return mixed
+	 */
+	public function Get($property, $field){
+		// Return the field property
+		return $this->fields[$field]->Get($property);
+	}
+
+	/**
+	 * Set Field Property
+	 *
+	 * Set a specific property about a field
+	 *
+	 * @param $property string
+	 * @param $field string
+	 * @param $value mixed
+	 * @return bool
+	 */
+	public function Set($property, $field, $value){
+		// Set the fields property
+		return $this->fields[$field]->Set($property, $value);
+	}
+
+	/**
+	 * Get Value
+	 *
+	 * @param $field string
+	 * @return mixed
+	 */
+	public function GetValue($field){
+		// Get the value of the field
+		return $this->Get('value', $field);
+	}
+
+	/**
+	 * Set Value
+	 *
+	 * @param $field string
+	 * @param $value mixed
+	 * @return bool
+	 */
+	public function SetValue($field, $value){
+		// Set the value of the field
+		return $this->Set('value', $field, $value);
+	}
+
+	/**
+	 * Get Error
+	 *
+	 * @param $field string
+	 * @return mixed
+	 */
+	public function GetError($field){
+		// Get the error of the field
+		return $this->Get('error', $field);
+	}
+
+	/**
+	 * Set Error
+	 *
+	 * @param $field string
+	 * @param $value mixed
+	 * @return bool
+	 */
+	public function SetError($field, $value){
+		// Set the error of the field
+		$str = (is_array($value))?implode('<br />', $value):$value;
 		
-		return $this->error;
+		return $this->Set('error', $field, $str);
 	}
-	
+
 	/**
-	* Get Field Property
-	*
-	* Get a specific property about a field
-	*
-	* @param $property string, $field string
-	* @return bool
-	*/
-	function Get($property,$field){
-		// Make sure there is fields and return the value
-		if (is_array($this->fields))
-			return $this->fields[trim($field)]->$property;
+	 * Get Fields
+	 *
+	 * Get a list of all the fields in the database
+	 *
+	 * @return array
+	 */
+	public function GetFields(){
+		return array_keys($this->fields);
 	}
-	
+
 	/**
-	* Set Field Property
-	*
-	* Set a specific property about a field
-	*
-	* @param $property string, $field string, $value mixed
-	* @return bool
-	*/
-	function Set($property,$field,$value){
-		// Make sure there is fields
-		if (is_array($this->fields)){
-			$this->fields[trim($field)]->$property = $value;
-			return true;
-		}
-		
-		return false;
+	 * Is Field
+	 *
+	 * Check to see if a field exists
+	 *
+	 * @param $field string of the field
+	 * @return bool
+	 */
+	public function IsField($field){
+		return (is_object($this->fields[$field]));
 	}
-	
+
 	/**
-	* Get Value
-	*
-	* Get the value of a field
-	*
-	* @return MIXED
-	*/
-	function GetValue($field){
-		// Make sure there is fields and return the value
-		if (is_array($this->fields))
-			return $this->fields[trim($field)]->value;
-	}
-	
-	/**
-	* Set Value
-	*
-	* Set the value of a field
-	*
-	* @return BOOL
-	*/
-	function SetValue($field,$value){
-		// Make sure there is fields
-		if (is_array($this->fields)){
-			$this->fields[trim($field)]->value = $value;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/**
-	* Get Error
-	*
-	* Get the error of a field
-	*
-	* @return MIXED
-	*/
-	function GetError($field){
-		// Make sure there is fields and return the value
-		if (is_string($this->error[$field]))
-			return $this->error[$field];
-		// There is no error set for this field
-		return NULL;
-	}
-	
-	/**
-	* Set Error
-	*
-	* Set the error of a field
-	*
-	* @return BOOL
-	*/
-	function SetError($field,$value){
-		// Make sure there is fields
-		if ($value != ''){
-			$this->error[$field] = $value;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/**
-	* Get Fields
-	*
-	* Get a list of all the fields in the database
-	*
-	* @return array
-	*/
-	function GetFields(){
-		// Make sure there is fields and return the value
-		if (is_array($this->fields)){
-			$list = array();
-			foreach($this->fields as $key=>$data)
-				$list[] = $data->name;
-			return $list;
-		}
-		
-		return 0;
-	}
-	
-	function IsField($field){
-		return (is_object($this->fields[trim($field)]));
-	}
-	
-	/**
-	* Set Values
-	*
-	* Set all the Values of a Class
-	*
-	* @param $data An associtive array with all the keys and values for the object
-	* @return bool
-	*/
-	function SetValues($data = array()){
+	 * Set Values
+	 *
+	 * Set all the Values of a Class
+	 *
+	 * @param $data An associtive array with all the keys and values for the object
+	 * @return bool
+	 */
+	public function SetValues($data){
 		Debug($data);
-		
-		// Set all the Data for the Class
-		if (is_array($this->fields)){
-			foreach($this->fields as $key=>$field){
-				// Set the Field Values
-				switch($field->type){
-					case 'date':
-						if ($data[$key] != '')
-							$this->SetValue($key,date("Y-m-d",strtotime($data[$key])));
-						break;
-					case 'time':
-						if ($data[$key] != '')
-							$this->SetValue($key,date("H:i",strtotime($data[$key])));
-						break;
-					default:
-						if (is_array($data[$key]))
-							$this->SetValue($key,implode(',', $data[$key]));
-						else
-							$this->SetValue($key,$data[$key]);
-						break;
-				}
+
+		// Loop through all the values
+		foreach($this->fields as $name=>$field){
+			// Set the Field Values
+			switch($field->Get('type')){
+				case 'date':
+					if ($data[$name] != '')
+						$this->Set('value', $name, date("Y-m-d",strtotime($data[$name])));
+					break;
+				case 'time':
+					if ($data[$name] != '')
+						$this->Set('value', $name, date("H:i",strtotime($data[$name])));
+					break;
+				default:
+					if (is_array($data[$name]))
+						$this->Set('value', $name, implode(',', $data[$name]));
+					else
+						$this->Set('value', $name, $data[$name]);
+					break;
 			}
 		}
 		
 		return true;
 	}
-	
+
 	/**
-	* Reset Values
-	*
-	* Reset all the Values of a Class
-	*
-	* @return bool
-	*/
-	function ResetValues(){
-		// Reset all the Data for the Class
-		if (is_array($this->fields))
-			foreach($this->fields as $key=>$field){
-				$this->SetValue($key,'');
-				$this->SetError($key,'');
-			}
-		// Reset List and search
-		$this->results = array();
-		$this->search = '';
-		
+	 * Reset Values
+	 *
+	 * Reset all the Values of a Class
+	 *
+	 * @return bool
+	 */
+	public function ResetValues(){
+		// Loop through all the fields
+		foreach($this->fields as $name=>$field){
+			$this->Set('value', $name, '');
+			$this->Set('error', $name, '');
+		}
+
 		return true;
 	}
-	
+
 	/**
-	* Get Values
-	*
-	* Get a list of all the fields and values in the class
-	*
-	* @return array
-	*/
-	function GetValues(){
-		// Make sure there is fields and return the value
-		if (is_array($this->fields)){
-			$list = array();
-			foreach($this->fields as $key=>$data)
-				$list[$key] = $data->value;
-			return $list;
-		}
+	 * Get Values
+	 *
+	 * Get a list of all the fields and values in the class
+	 *
+	 * @return array
+	 */
+	public function GetValues(){
+		$data = array();
 		
-		return 0;
+		// Loop through all the fields
+		foreach($this->fields as $name=>$field)
+			$data[$name] = $field->Get('value');
+
+		return $data;
 	}
-	
+
+	/**
+	 * Get Required
+	 *
+	 * Get a list of all the required fields in the class
+	 *
+	 * @return array
+	 */
+	public function GetRequired(){
+		$data = array();
+		
+		// Loop through all the fields
+		foreach($this->fields as $name=>$field)
+			if ($field->Get('required') == true)
+				$data[] = $name;
+
+		return $data;
+	}
+
+	/**
+	 * Get Errors
+	 *
+	 * Get a list of all the errors in the class
+	 *
+	 * @return array
+	 */
+	public function GetErrors(){
+		$data = array();
+		
+		// Loop through all the fields
+		foreach($this->fields as $name=>$field)
+			if ($field->Get('error') != '')
+				$data[$name] = $field->Get('error');
+
+		return $data;
+	}
+
 	/**
 	 * Simple Format
+	 *
 	 * Formats $this is a easy to read compact way to be used for Debug
 	 * 
 	 * @return string
 	 */
-	function SimpleFormat(){
+	public function SimpleFormat(){
 		// Start the Output
 		$output = '';
+		$required = $this->GetRequired();
+		$errors = $this->GetErrors();
+		$fields = $this->GetFields();
 		
 		// Format a nice Summary
 		$output .= '<strong>Name:</strong>' . "\t" . get_class($this) . ' ' . "\t" . '<strong>Parent:</strong>' . "\t" . get_parent_class($this) . '' . "\n";
-		$output .= '<strong>Table:</strong>' . "\t" . $this->table . ' ' . "\t" . '<strong>Primary Key:</strong>' . "\t" . $this->primary . ' ' . "\t" . '<strong>Database:</strong>' . "\t" . $this->database . "\n";
-		$output .= '<strong>Required:</strong>' . "\n\t" . ((is_array($this->required))?implode(', ',$this->required):'No Required Fields') . "\n";
+		$output .= '<strong>Required:</strong>' . "\n\t" . ((is_array($required))?implode(', ',$required):'No Required Fields') . "\n";
 		$output .= '<strong>Errors:</strong>' . "\n";
-		if (is_array($this->error))
-			foreach($this->error as $key=>$data)
-				$output .= "\t" . $key . ' => ' . $data . "\n";
+		if (count($errors) > 0)
+			foreach($errors as $name=>$error)
+				$output .= "\t" . $name . ' => ' . $error . "\n";
 		else
 			$output .= "\t" . 'No Errors' . "\n";
 		$output .= '<strong>Fields:</strong>' . "\n";
-		if (is_array($this->fields))
-			foreach($this->fields as $key=>$data)
-				$output .= "\t" . $key . ' => ' . $data->value . (($data->error != '')?' <strong>:</strong> ' . $data->error:'') . "\n";
+		if (count($fields) > 0)
+			foreach($fields as $name=>$field)
+				$output .= "\t" . $name . ' => ' . $field->Get('value') . (($errors[$name] != '')?' <strong>:</strong> ' . $errors[$name]:'') . "\n";
 		else
 			$output .= "\t" . 'No Fields' . "\n";
 		
 		return $output;
 	}
 	
-	function DisplayForm($display='', $hidden=array(), $options=array(), $config=array()){ 
+	/**
+	 * Display Form
+	 * 
+	 * @param $display array
+	 * @param $hidden array
+	 * @param $options array
+	 * @param $config array
+	 * @param $omit array
+	 * @return string
+	 */
+	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){ 
+		// Make sure things are arrays if required
+		if(!is_array($omit))
+			$omit = array($omit);
+		
 		// Rearrange the Fields if there is a custom display
 		$show = array();
 		if(is_array($display)){
 			// If there is a custome Display make the array
 			foreach($display as $key=>$data)
-				$show[$data] = ($this->fields[$data]->label != '')?$this->fields[$data]->label:ucfirst(str_replace('_',' ',$data));
-			
+				$show[] = $data;
+				
 			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
-			if (is_array($this->fields))
-				foreach($this->fields as $key=>$data)
-					if (!array_key_exists($key,$show) && !in_array($key,$hidden))
-						$hidden[] = $key;
+			foreach($this->fields as $key=>$data)
+				if (!in_array($key,$show) && !in_array($key,$hidden) && !in_array($key,$omit)){
+					if ($this->GetError($key) != '')
+						Alert($this->GetError($key));
+					$hidden[] = $key;
+				}
 		}else{
 			// If there is fields in the db table make the show array
-			if (is_array($this->fields))
-				foreach($this->fields as $key=>$data){
-					if (!in_array($key,$hidden))
-						$show[$key] = ($data->label != '')?$data->label:ucfirst(str_replace('_',' ',$key));
-				}
+			foreach($this->fields as $key=>$data)
+				if (!in_array($key,$hidden) && !in_array($key,$omit))
+					$show[] = $key;
 		}
 		
-		// Start the Fieldset
+		// Start the fieldset
 		echo '<fieldset><legend>Information</legend>' . "\n";
 		
-		// Show all the Visible Fields
-		foreach($show as $key=>$field){
-			// If the field is not in the hidden array
-			if (!in_array($key,$hidden)){
-				// Create the Field Div with the example, label and error if need be
-				echo '<div>' . (($this->fields[$key]->example != '')?'<div class="example"><p>' . stripslashes($this->fields[$key]->example) . '</p></div>':'') . '<label for="' . $key . '">' . ((in_array($key,$this->required))?'<em>*</em>':'') . $field . ':</label>' . (($this->error[$key] != '')?'<div class="error">':'');
-				
-				// If there is specialty options
-				if ($options[$key] != ''){
-					// Start the Select Box
-					echo '<select name="' . $key . '" id="' . $key . '">' . "\n";
-					// Loop though each option
-					foreach($options[$key] as $opt_key=>$opt_value){
-						echo "\t" . '<option value="' . $opt_key . '"' . (($this->fields[$key]->value == $opt_key)?' selected="selected"':'') . '>' . stripslashes($opt_value) . '</option>' . "\n";
-					}
-					// End the Select Box
-					echo '</select><br />' . "\n";
-				}elseif($this->fields[$key]->type == 'blob'){
-					// If it is a blob or text in the DB then make it a text area
-					echo '<textarea name="' . $key . '" id="' . $key . '" cols="50" rows="4">' . stripslashes($this->fields[$key]->value) . '</textarea><br />' . "\n";
-				}else{
-					// Set the display size, if it is a small field then limit it
-					$size = ($this->fields[$key]->length <= 30)?$this->fields[$key]->length:30;
-					// Display the Input Field
-					echo '<input name="' . $key . '" id="' . $key . '" type="' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'password')?$config[$key]:'text') . '"' . ((is_string($config[$key]) && trim(strtolower($config[$key])) == 'readonly')?' readonly="readonly"':'') . ' size="' . $size . '" maxlength="64" value="' . stripslashes($this->GetValue($key)) . '" />';
-				}
-				// If there is an error show it and end the field div
-				echo (($this->error[$key] != '')?'<p>' . stripslashes($this->error[$key]) . '</p></div>':'') . '</div>' . "\n";
-			}
-		}
+		// Show the fields
+		foreach($show as $field)
+			if (!in_array($field, $omit))
+				$this->fields[$field]->Form($options[$field], $config[$field]);
 		
-		// Make all the Hidden Fields
+		// Show the hidden
 		foreach($hidden as $field)
-			echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->value) . '" />' . "\n";
+			echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
 		
-		// End the Fieldset
+		// End the fieldset
 		echo '</fieldset>' . "\n";
+	}
+	
+	/**
+	 * Format output
+	 *
+	 * @param $string string
+	 * @return string
+	 */
+	protected function Output($string){
+		return htmlspecialchars(stripslashes($string));
 	}
 }
 ?>
