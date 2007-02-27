@@ -172,7 +172,7 @@ class Field {
 					break;
 				default:
 					// Custom Form
-					$output .= $options->Form($config='');
+					$output .= $options->Form($this, $config='');
 					break;
 			}
 		}else if (is_array($options)){
