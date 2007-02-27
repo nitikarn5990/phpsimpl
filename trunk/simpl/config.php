@@ -1,12 +1,12 @@
 <?php
-// Always Include trailing slash "/" in Direcories
+// Main Config
 define('DEBUG',false);
 define('DEBUG_QUERY',false);
 define('USE_CACHE',true);
 define('QUERY_CACHE',false);
-define('CLEAR_CACHE',false);
 
 // Where things are sitting
+// Always Include trailing slash "/" in Direcories
 define('DIR_ABS','./');
 define('WS_SIMPL','simpl/');
 define('WS_SIMPL_IMAGE','img/');

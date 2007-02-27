@@ -10,7 +10,7 @@ class File extends Folder {
 	/**
 	* @var string 
 	*/
-	var $filename;
+	public $filename;
 	
 	/**
 	 * File Constructor
@@ -19,7 +19,7 @@ class File extends Folder {
 	 * @param $direcotry	The directory where the file is sitting
 	 * @return 				NULL
 	 */
-	function File($filename,$directory=''){
+	public function File($filename,$directory=''){
 		Debug('Constructor(), Intitializing values');
 		// Set the Local variables
 		$this->filename = $filename;
@@ -39,7 +39,7 @@ class File extends Folder {
 	 * @param $new_directory string the directory to which we are moving the file
 	 * @return bool
 	 */  
-	function Move($new_directory) {
+	public function Move($new_directory) {
 		//if the file exists in the directory
 		if(is_file($this->directory . $this->filename)) {
 			//if a file with the same name does not exist in the new directory
@@ -69,7 +69,7 @@ class File extends Folder {
 	 * @param $new_directory string the directory to which we a re moving the file
 	 * @return bool
 	 */
-	function Copy($new_directory) {
+	public function Copy($new_directory) {
 		//if the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
 			//if a file with the same name doesnot exist in the new directory
@@ -94,7 +94,7 @@ class File extends Folder {
 	 * @param $new_filename string the name to which we want to rename the file
 	 * @result bool
 	 */
-	function Rename($new_filename) {
+	public function Rename($new_filename) {
 		//if the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
 			//copy the filename into the variable
@@ -117,7 +117,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @return bool
 	 */
-	function IsWritable() {
+	public function IsWritable() {
 		//if the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
 			//if the file is writable
@@ -135,7 +135,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @result bool
 	 */
-	function MakeWritable() {
+	public function MakeWritable() {
 		if(is_file($this->directory . $this->filename)) {
 			//if the file is writable return true
 			if(is_writable($this->directory . $this->filename)) {
@@ -158,7 +158,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @return string extension of the file
 	 */
-	function GetExtension() {
+	public function GetExtension() {
 		if(is_file($this->directory . $this->filename)) {
 			//get position of the last dot in the filename
 			$pos = strrpos($this->directory . $this->filename, '.');
@@ -175,7 +175,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @result bool
 	 */
-	function Delete() {
+	public function Delete() {
 		if(is_file($this->directory . $this->filename)) {
 			//delete the file
 			Debug('Delete(), Deleting file ' . $this->directory . $this->filename);
@@ -194,7 +194,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @result bool
 	 */
-	function LastModified() {
+	public function LastModified() {
 		// Make sure the file exists
 		if(is_file($this->directory . $this->filename)) {
 			Debug('LastModified(), Last modified time of file ' . $this->directory . $this->filename);
@@ -210,7 +210,7 @@ class File extends Folder {
 	 * @return bool
 	 * 
 	 */
-	function Exists() {
+	public function Exists() {
 		// If the file exists in the current directory
 		if(is_file($this->directory . $this->filename)) {
 			Debug('Esixts(), The file ' . $this->directory . $this->filename . ' exists.');
@@ -225,7 +225,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @return bool
 	 */
-	function GetContents() {
+	public function GetContents() {
 		// If the file exists in the directory
 		if(is_file($this->directory . $this->filename)) {
 			// Return contents of the file in a string
@@ -241,7 +241,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @return bool 
 	 */
-	function FormatFilename() {
+	public function FormatFilename() {
 		// Rip it apart
 		$pieces = explode('.', $this->filename);
 		$fext  = array_pop($pieces);
@@ -276,7 +276,7 @@ class File extends Folder {
 	 * @param NULL
 	 * @return int size of file in bytes
 	 */
-	function Filesize() {
+	public function Filesize() {
 		//if the file exists in the directory
 		if(is_file($this->directory . $this->filename)) {
 			//return the size in number of bytes
