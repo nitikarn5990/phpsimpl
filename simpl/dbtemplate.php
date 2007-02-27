@@ -591,7 +591,8 @@ class DbTemplate extends Form {
 		
 		// Show the hidden
 		foreach($hidden as $field)
-			echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
+			if (is_object($this->fields[$field]))
+				echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
 		
 		// End the fieldset
 		echo '</fieldset>' . "\n";
