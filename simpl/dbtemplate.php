@@ -357,7 +357,7 @@ class DbTemplate extends Form {
 		// Get the order
 		if(is_array($order_by)){
 			foreach($order_by as $key=>$field)
-				$order .= '`' . $this->table . '`.' . $field . ((is_array($sort) && $sort[$key] != '')?$sort[$key] . ', ':', ');
+				$order .= '`' . $this->table . '`.' . $field . ((is_array($sort) && $sort[$key] != '')?' ' . $sort[$key] . ', ':', ');
 		}else{
 			$order = ($order_by != '')?'`' . $this->table . '`.' . $order_by . ', ':'';
 		}
