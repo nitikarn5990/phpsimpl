@@ -164,7 +164,7 @@ class Field {
 				case 'Upload':
 					// If there is something in the field
 					if ($this->Get('value') != ''){
-						$output .=  '<div id="form_' . $this->Get('name') . '">' . $this->Get('value') . '</div>';
+						$output .=  '<div id="form_' . $this->Get('name') . '">' . $this->Get('value') . ' <input name="remove[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . '" /> Remove File</div>';
 						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="hidden" value="' . $this->Get('value') . '" />' . "\n";
 					}else{
 						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="file" />';
