@@ -13,7 +13,7 @@ class DbTemplate extends Form {
 	/**
 	* @var string 
 	*/
-	private $database;
+	protected $database;
 	/**
 	* @var string 
 	*/
@@ -74,8 +74,13 @@ class DbTemplate extends Form {
 	public function DbTemplate($data, $required=array(), $labels=array(), $examples=array(), $table='', $fields=array(), $database=''){
 		global $db;
 
-		// Set the required information
-		$this->__construct($table, $database);
+		// Set the Table
+		if ($table != '')
+			$this->table = $table;
+
+		// Set the database
+		if ($database != '')
+			$this->database = $database;
 
 		// Pull the cache if available
 		$cache = $this->Cache('get', 'table_' . $this->table . '.cache.php', '', '1 day');
