@@ -371,7 +371,7 @@ class Mail{
 		$this->xheaders["Content-Type"] = "multipart/mixed;\n boundary=\"$this->boundary\"";
 	
 		$this->fullBody = "This is a multi-part message in MIME format.\n--$this->boundary\n";
-		$this->fullBody .= "Content-Type: text/plain; charset=$this->charset\nContent-Transfer-Encoding: $this->ctencoding\n\n" . $this->body ."\n";
+		$this->fullBody .= "Content-Type: " . $this->content_type . "; charset=$this->charset\nContent-Transfer-Encoding: $this->ctencoding\n\n" . $this->body ."\n";
 		
 		$sep = chr(13) . chr(10);
 		
