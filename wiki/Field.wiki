@@ -20,3 +20,27 @@ Returns the value of a property associated with the field.
 Set(property, value) -> Boolean
 }}}
 Set the value for a certain property for a field and returns if it was successful.
+
+*Validate*
+{{{
+Validate() -> Boolean
+}}}
+Validate the field object against it being required, its regular expression type and its length.
+
+*Label*
+{{{
+Label($append) -> String
+}}}
+Get a human readable label for the field and append the ending if desired.
+
+*Form*
+{{{
+Form($options, $config) -> NULL
+}}}
+Printed to the screen an XHTML compliant form based on the field type and values. $options can be an object which will call the Form() function of that object to display its particular form or if $options is an array depending on the $config type will display a drop-down, radio buttons or checkboxes.
+
+*View*
+{{{
+View($options) -> NULL
+}}}
+Prints to the screen a line item of a table of this field. The first th will be the label and the second a td with its value and meshed with the $options array if given.
