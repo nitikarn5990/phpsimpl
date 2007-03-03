@@ -52,9 +52,15 @@ class DB {
 	 * @return bool
 	 */
 	function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
+		global $db;
+		
 		// Save the config till we are ready to connect
 		if (!$this->connected)
 			$this->config = array($server,$username,$password,$database);
+		
+		// If using DB Sessions start them now
+    	if (DB_SESSIONS == true && session_id() == '')
+    		session_start();
 		
 		return true;
 	}
@@ -303,10 +309,11 @@ class DB {
 	 * @return int
 	 */
 	function NumRows($result) {
-		if (QUERY_CACHE){
+		if (QUERY_CACHE && is_array($result)){
 			return count($this->results);
-		}else
+		}else{
 			return mysql_num_rows($result);
+		}
 	}
 	
 	/**
