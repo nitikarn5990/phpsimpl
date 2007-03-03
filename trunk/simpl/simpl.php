@@ -1,8 +1,4 @@
 <?php
-// Start a session if not already started
-if (session_id() == '')
-	session_start();
-
 // Include the Config
 if (defined('FS_SIMPL'))
 	include_once(FS_SIMPL . 'config.php');
@@ -18,4 +14,23 @@ include_once(FS_SIMPL . 'main.php');
 // Load the Base Classes
 $mySimpl = new Simpl;
 $myValidator = new Validate;
+
+// If using DB Sessions
+if (DB_SESSIONS == true){
+	// Create the DB Sesssion
+	$s = new Session(DB_DEFAULT);
+	//Change the save_handler to use the class functions
+	session_set_save_handler (
+		array(&$s, 'open'),
+		array(&$s, 'close'),
+		array(&$s, 'read'),
+		array(&$s, 'write'),
+		array(&$s, 'destroy'),
+		array(&$s, 'gc')
+	);
+}else{
+	// Start a session if not already started
+	if (session_id() == '')
+		session_start();
+}
 ?>

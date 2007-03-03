@@ -44,3 +44,18 @@ CREATE TABLE `post` (
   `body` text NOT NULL,
   PRIMARY KEY  (`post_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog posts';
+
+-- --------------------------------------------------------
+
+-- 
+-- Table structure for table `session`
+-- 
+
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+  `ses_id` varchar(32) NOT NULL,
+  `last_access` int(12) unsigned NOT NULL,
+  `ses_start` int(12) unsigned NOT NULL,
+  `ses_value` text NOT NULL,
+  PRIMARY KEY  (`ses_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Used to store the sessions data';
