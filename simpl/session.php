@@ -99,7 +99,7 @@ class Session {
 		}
 
 		// Do the Operation
-		$session_res = $db->Perform($this->table, $info, $type, $extra, $this->db);
+		$session_res = $db->Perform($this->table, $info, $type, $extra, $this->db, false);
 		if (!$session_res)
 			return false;
 		
