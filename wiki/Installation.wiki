@@ -46,8 +46,7 @@ $mySimpl->Load('DbTemplate');
 {{{
 // Make the DB Connection
 $db = new DB;
-if (!$db->Connect())
-	define('DB_STATUS',false);
+$db->Connect();
 }}}
 
 == Next Step ==
