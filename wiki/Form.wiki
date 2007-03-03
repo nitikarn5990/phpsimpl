@@ -1,0 +1,118 @@
+#summary API of the Form Class
+#labels Phase-Implementation
+
+= Introduction =
+
+The form class is used to take in a set of field objects and interact with them as a single form. It performs actions on the whole group of fields at a time making life easier.
+
+= Example =
+_Need Example_
+
+= Functions =
+*__construct*
+{{{
+__construct($data, $required, $labels, $examples) -> Boolean
+}}}
+Creates a Form Class with all the information to use the Form functions. It sets all the data for the form objects such as its value, if it is required or not, what its label is and if there is any example of input for the field. All of the arrays passed to this function are in this format:
+{{{
+$data['field_key'] = value
+}}}
+
+*Validate*
+{{{
+Validate() -> Boolean
+}}}
+Validate all the fields in the form and return if any of the fields are not valid. The error statements are all stored in their respecitve field objects.
+
+*Get*
+{{{
+Get($property, $field) -> Mixed
+}}}
+Return a specific property of a field in the array. Null is returned if the field does not exists.
+
+*Set*
+{{{
+Set($property, $field, $value) -> Boolean
+}}}
+Set a specific property of a field in the form. Null is returned if the field does not exist.
+
+*GetValue*
+{{{
+GetValue($field) -> Mixed
+}}}
+Shortcut to "Get('value', $field)" to make code easier to read.
+
+*SetValue*
+{{{
+SetValue($field, $value) -> Boolean
+}}}
+Shortcut to "Set('value', $field, $value)" to make code easier to read.
+
+*GetError*
+{{{
+GetError($field) -> Mixed
+}}}
+Shortcut to "Get('error', $field)" to make code easier to read.
+
+*SetError*
+{{{
+SetError($field, $value) -> Boolean
+}}}
+Shortcut to "Set('error', $field, $value)" to make code easier to read. The value statement can be an array and the elements will be seperated by linebreaks "<br />" for easy readability.
+
+*GetFields*
+{{{
+GetFields() -> Array
+}}}
+Returns an array of the field names in the form.
+
+*IsField*
+{{{
+IsField($field) -> Boolean
+}}}
+Checks to see if a field exists in the form.
+
+*SetValues*
+{{{
+SetValues($data) -> Boolean
+}}}
+Takes an array of data and sets it to all the values of each field in the form. The $data array is an associative array with the field name being the key. This is a quick way to set the values of a form from the _POST values of a form. Here is an example:
+{{{
+$myForm->SetValues($_POST);
+}}}
+
+*ResetValues*
+{{{
+ResetValues() -> Boolean
+}}}
+Resets all the values and errors of the fields in a form.
+
+*GetValues*
+{{{
+GetValues() -> Array
+}}}
+Returns an array of all the values of the fields in a form. This array is an associative array with the field name being the key and the data being the value.
+
+*GetRequired*
+{{{
+GetRequired() -> Array
+}}}
+Returns an array of all the required field names in the form.
+
+*GetErrors*
+{{{
+GetErrors() -> Array
+}}}
+Returns an array of all the fields with errors in an associative array with the key being the field names.
+
+*SimpleFormat*
+{{{
+SimpleFormat() -> String
+}}}
+Returns the class in a simple format that is human readable. This is very helpful for debugging and is used by Simpl when DEBUG define is set to true.
+
+*Form*
+{{{
+Form($display, $hidden, $options, $config, $omit) -> Null
+}}}
+Display an XHTML compliant form to the user that includes all the fields in the $display. If $display is not an array it will display all the fields that are not in the $omit array. The $options and $config arrays are associative arrays with the field names as keys. They will be passed to each field individually by their key.
