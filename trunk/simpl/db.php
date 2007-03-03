@@ -173,7 +173,7 @@ class DB {
 	 * @param $db String of a different database if this is going to happen on another location
 	 * @return result
 	 */
-	function Perform($table, $data, $action = 'insert', $parameters = '', $db = '') {
+	function Perform($table, $data, $action = 'insert', $parameters = '', $db = '', $clear = true) {
 		// Use the Global Link
 		global $db_link;
 		global $mySimpl;
@@ -182,7 +182,8 @@ class DB {
 		$this->DbConnect();
 		
 		// Clear the Query Cache
-		$mySimpl->Cache('clear_query');
+		if ($clear == true)
+			$mySimpl->Cache('clear_query');
 		
 		// Decide how to create the query
 		if ($action == 'insert'){
