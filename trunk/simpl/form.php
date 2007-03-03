@@ -105,7 +105,10 @@ class Form {
 	 */
 	public function GetValue($field){
 		// Get the value of the field
-		return $this->Get('value', $field);
+		if ($this->IsField($field))
+			return $this->Get('value', $field);
+			
+		return '';
 	}
 
 	/**
@@ -117,7 +120,10 @@ class Form {
 	 */
 	public function SetValue($field, $value){
 		// Set the value of the field
-		return $this->Set('value', $field, $value);
+		if ($this->IsField($field))
+			return $this->Set('value', $field, $value);
+			
+		return false;
 	}
 
 	/**
@@ -128,7 +134,10 @@ class Form {
 	 */
 	public function GetError($field){
 		// Get the error of the field
-		return $this->Get('error', $field);
+		if ($this->IsField($field))
+			return $this->Get('error', $field);
+
+		return '';
 	}
 
 	/**
@@ -142,7 +151,10 @@ class Form {
 		// Set the error of the field
 		$str = (is_array($value))?implode('<br />', $value):$value;
 		
-		return $this->Set('error', $field, $str);
+		if ($this->IsField($field))
+			return $this->Set('error', $field, $str);
+			
+		return false;
 	}
 
 	/**
