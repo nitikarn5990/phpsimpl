@@ -8,13 +8,13 @@ The Email class is used to send email. Its task is to wrap mail functions in a c
 = Example =
 {{{
 $myMail = new Mail;
-$myMail->From('setup@domain.com);
+$myMail->From('setup@domain.com');
 $myMail->To('user@domain.com');
 $myMail->Subject('Subject of this email');
 $message = 'How are things? I am writing my email to you!';
 $myMail->Body($message);
 $myMail->Cc('boss@domain.com');
-$myMail->Bcc('coe@domain.com');
+$myMail->Bcc('ceo@domain.com');
 $myMail->Priority(4);
 $myMail->Attach('/usr/local/www/logo.gif', 'image/gif');
 $myMail->Send();
