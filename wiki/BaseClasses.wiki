@@ -1,5 +1,5 @@
 #summary List and uses of the base classes in Simpl framework
-#labels Phase-Implementation
+#labels Phase-Implementation,Featured
 
 = Classes =
 
