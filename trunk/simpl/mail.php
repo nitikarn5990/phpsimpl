@@ -1,24 +1,10 @@
 <?php
 /**
- * This class encapsulates the PHP mail() function.
+ * Base Mail Class
  * 
- * @version	1.3 
- * @example
- * $m= new Mail; // create the mail
- * $m->From( "leo@isp.com" );
- * $m->To( "destination@somewhere.fr" );
- * $m->Subject( "the subject of the mail" );
- * $message= "Hello world!\nthis is a test of the Mail class\nplease ignore\nThanks.";
- * $m->Body( $message);	// set the body
- * $m->Cc( "someone@somewhere.fr");
- * $m->Bcc( "someoneelse@somewhere.fr");
- * $m->Priority(4) ;	// set the priority to Low
- * $m->Attach( "/home/leo/toto.gif", "image/gif" ) ;	// attach a file of type image/gif
- * $m->Send();	// send the mail
- * echo "the mail below has been sent:<br><pre>", $m->Get(), "</pre>";
- * 
+ * Used to create and send emails with attachments.
+ *
  * @author Nick DeNardis <nick.denardis@gmail.com>
- * @todo Better error handling
  */
 class Mail{
 	/**
@@ -71,7 +57,7 @@ class Mail{
 	 * 
 	 * @return null
 	 */
-	function Mail(){
+	public function __construct(){
 		$this->autoCheck(true);
 		$this->boundary = '--' . md5(uniqid("myboundary"));
 	}
@@ -82,10 +68,9 @@ class Mail{
 	 * @param $bool Boolean set to true to turn on the auto validation
 	 * @return null
 	 */
-	function autoCheck($bool){
+	public function autoCheck($bool){
 		$this->checkAddress = ($bool)?true:false;
 	}
-	
 	
 	/**
 	 * Define the subject line of the email
@@ -93,7 +78,7 @@ class Mail{
 	 * @param $subject String of the title of the email
 	 * @return null
 	 */
-	function Subject($subject){
+	public function Subject($subject){
 		$this->xheaders['Subject'] = strip_tags(strtr( $subject, "\r\n" , "  " ));
 	}
 	
@@ -103,7 +88,7 @@ class Mail{
 	 * @param $from String should be an email address
 	 * @return null
 	 */
-	function From($from){
+	public function From($from){
 		if( !is_string($from) ) {
 			echo "Class Mail: error, From is not a string";
 			exit;
@@ -117,7 +102,7 @@ class Mail{
 	 * @param $email String should be an email address
 	 * @return bool
 	 */
-	function ReplyTo( $address ){
+	public function ReplyTo( $address ){
 		if( !is_string($address) ) 
 			return false;
 		
@@ -132,7 +117,7 @@ class Mail{
 	 * @warning this functionality is *not* a standard, thus only some mail clients are compliants.
 	 * @return null
 	 */
-	function Receipt(){
+	public function Receipt(){
 		$this->receipt = 1;
 	}
 	
@@ -142,7 +127,7 @@ class Mail{
 	 * @param $to String email address, accept both a single address or an array of addresses
 	 * @return null
 	 */
-	function To($to){
+	public function To($to){
 		if(is_array($to))
 			$this->sendto= $to;
 		else 
@@ -160,7 +145,7 @@ class Mail{
 	 * @param $cc String email address, accept both a single address or an array of addresses
 	 * @return bool
 	 */
-	function Cc($cc){
+	public function Cc($cc){
 		if(is_array($cc))
 			$this->acc= $cc;
 		else 
@@ -176,7 +161,7 @@ class Mail{
 	 * @param $bcc Email address(es), accept both array and string
 	 * @return null
 	 */
-	function Bcc($bcc){
+	public function Bcc($bcc){
 		if(is_array($bcc)){
 			$this->abcc = $bcc;
 		}else{
@@ -196,7 +181,7 @@ class Mail{
 	 * @param $charset String containing the charset (us-ascii)
 	 * @return null
 	 */
-	function Body($body, $content_type='', $charset=''){
+	public function Body($body, $content_type='', $charset=''){
 		$this->body = $body;
 		
 		if ($content_type != '')
@@ -215,7 +200,7 @@ class Mail{
 	 * @param $org String containing the Organization
 	 * @return null
 	 */
-	function Organization($org){
+	public function Organization($org){
 		if(trim($org != ''))
 			$this->xheaders['Organization'] = $org;
 	}
@@ -226,7 +211,7 @@ class Mail{
 	 * @param $priority Integer taken between 1 (highest) and 5 (lowest)
 	 * @return bool
 	 */
-	function Priority($priority){
+	public function Priority($priority){
 		if(!intval($priority))
 			return false;
 			
@@ -246,7 +231,7 @@ class Mail{
 	 * @param $disposition String instruct the Mailclient to display the file if possible ("inline") or always as a link ("attachment") possible values are "inline", "attachment"
 	 * @return null
 	 */
-	function Attach($filename, $filetype = '', $disposition = 'inline'){
+	public function Attach($filename, $filetype = '', $disposition = 'inline'){
 		if($filetype == '')
 			$filetype = "application/x-unknown-content-type";
 		
@@ -258,10 +243,9 @@ class Mail{
 	/**
 	 * Build the email message
 	 * 
-	 * @access protected
 	 * @return null
 	 */
-	function BuildMail(){
+	protected function BuildMail(){
 		$this->headers = '';
 		
 		if(count($this->acc) > 0)
@@ -305,7 +289,7 @@ class Mail{
 	 * 
 	 * @return bool
 	 */
-	function Send(){
+	public function Send(){
 		$this->BuildMail();
 		
 		$this->strTo = implode( ", ", $this->sendto );
@@ -321,7 +305,7 @@ class Mail{
 	 * 
 	 * @return string
 	 */
-	function Get(){
+	public function Get(){
 		$this->BuildMail();
 		$mail = 'To: ' . $this->strTo . "\n";
 		$mail .= $this->headers . "\n";
@@ -335,7 +319,7 @@ class Mail{
 	 * @param $address String email address to check
 	 * @return bool
 	 */
-	function ValidEmail($address){
+	public function ValidEmail($address){
 		// Get the email address out
 		if(ereg( ".*<(.+)>", $address, $regs))
 			$address = $regs[1];
@@ -350,7 +334,7 @@ class Mail{
 	 * @param $aad Array of email addresses 
 	 * @return bool
 	 */
-	function CheckAdresses($aad){
+	public function CheckAdresses($aad){
 		for($i=0;$i< count($aad); $i++){
 			if(!$this->ValidEmail($aad[$i])){
 				return false;
@@ -364,10 +348,9 @@ class Mail{
 	/**
 	 * Check and encode attach file(s)
 	 * 
-	 * @access private
 	 * @return null
 	 */
-	function _build_attachement(){
+	private function _build_attachement(){
 		$this->xheaders["Content-Type"] = "multipart/mixed;\n boundary=\"$this->boundary\"";
 	
 		$this->fullBody = "This is a multi-part message in MIME format.\n--$this->boundary\n";
