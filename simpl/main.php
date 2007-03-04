@@ -11,7 +11,7 @@ class Simpl {
 	*
 	* @return NULL
 	*/
-	function Simpl(){
+	public function __construct(){
 		// Clear the Cache if needed
 		if (isset($_GET['clear']) || CLEAR_CACHE === true)
 			$this->Cache('clear');
@@ -24,7 +24,16 @@ class Simpl {
 	 * @param $class A string containing the class name
 	 * @return bool
 	 */
-	 function Load($class){
+	 public function Load($class){
+	 	// Depricated but used for backwards compatibility
+	 	if (!class_exists($class)){
+	 		switch($class){
+	 			case 'Feed':
+	 				include_once(FS_SIMPL . 'feed.php');
+	 				break;
+	 		}
+	 	}
+	 	
 	 	return true;
 	 }
 
@@ -34,7 +43,7 @@ class Simpl {
 	  * @param string $action
 	  * @return bool
 	  */
-	 function Cache($action){
+	 public function Cache($action){
 	 	switch($action){
 	 		case 'clear':
 	 			$files = glob(FS_CACHE . "*.cache.php");
