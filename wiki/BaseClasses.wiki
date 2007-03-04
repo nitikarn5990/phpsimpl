@@ -24,7 +24,7 @@ _Used to send email in plain text or html and has the ability to attach document
 [Export]
 _Used to export a list of items into various formats_
 
-[FeedCreator]
+[Feed]
 _Used to create a feeds of the data in a class, this is the UniversialFeedCreator class found on the web except optimized for filesize and to work with Simpl_
 
 [File]
