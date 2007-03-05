@@ -79,7 +79,10 @@ class Form {
 	 */
 	public function Get($property, $field){
 		// Return the field property
-		return $this->fields[$field]->Get($property);
+		if ($this->IsField($field))
+			return $this->fields[$field]->Get($property);
+		
+		return '';
 	}
 
 	/**
@@ -94,7 +97,10 @@ class Form {
 	 */
 	public function Set($property, $field, $value){
 		// Set the fields property
-		return $this->fields[$field]->Set($property, $value);
+		if ($this->IsField($field))
+			return $this->fields[$field]->Set($property, $value);
+		
+		return false;
 	}
 
 	/**
@@ -105,10 +111,7 @@ class Form {
 	 */
 	public function GetValue($field){
 		// Get the value of the field
-		if ($this->IsField($field))
-			return $this->Get('value', $field);
-			
-		return '';
+		return $this->Get('value', $field);
 	}
 
 	/**
@@ -120,10 +123,7 @@ class Form {
 	 */
 	public function SetValue($field, $value){
 		// Set the value of the field
-		if ($this->IsField($field))
-			return $this->Set('value', $field, $value);
-			
-		return false;
+		return $this->Set('value', $field, $value);
 	}
 
 	/**
@@ -134,10 +134,7 @@ class Form {
 	 */
 	public function GetError($field){
 		// Get the error of the field
-		if ($this->IsField($field))
-			return $this->Get('error', $field);
-
-		return '';
+		return $this->Get('error', $field);
 	}
 
 	/**
@@ -150,11 +147,8 @@ class Form {
 	public function SetError($field, $value){
 		// Set the error of the field
 		$str = (is_array($value))?implode('<br />', $value):$value;
-		
-		if ($this->IsField($field))
-			return $this->Set('error', $field, $str);
-			
-		return false;
+
+		return $this->Set('error', $field, $str);
 	}
 
 	/**

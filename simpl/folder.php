@@ -10,7 +10,7 @@ class Folder {
 	/**
 	* @var string 
 	*/
-	protected $directory;
+	public $directory;
 	/**
 	* @var string 
 	*/

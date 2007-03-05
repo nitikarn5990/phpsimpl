@@ -859,7 +859,7 @@ class DbTemplate extends Form {
 				fclose($fp);
 				chmod ($cache_file, 0777);
 
-				$cache = mb_strlen($store);
+				$cache = strlen($store);
 			}
 		}
 
