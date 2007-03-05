@@ -551,6 +551,20 @@ class DbTemplate extends Form {
 	}
 	
 	/**
+	 * Display Individual Field
+	 * 
+	 * @param $field string
+	 * @param $hidden boolean
+	 * @param $options array
+	 * @param $config array
+	 * @return NULL
+	 */
+	public function FormField($field, $hidden=false, $options='', $config=''){
+		if ($hidden != true)
+			$this->fields[$field]->Form($options, $config);
+	}
+	
+	/**
 	 * Display Form
 	 * 
 	 * @param $display array
