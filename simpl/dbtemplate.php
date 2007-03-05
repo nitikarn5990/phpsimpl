@@ -326,7 +326,7 @@ class DbTemplate extends Form {
 			}
 			
 			// Create the return fields
-			if (is_array($returns[$key])){
+			if (is_array($returns[$key]) && count($returns[$key]) > 0){
 				// Require primary key returned
 				if (!in_array($class->primary,$returns[$key]))
 					$return .= '`' . $class->table . '`.' . $class->primary . ', ';
