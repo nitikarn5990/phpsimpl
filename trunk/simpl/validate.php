@@ -38,7 +38,7 @@ class Validate {
 	 * @param $value Mixed value that needs to be validated
 	 * @return bool
 	 */
-	public function Check(&$type, &$value){
+	public function Check($type, $value){
 		// Check for the type
 		if ($value != '' && array_key_exists($type, $this->types))
 			return ereg($this->types[$type], $value);
