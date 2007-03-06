@@ -260,6 +260,29 @@ class Form {
 
 		return $data;
 	}
+	
+	/**
+	 * Set Required
+	 *
+	 * Set the required fields in the class
+	 *
+	 * @param $fields array
+	 * @return bool
+	 */
+	public function SetRequired($fields){
+		// Require an array
+		if (!is_array($fields))
+			return false;
+		
+		// Get the field names
+		$keys = $this->GetFields();
+			
+		// Loop through all the fields
+		foreach($keys as $name)
+			$this->Set('required', $name, (in_array($name,$fields)));
+		
+		return true;
+	}
 
 	/**
 	 * Get Errors
