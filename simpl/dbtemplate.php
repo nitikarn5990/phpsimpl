@@ -134,7 +134,7 @@ class DbTemplate extends Form {
 		global $db;
 
 		// Require a primary key
-		if (!isset($this->primary))
+		if (!isset($this->primary) && $this->GetPrimary() != '')
 			return false;
 
 		Debug('GetInfo(), Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
