@@ -223,9 +223,9 @@ class Field {
 	}
 	
 	public function View($options = array()){
-		$output = '<tr>' . 
-		$output .= '<th scope="row">' . $this->Label(':') . '</th>' .
-		$output .= '<td>' . (($options[$this->Get('value')] != '')?$options[$this->Get('value')]:$this->Output($this->Get('value'))) . '</td>' .
+		$output = '<tr>';
+		$output .= '<th scope="row">' . $this->Label(':') . '</th>';
+		$output .= '<td>' . (($options[$this->Get('value')] != '')?$options[$this->Get('value')]:$this->Output($this->Get('value'))) . '</td>';
 		$output .= '</tr>';
 		
 		echo $output;
