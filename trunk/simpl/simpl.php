@@ -18,7 +18,7 @@ $myValidator = new Validate;
 // If using DB Sessions
 if (DB_SESSIONS == true){
 	// Create the DB Sesssion
-	$s = new Session(DB_DEFAULT);
+	$s = new Session((defined('DB_CMS'))?DB_CMS:DB_DEFAULT);
 	//Change the save_handler to use the class functions
 	session_set_save_handler (
 		array(&$s, 'open'),
