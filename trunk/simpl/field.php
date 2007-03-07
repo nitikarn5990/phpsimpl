@@ -100,7 +100,7 @@ class Field {
 			return false;
 			
 		// Check to see if it is required first
-		if ($this->Get('required') == true && $this->Get('value') == NULL){
+		if ($this->Get('required') == true && (string)$this->Get('value') == NULL){
 			// Set the Error
 			$this->Set('error', $this->Label() . ' is required.');
 			return false;
