@@ -113,6 +113,12 @@ class Session {
 	* @return null
 	*/
 	public function destroy($ses_id){
+		global $db;
+		
+		$session_sql = 'DELETE FROM `' . $this->table . '` WHERE `ses_id` = \'' . $ses_id . '\' LIMIT 1';
+		$res = $db->Query($session_sql, $this->db, false);
+		
+		return true;
 	}
 	
 	/**
