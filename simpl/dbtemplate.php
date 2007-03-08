@@ -878,6 +878,9 @@ class DbTemplate extends Form {
 
 		if ($field->numeric == 1)
 			return 'int';
+			
+		if ($field->name == 'email')
+			return 'email';
 
 		return NULL;
 	}

@@ -40,7 +40,7 @@ class Validate {
 	 */
 	public function Check($type, $value){
 		// Check for the type
-		if ($value != '' && array_key_exists($type, $this->types))
+		if ((string)$value != '' && array_key_exists($type, $this->types))
 			return ereg($this->types[$type], $value);
 		
 		return false;
