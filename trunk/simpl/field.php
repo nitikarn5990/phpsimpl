@@ -107,7 +107,7 @@ class Field {
 		}
 		
 		// Validate agaist the regular expression
-		if ($this->Get('validate') != '' && $myValidator->Check($this->Get('validate'), $this->Get('value'))){
+		if ($this->Get('validate') != '' && (string)$this->Get('value') != '' && $myValidator->Check($this->Get('validate'), $this->Get('value')) == false){
 			// Set the Error
 			$this->Set('error', $this->ErrorString());
 			return false;
@@ -238,7 +238,7 @@ class Field {
 	 */
 	private function ErrorString(){
 		// Depending on the type return the correct error
-		return 'Field is not a valid [type]';
+		return 'Field is not a valid ' . $this->Label();
 	}
 
 	/**
