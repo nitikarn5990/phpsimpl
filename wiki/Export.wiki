@@ -1,0 +1,30 @@
+#summary API of the Export Class
+#labels Phase-Implementation
+
+= Introduction =
+
+The export class is used to output the data arrays into various file formats. This class needs to be expanded.
+
+_This class needs work, API will change without notice_
+
+= Example =
+_Need Example_
+
+= Functions =
+*Export*
+{{{
+Export(data, display, file_name) -> Null
+}}}
+Sets up the export and takes in all the data, the display fields and the filename if any. All fields are optional.
+
+*GetXLS*
+{{{
+GetXLS() -> String
+}}}
+Returns a string of the data in XLS format.
+
+*DisplayXLS*
+{{{
+DisplayXLS(output) -> Null
+}}}
+Takes the output from the GetXLS and will display it to the screen with the "application/vnd.ms-excel" mime type and the filename that was determined in the constructor.
