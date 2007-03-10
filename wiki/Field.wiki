@@ -1,4 +1,4 @@
-#summary API of the Image Class
+#summary API of the Field Class
 #labels Phase-Implementation
 
 = Introduction =
@@ -9,6 +9,12 @@ The field class is used to represent one field in a form, from its value to labe
 _Need Example_
 
 = Functions =
+*Field*
+{{{
+__construct() -> Boolean
+}}}
+Sets up the field class.
+
 *Get*
 {{{
 Get(property) -> Mixed
