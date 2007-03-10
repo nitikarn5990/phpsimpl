@@ -24,6 +24,12 @@ Validate() -> Boolean
 }}}
 Validate all the fields in the form and return if any of the fields are not valid. The error statements are all stored in their respecitve field objects.
 
+*CheckRequired (depricated)*
+{{{
+CheckRequired() -> Array
+}}}
+Validate all the fields in the form and returns an array of errors. This has been replaced by the Validate function after Rev 187 but is still available for backwards compatibility.
+
 *Get*
 {{{
 Get($property, $field) -> Mixed
@@ -98,6 +104,12 @@ Returns an array of all the values of the fields in a form. This array is an ass
 GetRequired() -> Array
 }}}
 Returns an array of all the required field names in the form.
+
+*SetRequired*
+{{{
+SetRequired(fields) -> Boolean
+}}}
+Set the required fields in the class and returns if it was successful.
 
 *GetErrors*
 {{{
