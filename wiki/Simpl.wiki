@@ -12,26 +12,21 @@ When including Simpl in your web application this is the only class that is load
 {{{
 // Simpl Framework
 include_once(FS_SIMPL . 'simpl.php');
-
-// Load the Simpl classes
-$mySimpl->Load('Form');
-$mySimpl->Load('Db');
-$mySimpl->Load('DbTemplate');
 }}}
 
 = Functions =
 
 *Simpl*
 {{{
-Simpl() -> NULL
+__construct() -> NULL
 }}}
-Main Class Constructor
+Main Class Constructor. It will clear the cache is there is a _GET['clear'] used.
 
-*Load*
+*Load (depricated)*
 {{{
 Load(classname) -> Boolean
 }}}
-Load a Simpl Class and returns if it was successfully included or not. Include happens just once so Load() can be called multiple times without conflict.
+Load a Simpl Class and returns if it was successfully included or not. Include happens just once so Load() can be called multiple times without conflict. This function was depricated after Rev. 187 when Simpl went PHP5 only. Classes are now loaded automatically with the __autoload function.
 
 *Cache*
 {{{
