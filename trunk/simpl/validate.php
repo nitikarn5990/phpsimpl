@@ -26,7 +26,7 @@ class Validate {
 				//'unsigned' => '|^[a-zA-Z-]*$|',
 				'alpha' => '^[a-zA-Z]$',
 				'alphanum' => '^[a-zA-Z0-9]$',
-				'float' => '^[0-9\.-]$');
+				'float' => '^[0-9]*\\.?[0-9]*$');
 
 		return true;
 	}
