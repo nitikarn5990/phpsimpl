@@ -875,10 +875,13 @@ class DbTemplate extends Form {
 	private function ValidType(&$field){
 		if ($field->unsigned == 1)
 			return 'unsigned';
+		
+		if ($field->type == 'real')
+			return 'float';
 
 		if ($field->numeric == 1)
 			return 'int';
-			
+
 		if ($field->name == 'email')
 			return 'email';
 
