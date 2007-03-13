@@ -22,7 +22,7 @@ class Validate {
 	public function __construct(){
 		$this->types = array('email' => '^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,4}$',
 				'phone' => '^[0-9]{3}-[0-9]{3}-[0-9]{4}$',
-				'int' => '^[0-9-]$',
+				'int' => '^[0-9-]*$',
 				//'unsigned' => '|^[a-zA-Z-]*$|',
 				'alpha' => '^[a-zA-Z]$',
 				'alphanum' => '^[a-zA-Z0-9]$',
