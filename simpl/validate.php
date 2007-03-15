@@ -23,7 +23,7 @@ class Validate {
 		$this->types = array('email' => '^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,4}$',
 				'phone' => '^[0-9]{3}-[0-9]{3}-[0-9]{4}$',
 				'int' => '^[0-9-]*$',
-				//'unsigned' => '|^[a-zA-Z-]*$|',
+				'unsigned' => '^[0-9]*$',
 				'alpha' => '^[a-zA-Z]$',
 				'alphanum' => '^[a-zA-Z0-9]$',
 				'float' => '^[0-9]*\\.?[0-9]*$');
@@ -43,7 +43,7 @@ class Validate {
 		if ((string)$value != '' && array_key_exists($type, $this->types))
 			return ereg($this->types[$type], $value);
 		
-		return false;
+		return true;
 	}
 
 	/**

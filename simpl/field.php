@@ -180,7 +180,7 @@ class Field {
 			switch($config){
 				case 'radio':
 				foreach($options as $key=>$value){
-					$selected = ($this->Get('value') == (string)$value)?' checked="checked"':'';
+					$selected = ($this->Get('value') == (string)$key)?' checked="checked"':'';
 					$each .= '<div><input name="' . $this->Get('name') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
 				}
 				break;
