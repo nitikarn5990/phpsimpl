@@ -211,7 +211,7 @@ class Field {
 			$output .= '<script type="text/javascript">Calendar.setup({ inputField : "' . $this->Get('name') . '", ifFormat : "%B %e, %Y", button : "' . $this->Get('name') . '_b"});</script>';
 		}else{
 			// Single Field
-			$type = ($config[$this->Get('name')] != '' && $config[$this->Get('name')] != 'text')?$config[$this->Get('name')]:'text';
+			$type = ($config != '' && $config != 'text')?$config:'text';
 			$size = ($this->Get('length') < 30)?$this->Get('length'):30;
 			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' .$this->Output($this->Get('value')) . '" />';
 		}
