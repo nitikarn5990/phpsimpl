@@ -560,8 +560,12 @@ class DbTemplate extends Form {
 	 * @return NULL
 	 */
 	public function FormField($field, $hidden=false, $options='', $config=''){
-		if ($hidden != true)
-			$this->fields[$field]->Form($options, $config);
+		if ($this->IsField($field)){
+			if ($hidden != true)
+				$this->fields[$field]->Form($options, $config);
+			else
+				echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
+		}
 	}
 	
 	/**
@@ -605,13 +609,11 @@ class DbTemplate extends Form {
 		
 		// Show the fields
 		foreach($show as $field)
-			if (!in_array($field, $omit))
-				$this->fields[$field]->Form($options[$field], $config[$field]);
+			$this->FormField($field, false, $options[$field], $config[$field]);
 		
 		// Show the hidden
 		foreach($hidden as $field)
-			if (is_object($this->fields[$field]))
-				echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
+			$this->FormField($field, true);
 		
 		// End the fieldset
 		echo '</fieldset>' . "\n";
@@ -641,7 +643,7 @@ class DbTemplate extends Form {
 		
 		// Show the fields
 		foreach($show as $field)
-				$this->fields[$field]->View($options[$field]);
+			$this->fields[$field]->View($options[$field]);
 		
 		echo '</table>';
 	}
