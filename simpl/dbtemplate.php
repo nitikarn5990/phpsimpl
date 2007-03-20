@@ -319,7 +319,7 @@ class DbTemplate extends Form {
 
 			// Create the filters
 			foreach($values as $name=>$value){
-				$where .= ($value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string')?'LIKE':'=') . ' \'' . $value . '\' AND ':'';
+				$where .= ((string)$value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string')?'LIKE':'=') . ' \'' . $value . '\' AND ':'';
 			
 				// Create the search
 				$search .= ($class->search != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string')?'LIKE \'%' . $class->search . '%\'':' = \'' . $class->search . '\'') . ' OR ':'';
