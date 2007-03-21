@@ -181,7 +181,7 @@ class DbTemplate extends Form {
 		global $db;
 
 		// Make sure the data validates
-		if (!$this->Validate())
+		if ($this->IsError())
 			return false;
 
 		// Determine the save type
