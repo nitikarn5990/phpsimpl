@@ -150,6 +150,22 @@ class Form {
 
 		return $this->Set('error', $field, $str);
 	}
+	
+	/**
+	 * Is Error
+	 *
+	 * @return bool
+	 */
+	public function IsError(){
+		// Loop through the fields
+		foreach ($this->fields as $name=>$field){
+			// Check for Error
+			if ($field->Get('error') != '')
+				return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Get Fields

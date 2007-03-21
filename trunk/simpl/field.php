@@ -77,12 +77,11 @@ class Field {
 	*/
 	public function Set($property, $value){
 		// Set the new value to the property
-		
-		
 		if ($value != '' && $property == 'value' && $this->Get('type') == 'int'){
 			$this->$property = (int)$value;
-		}else
+		}else{
 			$this->$property = $value;
+		}
 			
 		return true;
 	}
