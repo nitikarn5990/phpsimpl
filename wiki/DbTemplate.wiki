@@ -6,7 +6,45 @@
 The DbTemplate class is used to mirror a database table. No setup is needed, just give the class the database and table names and it does all the work for you. The table structure is cached to improve performance.
 
 = Example =
-_Need Example_
+{{{
+// Create the RSVP class to mirror the RSVP table
+class RSVP extends DbTemplate {
+  /**
+   * Class Constuctor
+   * 
+   * @param $data array
+   * @return null
+   */
+  function __construct($data=''){
+    $required = array('first_name', 'last_name', 'email', 'phone');
+    $table = 'rsvp';
+    $labels = array('first_name' => 'First Name', 'last_name' => 'Last Name', 'email' => 'E-Mail');
+    $examples = array();
+
+    $this->DbTemplate($data, $required, $labels, $examples, $table, '', 'my_database');
+  }
+}
+
+// Create the class
+$myRSVP = new RSVP;
+$display = array('first_name', 'last_name', 'email', 'phone');
+
+// If saving the RSVP
+if ($_POST['submit_button'] == 'RSVP'){
+  $myRSVP->SetValues($_POST);
+		
+  if ($myRSVP->Validate()){
+    $myRSVP->Save()
+  }
+}
+
+<form name="form_rsvp" id="form_rsvp" method="post" action="/">
+<?php $myRSVP->Form($display); ?>
+<fieldset class="submit_button">
+<div class="submit"><label for="submit_button">&nbsp;</label><input type="submit" name="submit" value="RSVP" class="submit" /></div>
+</fieldset>
+</form>
+}}}
 
 = Functions =
 *__construct*
