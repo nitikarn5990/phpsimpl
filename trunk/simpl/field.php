@@ -215,7 +215,7 @@ class Field {
 			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' .$this->Output($this->Get('value')) . '" />';
 		}
 
-		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . $this->Output($this->Get('example')) . '</p></div>':'';
+		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . stripslashes($this->Get('example')) . '</p></div>':'';
 		$output .= ($this->Get('error') != '')?'<p>' . $this->Output($this->Get('error')) . '</p></div>':'';
 		$output .= '</div>';
 		echo $output;
