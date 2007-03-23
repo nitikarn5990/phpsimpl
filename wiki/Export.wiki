@@ -8,7 +8,28 @@ The export class is used to output the data arrays into various file formats. Th
 _This class needs work, API will change without notice_
 
 = Example =
-_Need Example_
+{{{
+// Create the RSVP class
+$myRSVP = new RSVP;
+
+// Only pull the not viewed RSVPs
+$myRSVP->SetValue('is_viewed', 0);
+
+// Get the List of RSVPs
+$list = $myRSVP->GetList('', 'date_entered', 'ASC');
+
+// Define what fields to display in the export
+$fields = array('first_name'=>'First Name', 'last_name' => 'Last Name');
+
+// Create the Export Object
+$myExport = new Export($list, $fields, 'rsvp_list');
+
+// Get the Output
+$output = $myExport->GetXLS();
+
+// Force the Download
+$myExport->DisplayXLS($output);
+}}}
 
 = Functions =
 *Export*
@@ -28,3 +49,4 @@ Returns a string of the data in XLS format.
 DisplayXLS(output) -> Null
 }}}
 Takes the output from the GetXLS and will display it to the screen with the "application/vnd.ms-excel" mime type and the filename that was determined in the constructor.
+
