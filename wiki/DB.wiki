@@ -6,8 +6,37 @@
 The DB class is used for interacting with a MySQL database. It wraps the function calls in a simple to use class that can be abstracted further if needed.
 
 = Example =
-_Need Example_
+{{{
+// Make the DB connection
+$db = new DB;
 
+// Connect to the database
+$db->Connect($server, $username, $password, $database);
+
+// Create the query
+$query = 'SELECT * FROM `users` WHERE `is_active` = 1 ORDER BY `last_name` ASC';
+
+// Query the database
+$result = $db->Query($query);
+
+// If there are Rows
+if ($db->NumRows($result) > 0){
+  // Loop through all the records
+  while ($info = $db->FetchArray($result)){
+    // Set the Users Info
+    $myUser->SetValues($info);
+
+    // Disable the User
+    $myUser->SetValue('is_active', 0);
+
+    // Save the Users Info
+    $myUser->Save();
+  }
+}
+
+// Close the DB connection
+$db->Close();
+}}}
 
 = Functions =
 *DB*
