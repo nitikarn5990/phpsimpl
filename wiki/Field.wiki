@@ -6,7 +6,21 @@
 The field class is used to represent one field in a form, from its value to label to validation type. 
 
 = Example =
-_Need Example_
+{{{
+// Set all the field info
+$myField = new Field;
+$myField->Set('name', 'q');
+$myField->Set('value', '');
+$myField->Set('required', true);
+$myField->Set('label', 'Query');
+$myField->Set('example', "Learn Simpl Framework');
+
+// Display an XHTML form
+echo '<form name="search" id="search" method="get" action="/">';
+$myRSVP->Form();
+echo '<input type="submit" name="submit" value="Search" />
+echo '</form>';
+}}}
 
 = Functions =
 *Field*
