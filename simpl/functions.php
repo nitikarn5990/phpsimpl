@@ -89,10 +89,19 @@ if (!function_exists('GetAlert')){
  * @return null
  */
 if (!function_exists('Pre')){
-	function Pre($text){
-		echo '<pre>';
-		print_r($text);
-		echo '</pre>';
+	function Pre($text, $ip=''){
+		$ready = true;
+		
+		if (is_string($ip) && $ip != '' && $_SERVER['REMOTE_ADDR'] != $ip)
+			$ready = false;
+		else if (is_array($ip) && !in_array($_SERVER['REMOTE_ADDR'], $ip))
+			$ready = false;
+		
+		if ($ready == true){
+			echo '<pre>';
+			print_r($text);
+			echo '</pre>';
+		}
 	}
 }
 
