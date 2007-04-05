@@ -95,12 +95,14 @@ class DbTemplate extends Form {
 			// Loop through all the fields
 			while($field = $db->FetchField($result)){
 				// Set all the field info
+				$field_count = count($this->fields);
 				$tmpField = new Field;
 				$tmpField->Set('name', $field->name);
 				$tmpField->Set('type', $field->type);
-				$tmpField->Set('length', $db->FieldLength($result,count($this->fields)));
+				$tmpField->Set('length', $db->FieldLength($result,$field_count));
 				$tmpField->Set('validate', $this->ValidType($field));
 				$tmpField->Set('primary', $field->primary_key);
+				$tmpField->Set('display', ($field_count+1));
 
 				// Add the field to the list
 				$this->fields[$field->name] = $tmpField;
@@ -121,6 +123,9 @@ class DbTemplate extends Form {
 			if ($field->Get('primary') == 1)
 				$this->primary = $name;
 		}
+		
+		// Set the local display
+		$this->display = $this->GetFields();
 	}
 
 	/**
