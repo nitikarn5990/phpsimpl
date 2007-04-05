@@ -10,7 +10,11 @@ class Form {
 	/**
 	 * @var array 
 	 */
-	protected $fields = array();	
+	protected $fields = array();
+	/**
+	 * @var array 
+	 */
+	protected $display = array();	
 
 	/**
 	 * Class Constructor
@@ -33,6 +37,7 @@ class Form {
 			$tmpField->Set('required', $required[$key]);
 			$tmpField->Set('label', $labels[$key]);
 			$tmpField->Set('example', $examples[$key]);
+			$tmpField->Set('display', (count($this->fields)+1));
 			
 			// Add the field to the list
 			$this->fields[$key] = $tmpField;
@@ -299,7 +304,71 @@ class Form {
 		
 		return true;
 	}
+	
+	/**
+	 * Set Display
+	 *
+	 * Set the display fields in the class
+	 *
+	 * @param $fields array
+	 * @return bool
+	 */
+	public function SetDisplay($fields){
+		// Require an array
+		if (!is_array($fields))
+			return false;
+		
+		// Get the field names
+		$keys = $this->GetFields();
+			
+		// Loop through all the fields
+		foreach($keys as $name){
+			// Get its display position
+			$pos = array_search($name, $fields);
+			// If it is in the display array
+			if ($pos !== false){
+				// Set the new display order
+				$this->Set('display', $name, ($pos+1));
+			}else{
+				// If the field is no longer in the display
+				if ($this->Get('display', $name) > 0){
+					// Make it hidden
+					$this->Set('display', $name, 0);
+				}
+			}
+		}
+		
+		// Set the local display order
+		$this->display = $fields;
+			
+		return true;
+	}
+	
+	/**
+	 * Set Hidden
+	 *
+	 * Set the display fields in the class
+	 *
+	 * @param $fields array
+	 * @return bool
+	 */
+	public function SetHidden($fields){
+		// Require an array
+		if (!is_array($fields))
+			return false;
 
+		// Loop through all the newly hidden
+		foreach($fields as $name){
+			// Make it hidden
+			$this->Set('display', $name, 0);
+		}
+		
+		// Remove it from the display array
+		$this->display = array_diff($this->display, $fields);
+		
+		return true;
+	}
+	
 	/**
 	 * Get Errors
 	 *
@@ -410,7 +479,7 @@ class Form {
 	 * @return string
 	 */
 	protected function Output($string){
-		return htmlspecialchars(stripslashes($string));
+		return stripslashes($string);
 	}
 }
 ?>

@@ -31,6 +31,6 @@ if (DB_SESSIONS == true){
 }else{
 	// Start a session if not already started
 	if (session_id() == '')
-		session_start();
+		@session_start();
 }
 ?>

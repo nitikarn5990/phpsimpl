@@ -8,41 +8,53 @@
  */
 class Field {
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	private $name;
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	private $label;
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	private $example;
 	/**
-	* @var various 
-	*/
+	 * @var various 
+	 */
 	private $value;
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	private $error;
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	private $validate;
 	/**
-	* @var boolean 
-	*/
+	 * @var boolean 
+	 */
 	private $required = false;
 	/**
-	* @var int 
-	*/
+	 * @var int 
+	 */
 	private $length;
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	private $type;
+	/**
+	 * @var int 
+	 */
+	private $display;
+	/**
+	 * @var string 
+	 */
+	private $config;
+	/**
+	 * @var array 
+	 */
+	private $options = array();
 	/**
 	 * @var int
 	 */
@@ -146,6 +158,8 @@ class Field {
 	/**
 	 * XHTML Form field
 	 * 
+	 * @param $options array
+	 * @param $config string
 	 * @return bool
 	 */
 	public function Form($options='', $config=''){
@@ -221,6 +235,12 @@ class Field {
 		echo $output;
 	}
 	
+	/**
+	 * View a single table line of this item
+	 * 
+	 * @param $options array
+	 * @return null
+	 */
 	public function View($options = array()){
 		$output = '<tr>';
 		$output .= '<th scope="row">' . $this->Label(':') . '</th>';
