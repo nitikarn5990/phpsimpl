@@ -171,15 +171,26 @@ class Field {
 	 * @return bool
 	 */
 	public function Form($options='', $config=''){
+		// If there is a default value use that
+		$my_value = ($this->Get('value') == '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
+		
 		// Figure out how to display the form
 		if ($this->Get('display') < 0){
 			// Omit
 			return true;
 		}else if ($this->Get('display') == 0){
 			// Hidden
-			echo '<input name="' . $this->Get('name') . '" type="hidden" value="' . $this->Output($this->Get('value')) . '" />' . "\n";
+			echo '<input name="' . $this->Get('name') . '" type="hidden" value="' . $this->Output($my_value) . '" />' . "\n";
 			return true;
 		}
+		
+		// Overwrite the options if needed
+		if(is_array($options))
+			$this->Set('options', $options);
+		
+		// Overwrite the config if needed
+		if($config != '')
+			$this->Set('config', $config);
 		
 		$output = '<div class="field_' . $this->Get('name') . '">';
 		$output .= '<label for="' . $this->Get('name') . '">';
@@ -189,62 +200,63 @@ class Field {
 		$output .= ($this->Get('error') != '')?'<div class="error">':'';
 
 		// If passing in a class call its Form function
-		if(is_object($options)){
-			switch(get_class($options)){
+		if(is_object($this->Get('options'))){
+			switch(get_class($this->Get('options'))){
 				// If we are uploading a file
 				case 'Upload':
 					// If there is something in the field
-					if ($this->Get('value') != ''){
-						$output .=  '<div id="form_' . $this->Get('name') . '">' . $this->Get('value') . ' <input name="remove[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . '" /> Remove File</div>';
-						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="hidden" value="' . $this->Get('value') . '" />' . "\n";
+					if ($my_value != ''){
+						$output .=  '<div id="form_' . $this->Get('name') . '">' . $my_value . ' <input name="remove[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . '" /> Remove File</div>';
+						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="hidden" value="' . $my_value . '" />' . "\n";
 					}else{
 						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="file" />';
 					}
 					break;
 				default:
 					// Custom Form
-					$output .= $options->Form($this, $config);
+					$obj = $this->Get('options');
+					$output .= $obj->Form($this, $this->Get('config'));
 					break;
 			}
-		}else if (is_array($options)){
+		}else if (is_array($this->Get('options')) && count($this->Get('options')) > 0){
 			// Multi Options
-			switch($config){
+			switch($this->Get('config')){
 				case 'radio':
-				foreach($options as $key=>$value){
-					$selected = ($this->Get('value') == (string)$key)?' checked="checked"':'';
+				foreach($this->Get('options') as $key=>$value){
+					$selected = ($my_value == (string)$key)?' checked="checked"':'';
 					$each .= '<div><input name="' . $this->Get('name') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
 				}
 				break;
 				case 'checkbox':
-				$split = split(',',$this->Get('value'));
-				foreach($options as $key=>$value){
+				$split = split(',',$my_value);
+				foreach($this->Get('options') as $key=>$value){
 					$selected = (in_array($key,$split))?' checked="checked"':'';
 					$each .= '<div><input name="' . $this->Get('name') . '[]" type="checkbox" value="' . $key . '" id="' . $this->Get('name') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
 				}
 				break;
 				default:
 				$each .= '<select name="' . $this->Get('name') . '" id="' . $this->Get('name') . '">' . "\n";
-				foreach($options as $key=>$value){
-					$selected = ($this->Get('value') == (string)$key)?' selected="selected"':'';
+				foreach($this->Get('options') as $key=>$value){
+					$selected = ($my_value == (string)$key)?' selected="selected"':'';
 					$each .= '<option value="' . $key . '"' . $selected . '>' . $this->Output($value) . '</option>' . "\n";
 				}
 				$each .= '</select>';
 				break;
 			}
-			$output .= '<div class="' . $config . '">' . $each . '</div>';
+			$output .= '<div class="' . $this->Get('config') . '">' . $each . '</div>';
 		}elseif($this->Get('type') == 'blob'){
 			// Textarea
-			$output .= '<div><textarea name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" cols="50" rows="4">' . $this->Output($this->Get('value')) . '</textarea></div>' . "\n";
+			$output .= '<div><textarea name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
 		}elseif($this->Get('type') == 'date'){
 			// Date Field
-			$value = ($this->Get('value') != '0000-00-00' && $this->Get('value') != '')?date("F j, Y",strtotime($this->Get('value'))):'';
-			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="text" size="18" maxlength="18" value="' . $this->Get('value') . '" /><button type="reset" id="' . $this->Get('name') . '_b">...</button>';	
+			$value = ($my_value != '0000-00-00' && $my_value != '')?date("F j, Y",strtotime($my_value)):'';
+			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="text" size="18" maxlength="18" value="' . $my_value . '" /><button type="reset" id="' . $this->Get('name') . '_b">...</button>';	
 			$output .= '<script type="text/javascript">Calendar.setup({ inputField : "' . $this->Get('name') . '", ifFormat : "%B %e, %Y", button : "' . $this->Get('name') . '_b"});</script>';
 		}else{
 			// Single Field
-			$type = ($config != '' && $config != 'text')?$config:'text';
+			$type = ($this->Get('config') != '' && $this->Get('config') != 'text')?$this->Get('config'):'text';
 			$size = ($this->Get('length') < 30)?$this->Get('length'):30;
-			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . $this->Output($this->Get('value')) . '" />';
+			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . $this->Output($my_value) . '" />';
 		}
 
 		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . stripslashes($this->Get('example')) . '</p></div>':'';
@@ -263,7 +275,15 @@ class Field {
 	 * @param $options array
 	 * @return null
 	 */
-	public function View($options = array()){
+	public function View($options = ''){
+		// Overwrite the options for this field if desired
+		if(is_array($options))
+			$this->Set('options', $options);
+			
+		// Get the localised options
+		$options = $this->Get('options');
+		
+		// Display the individual item
 		$output = '<tr>';
 		$output .= '<th scope="row">' . $this->Label(':') . '</th>';
 		$output .= '<td>' . (($options[$this->Get('value')] != '')?$options[$this->Get('value')]:$this->Output($this->Get('value'))) . '</td>';

@@ -242,10 +242,6 @@ class Form {
 		foreach($this->fields as $name=>$field){
 			$this->Set('value', $name, '');
 			$this->Set('error', $name, '');
-			
-			// If there is a default set that value
-			if ($this->Get('default', $name) != '')
-				$this->Set('value', $name, $this->Get('default', $name));
 		}
 
 		return true;
@@ -413,7 +409,7 @@ class Form {
 		if (!is_array($fields))
 			return false;
 		
-		// Loop through all the newly omited
+		// Loop through all the new defaults
 		foreach($fields as $name=>$value){
 			// Make it always the default
 			$this->Set('default', $name, $value);
@@ -421,6 +417,52 @@ class Form {
 
 		// Set the Values
 		return $this->SetValues($fields);
+	}
+	
+	/**
+	 * Set Options
+	 *
+	 * Set the option values for the fields
+	 *
+	 * @param $options array
+	 * @return bool
+	 */
+	public function SetOptions($options){
+		// Require an array
+		if (!is_array($options))
+			return false;
+		
+		// Loop through all the options
+		foreach($options as $name=>$value){
+			// Set the options in their individual classes
+			$this->Set('options', $name, $value);
+		}
+
+		// All options set
+		return true;
+	}
+	
+	/**
+	 * Set Config
+	 *
+	 * Set the config values for the fields
+	 *
+	 * @param $config string
+	 * @return bool
+	 */
+	public function SetConfig($config){
+		// Require an array
+		if (!is_array($config))
+			return false;
+		
+		// Loop through all the options
+		foreach($config as $name=>$value){
+			// Set the options in their individual classes
+			$this->Set('config', $name, $value);
+		}
+
+		// All options set
+		return true;
 	}
 	
 	/**
