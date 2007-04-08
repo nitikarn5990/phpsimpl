@@ -24,6 +24,10 @@ class Field {
 	 */
 	private $value;
 	/**
+	 * @var various 
+	 */
+	private $default;
+	/**
 	 * @var string 
 	 */
 	private $error;
@@ -54,7 +58,7 @@ class Field {
 	/**
 	 * @var array 
 	 */
-	private $options = array();
+	private $options;
 	/**
 	 * @var int
 	 */

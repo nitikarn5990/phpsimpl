@@ -41,9 +41,7 @@ class DB {
     }
     
     /**
-	 * Connect to DB
-	 *
-	 * Connect to the database of your choice
+	 * Setup the DB Connection
 	 *
 	 * @param $server A String with the server name
 	 * @param $username A String with the user name
@@ -65,6 +63,11 @@ class DB {
 		return true;
 	}
 	
+	/**
+	 * Connect to the DB when needed
+	 *
+	 * @return bool
+	 */
 	public function DbConnect(){
 		if ($this->connected)
 			return true;
@@ -99,6 +102,7 @@ class DB {
 	 * 
 	 * @param $query The query to be executed
 	 * @param $db THe optional alternative database
+	 * @return Mixed
 	 * 
 	 */
 	public function Query($query, $db = '', $cache = true) {

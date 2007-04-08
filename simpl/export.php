@@ -3,24 +3,25 @@
 * Base Class for Exporting a XLS file
 *
 * @author Rob Vrabel <rvrabel@wayne.edu>
+* @todo This class needs to be rewritten
 */
 class Export {
 	/**
 	* @var array
 	*/
-	var $display;
+	private $display;
 	/**
 	* @var array
 	*/
-	var $data;
+	private $data;
 	/**
 	* @var string
 	*/
-	var $file_name;
+	private $file_name;
 	/**
 	* @var string
 	*/
-	var $output;
+	private $output;
 	
 	/**
 	* Class Constructor
@@ -30,7 +31,7 @@ class Export {
 	* @param display array, data array
 	* @return NULL
 	*/	
-	function Export($data='', $display='', $file_name='') {
+	public function __construct($data='', $display='', $file_name='') {
 		$this->display	= $display;
 		$this->data		= $data;
 		$this->file_name = $file_name;
@@ -46,7 +47,7 @@ class Export {
 	*
 	* @return BOOL
 	*/
-	function GetXLS() {
+	public function GetXLS() {
 		// Make sure data is an array
 		if(is_array($this->data)) {
 			// Debug
@@ -94,7 +95,7 @@ class Export {
 	*
 	* @return NULL
 	*/	
-	function DisplayXLS($output='') {
+	public function DisplayXLS($output='') {
 		// Check if they are sending ouput, if not just use the classes output
 		($output == '')? $output = $this->output : '';
 		
