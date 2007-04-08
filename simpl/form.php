@@ -242,6 +242,10 @@ class Form {
 		foreach($this->fields as $name=>$field){
 			$this->Set('value', $name, '');
 			$this->Set('error', $name, '');
+			
+			// If there is a default set that value
+			if ($this->Get('default', $name) != '')
+				$this->Set('value', $name, $this->Get('default', $name));
 		}
 
 		return true;
@@ -386,7 +390,7 @@ class Form {
 
 		// Loop through all the newly omited
 		foreach($fields as $name){
-			// Make it hidden
+			// Make it omit
 			$this->Set('display', $name, -1);
 		}
 		
@@ -408,6 +412,12 @@ class Form {
 		// Require an array
 		if (!is_array($fields))
 			return false;
+		
+		// Loop through all the newly omited
+		foreach($fields as $name=>$value){
+			// Make it always the default
+			$this->Set('default', $name, $value);
+		}
 
 		// Set the Values
 		return $this->SetValues($fields);
