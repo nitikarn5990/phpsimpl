@@ -10,47 +10,47 @@ class Mail{
 	/**
 	 * @var	array
 	 */
-	var $sendto = array();
+	private $sendto = array();
 	/**
 	 * @var	array
 	 */
-	var $acc = array();
+	private $acc = array();
 	/**
 	 * @var	array
 	 */
-	var $abcc = array();
+	private $abcc = array();
 	/**
 	 * @var	array List of message attachments
 	 */
-	var $aattach = array();
+	private $aattach = array();
 	/**
 	 * @var	array List of message headers
 	 */
-	var $xheaders = array();
+	private $xheaders = array();
 	/**
 	 * @var	array Message priorities referential
 	 */
-	var $priorities = array('1 (Highest)', '2 (High)', '3 (Normal)', '4 (Low)', '5 (Lowest)');
+	private $priorities = array('1 (Highest)', '2 (High)', '3 (Normal)', '4 (Low)', '5 (Lowest)');
 	/**
 	 * @var	string Character set of message
 	 */
-	var $charset = "us-ascii";
+	private $charset = "us-ascii";
 	/**
 	 * @var	string Character encoding
 	 */
-	var $ctencoding = "7bit";
+	private $ctencoding = "7bit";
 	/**
 	 * @var	int If reciept is desired
 	 */
-	var $receipt = 0;
+	private $receipt = 0;
 	/**
 	 * @var	string Content type of mail
 	 */
-	var $content_type = 'text/plain';
+	private $content_type = 'text/plain';
 	/**
 	 * @var	string Boundary of types in mail
 	 */
-	var $boundary;
+	private $boundary;
 	
 	/**
 	 * Mail contructor

@@ -35,10 +35,10 @@ define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
  * Converts to and from JSON format.
  */
 class Json{
-   /**
-    * @var int
-    */
-   private $use;
+	/**
+	* @var int
+	*/
+	private $use;
    
    /**
     * Constructs a new JSON instance
@@ -534,10 +534,9 @@ class Json{
     }
 
     /**
-     * @todo Ultimately, this should just call PEAR::isError()
+     * @todo Handle errors in a standard way.
      */
-    function isError($data, $code = null){
-
+    public function isError($data, $code = null){
         return false;
     }
 }
