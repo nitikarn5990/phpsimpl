@@ -104,6 +104,10 @@ class Field {
 	 * @return bool
 	 */
 	public function Validate(){
+		// If the field is omited no need to validate
+		if ($this->Get('display') < 0)
+			return true;
+		
 		global $myValidator;
 		
 		// Check to see if there is already an errror
@@ -163,6 +167,16 @@ class Field {
 	 * @return bool
 	 */
 	public function Form($options='', $config=''){
+		// Figure out how to display the form
+		if ($this->Get('display') < 0){
+			// Omit
+			return true;
+		}else if ($this->Get('display') == 0){
+			// Hidden
+			echo '<input name="' . $this->Get('name') . '" type="hidden" value="' . $this->Output($this->Get('value')) . '" />' . "\n";
+			return true;
+		}
+		
 		$output = '<div class="field_' . $this->Get('name') . '">';
 		$output .= '<label for="' . $this->Get('name') . '">';
 		$output .= ($this->Get('required'))?'<em>*</em>':'';
@@ -226,13 +240,17 @@ class Field {
 			// Single Field
 			$type = ($config != '' && $config != 'text')?$config:'text';
 			$size = ($this->Get('length') < 30)?$this->Get('length'):30;
-			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' .$this->Output($this->Get('value')) . '" />';
+			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . $this->Output($this->Get('value')) . '" />';
 		}
 
 		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . stripslashes($this->Get('example')) . '</p></div>':'';
 		$output .= ($this->Get('error') != '')?'<p>' . $this->Output($this->Get('error')) . '</p></div>':'';
 		$output .= '</div>';
+
+		// Output the form
 		echo $output;
+		
+		return true;
 	}
 	
 	/**
@@ -267,7 +285,7 @@ class Field {
 	 * @return string
 	 */
 	private function Output($string){
-		return htmlspecialchars(stripslashes($string));
+		return stripslashes($string);
 	}
 }
 ?>

@@ -329,6 +329,14 @@ class Form {
 			if ($pos !== false){
 				// Set the new display order
 				$this->Set('display', $name, ($pos+1));
+				
+				// Place it in the correct order
+				$old_pos = array_search($name, $this->display);
+				if ($pos != $old_pos){
+					$tmp = $this->display[$pos];
+					$this->display[$pos] = $name;
+					$this->display[$old_pos] = $tmp;
+				}
 			}else{
 				// If the field is no longer in the display
 				if ($this->Get('display', $name) > 0){
@@ -338,16 +346,13 @@ class Form {
 			}
 		}
 		
-		// Set the local display order
-		$this->display = $fields;
-			
 		return true;
 	}
 	
 	/**
 	 * Set Hidden
 	 *
-	 * Set the display fields in the class
+	 * Set the hidden fields in the class
 	 *
 	 * @param $fields array
 	 * @return bool
@@ -363,10 +368,49 @@ class Form {
 			$this->Set('display', $name, 0);
 		}
 		
+		return true;
+	}
+	
+	/**
+	 * Set Omit
+	 *
+	 * Set the omitted fields in the class
+	 *
+	 * @param $fields array
+	 * @return bool
+	 */
+	public function SetOmit($fields){
+		// Require an array
+		if (!is_array($fields))
+			return false;
+
+		// Loop through all the newly omited
+		foreach($fields as $name){
+			// Make it hidden
+			$this->Set('display', $name, -1);
+		}
+		
 		// Remove it from the display array
 		$this->display = array_diff($this->display, $fields);
 		
 		return true;
+	}
+	
+	/**
+	 * Set Defaults
+	 *
+	 * Set the default values for the fields
+	 *
+	 * @param $fields array
+	 * @return bool
+	 */
+	public function SetDefaults($fields){
+		// Require an array
+		if (!is_array($fields))
+			return false;
+
+		// Set the Values
+		return $this->SetValues($fields);
 	}
 	
 	/**
@@ -421,6 +465,24 @@ class Form {
 	}
 	
 	/**
+	 * Display Individual Field
+	 * 
+	 * @param $field string
+	 * @param $hidden boolean
+	 * @param $options array
+	 * @param $config array
+	 * @return NULL
+	 */
+	public function FormField($field, $hidden=false, $options='', $config=''){
+		if ($this->IsField($field)){
+			if ($hidden != true)
+				$this->fields[$field]->Form($options, $config);
+			else
+				echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
+		}
+	}
+	
+	/**
 	 * Display Form
 	 * 
 	 * @param $display array
@@ -431,43 +493,18 @@ class Form {
 	 * @return string
 	 */
 	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){ 
-		// Make sure things are arrays if required
-		if(!is_array($omit))
-			$omit = array($omit);
-		
-		// Rearrange the Fields if there is a custom display
-		$show = array();
-		if(is_array($display)){
-			// If there is a custome Display make the array
-			foreach($display as $key=>$data)
-				$show[] = $data;
-				
-			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
-			foreach($this->fields as $key=>$data)
-				if (!in_array($key,$show) && !in_array($key,$hidden) && !in_array($key,$omit)){
-					if ($this->GetError($key) != '')
-						Alert($this->GetError($key));
-					$hidden[] = $key;
-				}
-		}else{
-			// If there is fields in the db table make the show array
-			foreach($this->fields as $key=>$data)
-				if (!in_array($key,$hidden) && !in_array($key,$omit))
-					$show[] = $key;
-		}
+		// Set the Displays
+		$this->SetDisplay($display);
+		$this->SetHidden($hidden);
+		$this->SetOmit($omit);
 		
 		// Start the fieldset
 		echo '<fieldset><legend>Information</legend>' . "\n";
 		
 		// Show the fields
-		foreach($show as $field)
-			if (!in_array($field, $omit))
+		foreach($this->display as $field)
 				$this->fields[$field]->Form($options[$field], $config[$field]);
-		
-		// Show the hidden
-		foreach($hidden as $field)
-			echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
-		
+
 		// End the fieldset
 		echo '</fieldset>' . "\n";
 	}
