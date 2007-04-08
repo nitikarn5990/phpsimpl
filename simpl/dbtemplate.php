@@ -113,6 +113,9 @@ class DbTemplate extends Form {
 				$this->Cache('set', 'table_' . $this->table . '.cache.php', $this->fields);
 		}
 		
+		// Maybe in the future
+		//$result = $db->Query('SHOW COLUMNS FROM `' . $this->table . '`', $this->database, false);
+		
 		// Set the values and primary key
 		foreach($this->fields as $name=>$field){
 			$this->SetValue($name, $data[$name]);
@@ -221,9 +224,13 @@ class DbTemplate extends Form {
 				if ($this->IsField($key))
 					$this->SetValue($key, date("Y-m-d H:i:s"));
 		}
-
-		// Get an array of values
-		$info = $this->GetValues();
+		
+		// Get the values except for the omitted fields
+		$info = array();
+		$fields = $this->GetFields();
+		foreach($fields as $data)
+			if ($this->Get('display', $data) >= 0)
+				$info[$data] = $this->GetValue($data);
 
 		// Check to see if we can connect
 		if ($db->DbConnect()){
@@ -278,7 +285,7 @@ class DbTemplate extends Form {
 			
 			// Clear the cache
 			$mySimpl->Cache('clear_query');
-
+			
 			// If it did something the return that everything is gone
 			if ($db->RowsAffected() == 1)
 				return true;
@@ -556,24 +563,6 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	 * Display Individual Field
-	 * 
-	 * @param $field string
-	 * @param $hidden boolean
-	 * @param $options array
-	 * @param $config array
-	 * @return NULL
-	 */
-	public function FormField($field, $hidden=false, $options='', $config=''){
-		if ($this->IsField($field)){
-			if ($hidden != true)
-				$this->fields[$field]->Form($options, $config);
-			else
-				echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
-		}
-	}
-	
-	/**
 	 * Display Form
 	 * 
 	 * @param $display array
@@ -584,41 +573,17 @@ class DbTemplate extends Form {
 	 * @return string
 	 */
 	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){ 
-		// Make sure things are arrays if required
-		if(!is_array($omit))
-			$omit = array($omit);
-		
-		// Rearrange the Fields if there is a custom display
-		$show = array();
-		if(is_array($display)){
-			// If there is a custome Display make the array
-			foreach($display as $key=>$data)
-				$show[] = $data;
-				
-			// Loop through all the fields to find orphans and add them to the hidden array so we dont loose data
-			foreach($this->fields as $key=>$data)
-				if (!in_array($key,$show) && !in_array($key,$hidden) && !in_array($key,$omit)){
-					if ($this->GetError($key) != '')
-						Alert($this->GetError($key));
-					$hidden[] = $key;
-				}
-		}else{
-			// If there is fields in the db table make the show array
-			foreach($this->fields as $key=>$data)
-				if (!in_array($key,$hidden) && !in_array($key,$omit))
-					$show[] = $key;
-		}
+		// Set the Displays
+		$this->SetDisplay($display);
+		$this->SetHidden($hidden);
+		$this->SetOmit($omit);
 		
 		// Start the fieldset
 		echo '<fieldset id="table_' . $this->table . '"><legend>' . ucfirst(str_replace('_',' ',$this->table)) . ' Information</legend>' . "\n";
 		
 		// Show the fields
-		foreach($show as $field)
-			$this->FormField($field, false, $options[$field], $config[$field]);
-		
-		// Show the hidden
-		foreach($hidden as $field)
-			$this->FormField($field, true);
+		foreach($this->display as $field)
+				$this->fields[$field]->Form($options[$field], $config[$field]);
 		
 		// End the fieldset
 		echo '</fieldset>' . "\n";
@@ -690,7 +655,7 @@ class DbTemplate extends Form {
 					$show[$field] = ($this->IsField($field))?$this->fields[$field]->Label():ucfirst(str_replace('_',' ',$field));
 			}else{
 				foreach($this->fields as $key=>$field)
-					$show[$field] = $field->Label();
+					$show[$key] = $field->Label();
 			}
 			$col_count = count($show);
 			
