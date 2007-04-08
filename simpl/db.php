@@ -10,23 +10,23 @@ class DB {
     /**
 	* @var string 
 	*/
-    var $database;
+    private $database;
     /**
 	* @var int 
 	*/
-    var $query_count;
+    public $query_count;
 	/**
      * @var bool
      */
-    var $connected;
+    private $connected;
     /**
      * @var array
      */
-    var $results;
+    protected $results;
     /**
      * @var string
      */
-    var $config;
+    private $config;
     
     /**
 	* Class Constructor
@@ -35,7 +35,7 @@ class DB {
 	*
 	* @return NULL
 	*/
-    function DB(){
+    public function __construct(){
 		$this->connected = false;	
     	$this->query_count = 0;
     }
@@ -51,7 +51,7 @@ class DB {
 	 * @param $database A String with the databse to connect to
 	 * @return bool
 	 */
-	function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
+	public function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
 		global $db;
 		
 		// Save the config till we are ready to connect
@@ -65,7 +65,7 @@ class DB {
 		return true;
 	}
 	
-	function DbConnect(){
+	public function DbConnect(){
 		if ($this->connected)
 			return true;
 			
@@ -101,7 +101,7 @@ class DB {
 	 * @param $db THe optional alternative database
 	 * 
 	 */
-	function Query($query, $db = '', $cache = true) {
+	public function Query($query, $db = '', $cache = true) {
    		// Use the Global Link
 		global $db_link;
 		
@@ -173,7 +173,7 @@ class DB {
 	 * @param $db String of a different database if this is going to happen on another location
 	 * @return result
 	 */
-	function Perform($table, $data, $action = 'insert', $parameters = '', $db = '', $clear = true) {
+	public function Perform($table, $data, $action = 'insert', $parameters = '', $db = '', $clear = true) {
 		// Use the Global Link
 		global $db_link;
 		global $mySimpl;
@@ -236,7 +236,7 @@ class DB {
 	 * 
 	 * @return bool
 	 */
-	function Close(){
+	public function Close(){
 		// If Connected
  		if ($this->connected){
 			// Use the Global Link
@@ -254,7 +254,7 @@ class DB {
 	 * @param $database A String with the new database name
 	 * @return bool
 	 */
-	function Change($database){
+	public function Change($database){
 		// Use the Global Link
 		global $db_link;
 		
@@ -280,7 +280,7 @@ class DB {
 	 * @param $error The actual text error
 	 * @return null
 	 */
-	function Error($query, $errno, $error) {
+	public function Error($query, $errno, $error) {
 		// Record the error in the Log
 		
 		// Close the Database Connection
@@ -296,7 +296,7 @@ class DB {
 	 * @param $result The result that was returned from the database
 	 * @return array
 	 */
-	function FetchArray($result) {
+	public function FetchArray($result) {
 		if (QUERY_CACHE && is_array($this->results))
 			return array_shift($this->results);
 		else
@@ -309,7 +309,7 @@ class DB {
 	 * @param $result The result that was returned from the database
 	 * @return int
 	 */
-	function NumRows($result) {
+	public function NumRows($result) {
 		if (QUERY_CACHE && is_array($result)){
 			return count($this->results);
 		}else{
@@ -322,7 +322,7 @@ class DB {
 	 * 
 	 * @return int
 	 */
-	function InsertID() {
+	public function InsertID() {
 		return mysql_insert_id();
 	}
 
@@ -332,7 +332,7 @@ class DB {
 	 * @param $result The result that was returned from the database
 	 * @return bool
 	 */
-	function FreeResult($result) {
+	public function FreeResult($result) {
 		return mysql_free_result($result);
 	}
 	
@@ -342,7 +342,7 @@ class DB {
 	 * @param $result The result that was returned from the database
 	 * @return object
 	 */
-	function FetchField($result) {
+	public function FetchField($result) {
 		return mysql_fetch_field($result);
 	}
 	
@@ -351,7 +351,7 @@ class DB {
 	 * 
 	 * @return int
 	 */
-	function RowsAffected(){
+	public function RowsAffected(){
 		return mysql_affected_rows();
 	}
 	
@@ -362,7 +362,7 @@ class DB {
 	 * @param $field The field number that we are intrested in getting the info for
 	 * @return object
 	 */
-	function FieldLength($result,$field) {
+	public function FieldLength($result,$field) {
 		return mysql_field_len($result,$field);
 	}
 	
@@ -372,7 +372,7 @@ class DB {
 	 * @param $string A string to be outputted from the database
 	 * @return object
 	 */
-	function Output($string) {
+	public function Output($string) {
 		return htmlspecialchars(stripslashes($string));
 	}
 
@@ -382,7 +382,7 @@ class DB {
 	 * @param $string A string that is going to be inserted into the database
 	 * @return object
 	 */
-	function Prepare($string) {
+	public function Prepare($string) {
 		if (!$this->connected)
 			$this->DbConnect();
 			
