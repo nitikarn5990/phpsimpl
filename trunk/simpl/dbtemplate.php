@@ -680,7 +680,7 @@ class DbTemplate extends Form {
 				$col = 1;
 				foreach($show as $name=>$value){
 					$output .= '<td' . (($col == $col_count)?' class="last"':'') . '>';
-					$str = $field[$name];
+					$str = stripslashes($field[$name]);
 					
 					if (is_array($options[$name]))
 						$str = $options[$name][$str];
