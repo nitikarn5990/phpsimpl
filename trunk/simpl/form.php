@@ -525,12 +525,12 @@ class Form {
 	 * @param $config array
 	 * @return NULL
 	 */
-	public function FormField($field, $hidden=false, $options='', $config=''){
+	public function FormField($field, $hidden=false, $options='', $config='', $multi=false){
 		if ($this->IsField($field)){
 			if ($hidden != true)
-				$this->fields[$field]->Form($options, $config);
+				$this->fields[$field]->Form($options, $config, $multi);
 			else
-				echo '<input name="' . $field . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
+				echo '<input name="' . $field . (($multi)?'[]':'') . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
 		}
 	}
 	
@@ -544,7 +544,7 @@ class Form {
 	 * @param $omit array
 	 * @return string
 	 */
-	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){ 
+	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array(), $mutli=false){ 
 		// Set the Displays
 		$this->SetDisplay($display);
 		$this->SetHidden($hidden);
@@ -555,10 +555,39 @@ class Form {
 		
 		// Show the fields
 		foreach($this->display as $field)
-				$this->fields[$field]->Form($options[$field], $config[$field]);
+				$this->fields[$field]->Form($options[$field], $config[$field], $mutli);
 
 		// End the fieldset
 		echo '</fieldset>' . "\n";
+	}
+	
+	/**
+	 * Display a Mutli type Form
+	 * 
+	 * @param $display array
+	 * @param $hidden array
+	 * @param $options array
+	 * @param $config array
+	 * @param $omit array
+	 * @return NULL
+	 */
+	public function MultiForm($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){
+		// Call the original form with the multi flag
+		$this->Form($display, $hidden, $options, $config, $omit, true);
+	}
+	
+	/**
+	 * Display Individual Mutli type Field
+	 * 
+	 * @param $field string
+	 * @param $hidden boolean
+	 * @param $options array
+	 * @param $config array
+	 * @return NULL
+	 */
+	public function MultiFormField($field, $hidden=false, $options='', $config=''){
+		// Call the original form field with the multi flag
+		$this->FormField($field, $hidden, $options, $config, true);
 	}
 	
 	/**

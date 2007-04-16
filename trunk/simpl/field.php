@@ -63,6 +63,10 @@ class Field {
 	 * @var int
 	 */
 	private $primary = 0;
+	/**
+	 * @var int
+	 */
+	private $multi = 0;
 	
 	/**
 	 * Field Constructor
@@ -170,9 +174,12 @@ class Field {
 	 * @param $config string
 	 * @return bool
 	 */
-	public function Form($options='', $config=''){
+	public function Form($options='', $config='', $multi=false){
 		// If there is a default value use that
 		$my_value = ($this->Get('value') == '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
+		
+		// Change the fieldname to a multi if needed
+		if ($multi) $this->Set('multi', $this->Get('multi')+1);
 		
 		// Figure out how to display the form
 		if ($this->Get('display') < 0){
@@ -180,7 +187,7 @@ class Field {
 			return true;
 		}else if ($this->Get('display') == 0){
 			// Hidden
-			echo '<input name="' . $this->Get('name') . '" type="hidden" value="' . $this->Output($my_value) . '" />' . "\n";
+			echo '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" type="hidden" value="' . $this->Output($my_value) . '" />' . "\n";
 			return true;
 		}
 		
@@ -193,7 +200,7 @@ class Field {
 			$this->Set('config', $config);
 		
 		$output = '<div class="field_' . $this->Get('name') . '">';
-		$output .= '<label for="' . $this->Get('name') . '">';
+		$output .= '<label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">';
 		$output .= ($this->Get('required'))?'<em>*</em>':'';
 		$output .= $this->Label(':');
 		$output .= '</label>';
@@ -206,10 +213,10 @@ class Field {
 				case 'Upload':
 					// If there is something in the field
 					if ($my_value != ''){
-						$output .=  '<div id="form_' . $this->Get('name') . '">' . $my_value . ' <input name="remove[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . '" /> Remove File</div>';
-						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="hidden" value="' . $my_value . '" />' . "\n";
+						$output .=  '<div id="form_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . $my_value . ' <input name="remove_' . $this->Get('name') . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" /> Remove File</div>';
+						$output .=  '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="hidden" value="' . $my_value . '" />' . "\n";
 					}else{
-						$output .=  '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="file" />';
+						$output .=  '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="file" />';
 					}
 					break;
 				default:
@@ -224,18 +231,18 @@ class Field {
 				case 'radio':
 				foreach($this->Get('options') as $key=>$value){
 					$selected = ($my_value == (string)$key)?' checked="checked"':'';
-					$each .= '<div><input name="' . $this->Get('name') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
+					$each .= '<div><input name="' . $this->Get('name') . (($multi)?'[]':'') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
 				}
 				break;
 				case 'checkbox':
 				$split = split(',',$my_value);
 				foreach($this->Get('options') as $key=>$value){
 					$selected = (in_array($key,$split))?' checked="checked"':'';
-					$each .= '<div><input name="' . $this->Get('name') . '[]" type="checkbox" value="' . $key . '" id="' . $this->Get('name') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
+					$each .= '<div><input name="' . $this->Get('name') . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
 				}
 				break;
 				default:
-				$each .= '<select name="' . $this->Get('name') . '" id="' . $this->Get('name') . '">' . "\n";
+				$each .= '<select name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . "\n";
 				foreach($this->Get('options') as $key=>$value){
 					$selected = ($my_value == (string)$key)?' selected="selected"':'';
 					$each .= '<option value="' . $key . '"' . $selected . '>' . $this->Output($value) . '</option>' . "\n";
@@ -246,17 +253,17 @@ class Field {
 			$output .= '<div class="' . $this->Get('config') . '">' . $each . '</div>';
 		}elseif($this->Get('type') == 'blob'){
 			// Textarea
-			$output .= '<div><textarea name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
+			$output .= '<div><textarea name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
 		}elseif($this->Get('type') == 'date'){
 			// Date Field
 			$value = ($my_value != '0000-00-00' && $my_value != '')?date("F j, Y",strtotime($my_value)):'';
-			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="text" size="18" maxlength="18" value="' . $my_value . '" /><button type="reset" id="' . $this->Get('name') . '_b">...</button>';	
-			$output .= '<script type="text/javascript">Calendar.setup({ inputField : "' . $this->Get('name') . '", ifFormat : "%B %e, %Y", button : "' . $this->Get('name') . '_b"});</script>';
+			$output .= '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="text" size="18" maxlength="18" value="' . $my_value . '" /><button type="reset" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b">...</button>';	
+			$output .= '<script type="text/javascript">Calendar.setup({ inputField : "' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '", ifFormat : "%B %e, %Y", button : "' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b"});</script>';
 		}else{
 			// Single Field
 			$type = ($this->Get('config') != '' && $this->Get('config') != 'text')?$this->Get('config'):'text';
 			$size = ($this->Get('length') < 30)?$this->Get('length'):30;
-			$output .= '<input name="' . $this->Get('name') . '" id="' . $this->Get('name') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . $this->Output($my_value) . '" />';
+			$output .= '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . $this->Output($my_value) . '" />';
 		}
 
 		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . stripslashes($this->Get('example')) . '</p></div>':'';

@@ -38,6 +38,10 @@ class DbTemplate extends Form {
 	 * @var array
 	 */
 	private $join_on = array();
+	/**
+	 * @var int
+	 */
+	private $multi = 0;
 
 	/**
 	 * DbTemplate Constructor
@@ -572,18 +576,21 @@ class DbTemplate extends Form {
 	 * @param $omit array
 	 * @return string
 	 */
-	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()){ 
+	public function Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array(), $multi=false){ 
 		// Set the Displays
 		$this->SetDisplay($display);
 		$this->SetHidden($hidden);
 		$this->SetOmit($omit);
 		
+		// If this is a mutli form, increment the
+		if ($multi) $this->multi++;
+		
 		// Start the fieldset
-		echo '<fieldset id="table_' . $this->table . '"><legend>' . ucfirst(str_replace('_',' ',$this->table)) . ' Information</legend>' . "\n";
+		echo '<fieldset id="table_' . $this->table . (($multi)?'_' . $this->multi:'') . '"><legend>' . ucfirst(str_replace('_',' ',$this->table)) . ' Information</legend>' . "\n";
 		
 		// Show the fields
 		foreach($this->display as $field)
-				$this->fields[$field]->Form($options[$field], $config[$field]);
+				$this->fields[$field]->Form($options[$field], $config[$field], $multi);
 		
 		// End the fieldset
 		echo '</fieldset>' . "\n";
