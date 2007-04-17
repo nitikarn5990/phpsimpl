@@ -440,16 +440,16 @@ class DbTemplate extends Form {
 		foreach($terms_db as $term_db){
 			if (is_array($search_fields))
 				foreach($search_fields as $field)
-					$parts[] = '`' . $field . '` RLIKE \'' . $term_db . '\'';
+					$parts[] = '`' . $this->table . '`.' . $field . ' RLIKE \'' . $term_db . '\'';
 			else
-				$parts[] = '`' . $search_fields . '` RLIKE \'' . $term_db . '\'';
+				$parts[] = '`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
 		}
 		$parts = implode(' AND ', $parts);
 	
 		// Create the return values
 		if (is_array($return_fields)){
 			foreach($return_fields as $field)
-				$fields[] = '`' . $field . '`';
+				$fields[] = '`' . $this->table . '`.' . $field;
 			$return = implode(', ', $fields);
 		}else{
 			$return = '*';
@@ -638,7 +638,7 @@ class DbTemplate extends Form {
 		// Setup the Sort Sessions
 		$_SESSION[$this->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
 		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . '_order'];
-
+		
 		// Get the list of items if forced
 		if ($force_check == true )
 			$this->GetList($display, $_SESSION[$this->table . '_sort'], $_SESSION[$this->table . '_order']);

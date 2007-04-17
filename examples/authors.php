@@ -1,8 +1,4 @@
 <?php
-/**
- * Created on Nov 11, 2006
- * Filename authors.php
- */
 	// Prerequisites
 	include_once('application_top.php');
 	
@@ -17,28 +13,38 @@
 	// Add some Filtering
 	if (trim($_GET['q']) != '')
 		$myAuthor->search = trim($_GET['q']);
-		
-	// Get the List
-	$myAuthor->GetList($display,'last_name','DESC');
 	
 	// Header
 	define('PAGE_TITLE','Edit Authors');
 	include_once('inc/header.php');
 ?>
-<h1>Blog Authors</h1>
-<form action="<?php echo htmlspecialchars(sprintf("%s%s%s","http://",$_SERVER["HTTP_HOST"],$_SERVER["REQUEST_URI"])); ?>" method="get" name="search" id="search">
-	<fieldset>
-		<legend>Search</legend>
-		<div><label>Search:</label><input name="q" type="text" class="search" value="<?php echo stripslashes($_GET['q']); ?>" /> <input name="submit" type="submit" value="Search" class="submit" /></div>
-	</fieldset>
-</form>
-<ul id="options">
-	<li class="add"><a href="author.php" title="A New Blog Author">Add New Author</a></li>
-</ul>
-<?php
-	// Display the List
-	$myAuthor->DisplayList($display, $locations, $options, false);
+<div id="main-info">
+	<h1>Blog Authors</h1>
+	<form action="<?php echo htmlspecialchars(sprintf("%s%s%s","http://",$_SERVER["HTTP_HOST"],$_SERVER["REQUEST_URI"])); ?>" method="get" name="search" id="search">
+		<fieldset>
+			<legend>Search</legend>
+			<div><label>Search:</label><input name="q" type="text" class="search" value="<?php echo stripslashes($_GET['q']); ?>" /> <input name="submit" type="submit" value="Search" class="submit" /></div>
+		</fieldset>
+	</form>
+</div>
+<div id="data">
+	<div id="notifications">
+	<?php
+		// Report errors to the user
+		Alert(GetAlert('error'));
+		Alert(GetAlert('success'),'success');
+	?>
+	</div>
 	
+	<ul id="options">
+		<li class="add"><a href="author.php" title="A New Blog Author">Add New Author</a></li>
+	</ul>
+	<?php
+		// Display the List
+		$myAuthor->DisplayList($display, $locations, $options);
+	?>
+</div>	
+<?php
 	// Footer
 	include_once('inc/footer.php');
 ?>

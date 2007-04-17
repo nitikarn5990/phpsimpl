@@ -1,4 +1,3 @@
-		<?php $db->Close(); ?>
 		<div class="clearboth"></div>
 	</div>
 	<div id="footer">
