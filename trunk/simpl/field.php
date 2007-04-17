@@ -192,7 +192,7 @@ class Field {
 		}
 		
 		// Overwrite the options if needed
-		if(is_array($options))
+		if(is_array($options) || is_object($options))
 			$this->Set('options', $options);
 		
 		// Overwrite the config if needed
