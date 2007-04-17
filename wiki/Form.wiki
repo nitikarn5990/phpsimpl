@@ -111,6 +111,42 @@ SetRequired(fields) -> Boolean
 }}}
 Set the required fields in the class and returns if it was successful.
 
+*SetDisplay*
+{{{
+SetDisplay($fields) -> Boolean
+}}}
+Set the display fields for the class. This allows the user to set a default display for the class right in the class constructor. Allowing the class to be displaying on multiple pages without having to change the default display on each page.
+
+*SetHidden*
+{{{
+SetHidden($fields) -> Boolean
+}}}
+Set the hidden fields for the class. This allows the user to set a default hidden fields for the class right in the class constructor. Allowing the class to be displaying on multiple pages without having to change the default hidden fields on each page.
+
+*SetOmit*
+{{{
+SetOmit($fields) -> Boolean
+}}}
+Set the omitted fields for the class. This allows the user to set a default omitted fields for the class right in the class constructor. Allowing the class to be displaying on multiple pages without having to change the default omitted fields on each page.
+
+*SetDefaults*
+{{{
+SetDefaults($fields) -> Boolean
+}}}
+Set the default values for fields in the class. This is only used on the Form() functions and allows the user to set default values that will be outputted to the form. For example having "is_active" automatically set to "true" so the checkbox is already check when the user goes to enter the form for the first time.
+
+*SetOptions*
+{{{
+SetOptions($options) -> Boolean
+}}}
+Set the default options for the fields in the class. This is used to put options into variables in a class that will be used multiple times on a site. A good example is the "States" field in a signup form. The States will always stay the same so there is no need to redefine them on each page the form is used. This allows it to be defined once and be used everywhere.
+
+*SetConfig*
+{{{
+SetConfig($config) -> Boolean
+}}}
+Set the default config for the fields in the form. This is useful when you always want something to be a checkbox or a radio button or even an upload form. If you do not want to worry about defining it on every page this allows it to be defined once and then used on every page.
+
 *GetErrors*
 {{{
 GetErrors() -> Array
@@ -128,3 +164,21 @@ Returns the class in a simple format that is human readable. This is very helpfu
 Form($display, $hidden, $options, $config, $omit) -> Null
 }}}
 Display an XHTML compliant form to the user that includes all the fields in the $display. If $display is not an array it will display all the fields that are not in the $omit array. The $options and $config arrays are associative arrays with the field names as keys. They will be passed to each field individually by their key.
+
+*FormField*
+{{{
+FormField($field, $hidden, $options, $config) -> Null
+}}}
+Display an XHTML compliant individual form field to the user. Will use the predefined hidden, options and config unless passed to this function which will overwrite the defaults.
+
+*MultiForm*
+{{{
+MultiForm($display, $hidden, $options, $config, $omit) -> Null
+}}}
+Display an XHTML compliant form with [] brackets at the end of the input names. This allows the set of fields to be displayed multiple times in a single form element and no data is overwritten.
+
+*MultiFormField*
+{{{
+MultiFormField($field, $hidden $options, $config) -> Null
+}}}
+Display an XHTML compliant form field with [] brackets at the end of the input names. This allows the field to be displayed multiple times in a single form element and no data is overwritten.
