@@ -175,7 +175,7 @@ Display an XHTML compliant individual form field to the user. Will use the prede
 {{{
 MultiForm($display, $hidden, $options, $config, $omit) -> Null
 }}}
-Display an XHTML compliant form with [] brackets at the end of the input names. This allows the set of fields to be displayed multiple times in a single form element and no data is overwritten.
+Display an XHTML compliant form with [] brackets at the end of the input names. This allows the set of fields to be displayed multiple times in a single form element and no data is overwritten. [http://nickdenardis.blogspot.com/2007/04/multiplication.html Example]
 
 *MultiFormField*
 {{{
