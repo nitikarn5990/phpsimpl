@@ -1,3 +1,37 @@
+/* General */
+body {
+	font: 100% Arial, Helvetica, sans-serif;
+	color: #333333;
+	background: #FFFFFF;
+	margin: 0px;
+	padding: 0px;
+}
+h1, h2, h3, h4, h5, img {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+}
+a {
+	color: #4d76e0;
+	text-decoration: none;
+}
+a:visited {
+	color: #4d7bf1;
+}
+a:hover {
+	color: #FFF;
+	background-color: #839de0;
+}
+form {
+	margin: 0px;
+	padding: 0px;
+	display: inline;
+}
+
+/* Global */
+#container {
+	background-color: #dce0eb;
+}
 .clearboth { clear: both; }
 
 /* Header */
@@ -13,23 +47,23 @@
 }
 
 /* Main Menu */
-#left-column {
+#main-menu {
 	clear: both;
 	float: left;
 	width: 150px;
 	font-size: 0.8em;
 	margin-left: 10px;
 }
-#left-column ul {
+#main-menu ul {
 	margin: 0px;
 	padding: 5px 0px;
 	list-style: none;
 	background-color: #CCCCCC;
 }
-#left-column li {
+#main-menu li {
 	display: inline;
 }
-#left-column li a {
+#main-menu li a {
 	display: block;
 	padding: 4px 10px;
 	margin: 1px;
@@ -38,10 +72,10 @@
 	text-decoration: none;
 	color: #1d2f64;
 }
-#left-column li a.last {
+#main-menu li a.last {
 	border-bottom: 0px;
 }
-#left-column li a:hover {
+#main-menu li a:hover {
 	background-color: #999999;
 }
 
@@ -52,6 +86,19 @@
 	position: relative;
 	background-color: #FFF;
 }
+#content #main-info {
+	background-color: #EEE;
+	padding: 5px;
+	position: relative;
+}
+#content #main-info h1 {
+	border: 0px;
+	padding: 6px;
+	margin: 0px;
+}
+#content #data {
+	padding: 5px;
+}
 #content h1 {
 	font-size: 1.3em;
 	border-bottom: 1px solid #333333;
@@ -60,6 +107,8 @@
 #content form {
 	margin: 0px 0px 10px 0px;
 }
+
+/* Post List */
 dl#posts {
 	margin: 0px;
 	padding: 0px;
@@ -67,7 +116,7 @@ dl#posts {
 dl#posts dt, #view-post h1 {
 	font-family: Georgia;
 	font-size: 1.3em;
-	margin-bottom: 3px;
+	margin-bottom: 7px;
 }
 dl#posts dt a {
 	color: #000;
@@ -79,16 +128,22 @@ dl#posts dt a:hover {
 }
 dl#posts dd {
 	padding: 0px;
-	color: #222;
+	margin: 0px;
+	color: #333;
+	font-size: 0.95em;
 }
 dl#posts dd .details, #view-post .details {
-	margin: 2px 0px 15px;
-	font-size: 0.8em;
+	margin: 3px 0px 15px;
+	font-size: 0.85em;
 	color: #666;
 }
+
+/* Viewing Post */
 #view-post {
-	padding: 0px 0px 10px;
+	padding: 5px 0px 10px;
 }
+
+/* Item Lists */
 table.small {
 	clear: right;
 	font-size: 0.9em;
@@ -117,24 +172,53 @@ table.small td.last, table.small th.last {
 
 /* Search */
 #search {
-	float: right;
+	position: absolute;
+	top: 10px;
+	right: 6px;
 }
 #search fieldset {
 	border: 0px;
+	display: inline;
+	margin: 0px;
+	padding: 0px;
 }
 #search legend {
 	display: none;
 }
+#search label {
+	display: none;
+	float: left;
+	text-align: right;
+	margin: 4px 4px 0px 0px;
+	font-weight: bold;
+}
+#search input.submit {
+	display: none;
+	border: 1px solid #999999;
+	background-color: #FFF;
+}
+#search input.search {
+	background: #FFF url(../images/magnifier.png) no-repeat 2px center;
+	padding-left: 20px;
+}
 
 
 /* Options */
-ul.options {
+ul#options {
 	margin: 0px;
 	padding: 7px 0px;
 	list-style: none;
 }
+li.back {
+	background: url(../images/bullet_back.png) no-repeat left center;
+	padding: 0px 0px 0px 17px;	
+}
+li.add {
+	background: url(../images/bullet_add.png) no-repeat left center;
+	padding: 0px 0px 0px 17px;	
+}
 
-/* Form Stuff */
+/* Form */
 label {
 	float: left;
 	width: 150px;
