@@ -18,9 +18,13 @@
 	// Add some Filtering
 	if (trim($_GET['q']) != '')
 		$myPost->search = trim($_GET['q']);
-		
+	
+	// Figure out the display type and order, Taken from DisplayList(), Need to find a better way to do this, it does not work with joined orders
+	$_SESSION[$myPost->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$myPost->table . '_sort'];
+	$_SESSION[$myPost->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$myPost->table . '_order'];
+	
 	// Get the List
-	$myPost->GetList($display,'date_entered','DESC');
+	$myPost->GetList($display, $_SESSION[$myPost->table . '_sort'], $_SESSION[$myPost->table . '_order']);
 	
 	// Header
 	define('PAGE_TITLE','Edit Posts');

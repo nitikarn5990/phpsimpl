@@ -7,7 +7,7 @@
 	
 	// Setup the Display
 	$display = array('first_name', 'last_name', 'email', 'date_entered');
-	$locations = array('title' => '<a href="author.php?id={$item_id}">{$data}</a>');
+	$locations = array('first_name' => '<a href="author.php?id={$item_id}">{$data}</a>');
 	$options = array();
 	
 	// Add some Filtering

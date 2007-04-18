@@ -8,7 +8,7 @@ define('DEBUG',false);
 define('DEBUG_QUERY',false);
 define('USE_CACHE',true);
 define('QUERY_CACHE',true);
-define('DB_SESSIONS',true);
+define('DB_SESSIONS',false);
 
 // Directories
 // Always Include trailing slash "/" in Direcories
