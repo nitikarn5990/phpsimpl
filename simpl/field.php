@@ -213,7 +213,7 @@ class Field {
 				case 'Upload':
 					// If there is something in the field
 					if ($my_value != ''){
-						$output .=  '<div id="form_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . $my_value . ' <input name="remove_' . $this->Get('name') . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" /> Remove File</div>';
+						$output .=  '<div id="form_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . $my_value . ' <input name="remove' . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" /> Remove File</div>';
 						$output .=  '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="hidden" value="' . $my_value . '" />' . "\n";
 					}else{
 						$output .=  '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="file" />';
@@ -251,7 +251,7 @@ class Field {
 				break;
 			}
 			$output .= '<div class="' . $this->Get('config') . '">' . $each . '</div>';
-		}elseif($this->Get('type') == 'blob'){
+		}elseif($this->Get('type') == 'blob' || $this->Get('type') == 'text'){
 			// Textarea
 			$output .= '<div><textarea name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
 		}elseif($this->Get('type') == 'date'){
