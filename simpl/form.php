@@ -171,6 +171,20 @@ class Form {
 
 		return false;
 	}
+	
+	/**
+	 * Get Label
+	 *
+	 * @param $field string
+	 * @return string
+	 */
+	public function GetLabel($field, $append=''){
+		// Make sure it is a field
+		if ($this->IsField($field))
+			return $this->fields[$field]->Label($append);
+		
+		return '';
+	}
 
 	/**
 	 * Get Fields
@@ -440,6 +454,29 @@ class Form {
 
 		// All options set
 		return true;
+	}
+	
+	/**
+	 * Set Options for a specific field
+	 *
+	 * Set the option values for a specific field and an optional first item
+	 *
+	 * @param $field string
+	 * @param $options array
+	 * @param $first string
+	 * @return bool
+	 */
+	public function SetOption($field, $options, $first=''){
+		// Require an array
+		if (!is_array($options) || !$this->IsField($field))
+			return false;
+		
+		// Append the first item to the options if needed
+		if ($first != '')
+			$options = array_merge(array(''=>$first), $options); 
+
+		// Set the options for the field
+		return $this->Set('options', $field, $options);
 	}
 	
 	/**

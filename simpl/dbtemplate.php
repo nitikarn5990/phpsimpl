@@ -93,32 +93,13 @@ class DbTemplate extends Form {
 		if (USE_CACHE == true && $cache != ''){
 			$this->fields = unserialize($cache);
 		}else{
-			// Query for one record
-			$result = $db->Query('SELECT * FROM `' . $this->table . '` LIMIT 1', $this->database, false);
-
-			// Loop through all the fields
-			while($field = $db->FetchField($result)){
-				// Set all the field info
-				$field_count = count($this->fields);
-				$tmpField = new Field;
-				$tmpField->Set('name', $field->name);
-				$tmpField->Set('type', $field->type);
-				$tmpField->Set('length', $db->FieldLength($result,$field_count));
-				$tmpField->Set('validate', $this->ValidType($field));
-				$tmpField->Set('primary', $field->primary_key);
-				$tmpField->Set('display', ($field_count+1));
-
-				// Add the field to the list
-				$this->fields[$field->name] = $tmpField;
-			}
+			// Get the fields and their properties
+			$this->ParseTable();
 
 			// If Use Cache try to save it
 			if (USE_CACHE == true)
 				$this->Cache('set', 'table_' . $this->table . '.cache.php', $this->fields);
 		}
-		
-		// Maybe in the future
-		//$result = $db->Query('SHOW COLUMNS FROM `' . $this->table . '`', $this->database, false);
 		
 		// Set the values and primary key
 		foreach($this->fields as $name=>$field){
@@ -852,9 +833,12 @@ class DbTemplate extends Form {
 	 * @return string
 	 */
 	private function ValidType(&$field){
+		if (!is_object($field))
+			return NULL;
+		
 		if ($field->unsigned == 1)
 			return 'unsigned';
-		
+
 		if ($field->type == 'real')
 			return 'float';
 
@@ -865,6 +849,54 @@ class DbTemplate extends Form {
 			return 'email';
 
 		return NULL;
+	}
+	
+	/**
+	 * Parse the table information into an array format
+	 *
+	 * @return boolean
+	 */
+	private function ParseTable(){
+		global $db;
+		
+		// Query for one record
+		$result = $db->Query('SELECT * FROM `' . $this->table . '` LIMIT 1', $this->database, false);
+
+		// Loop through all the fields
+		while($field = $db->FetchField($result)){
+			// Set all the field info
+			$field_count = count($this->fields);
+			$tmpField = new Field;
+			$tmpField->Set('name', $field->name);
+			$tmpField->Set('type', $field->type);
+			$tmpField->Set('length', $db->FieldLength($result,$field_count));
+			$tmpField->Set('validate', $this->ValidType($field));
+			$tmpField->Set('primary', $field->primary_key);
+			$tmpField->Set('display', ($field_count+1));
+
+			// Add the field to the list
+			$this->fields[$field->name] = $tmpField;
+		}
+		
+		if (USE_ENUM == true){
+			// Query for the ENUM information
+			$result2 = $db->Query('DESCRIBE ' . $this->table, $this->database, false);
+			
+			// Loop through all the fields
+			while ($info = $db->FetchArray($result2)){
+				// Split up the type
+				ereg('^([^ (]+)(\((.+)\))?([ ](.+))?$',$info['Type'],$field);
+				if ($field[1] == 'enum' || $field[1] == 'set'){
+					// Split the options
+					$opts = split("','",substr($field[3],1,-1));
+					foreach($opts as $key=>$value)
+						$options[$value] = $value;
+					$this->SetOption($info['Field'], $options);
+				}
+			}
+		}
+
+		return true;
 	}
 }
 ?>
