@@ -60,6 +60,9 @@ class DbTemplate extends Form {
 		// Set the database
 		$this->database = $database;
 
+		// Construct the class from the DB
+		$this->DbTemplate(array());
+
 		return true;
 	}
 
@@ -408,7 +411,7 @@ class DbTemplate extends Form {
 	* @param $return_fields An array of the field keys that are going to be returned
 	* @return int
 	*/
-	public function Search($keywords,$search_fields,$return_fields){
+	public function Search($keywords, $search_fields, $return_fields){
 		global $db;
 		
 		// Split up the terms
@@ -492,7 +495,7 @@ class DbTemplate extends Form {
 	* @param $options An array containing the search criteria for the move, if there is a cetain category or list to stay within
 	* @return bool
 	*/
-	public function Move($direction,$options = array()){
+	public function Move($direction, $options = array()){
 		global $db;
 		
 		// Get the Fields
