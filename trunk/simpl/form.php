@@ -171,6 +171,24 @@ class Form {
 
 		return false;
 	}
+
+	/**
+	 * Get Errors
+	 *
+	 * Get a list of all the errors in the class
+	 *
+	 * @return array
+	 */
+	public function GetErrors(){
+		$data = array();
+		
+		// Loop through all the fields
+		foreach($this->fields as $name=>$field)
+			if ($field->Get('error') != '')
+				$data[$name] = $field->Get('error');
+
+		return $data;
+	}
 	
 	/**
 	 * Get Label
@@ -184,6 +202,50 @@ class Form {
 			return $this->fields[$field]->Label($append);
 		
 		return '';
+	}
+	
+	/**
+	 * Set Labels
+	 *
+	 * Set the labels for the fields in the class
+	 *
+	 * @param $labels array
+	 * @return bool
+	 */
+	public function SetLabels($labels){
+		// Require an array
+		if (!is_array($labels))
+			return false;
+
+		// Loop through all the newly hidden
+		foreach($labels as $field=>$label){
+			// Make it hidden
+			$this->Set('label', $field, $label);
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Set Examples
+	 *
+	 * Set the examples for the fields in the class
+	 *
+	 * @param $examples array
+	 * @return bool
+	 */
+	public function SetExamples($examples){
+		// Require an array
+		if (!is_array($examples))
+			return false;
+
+		// Loop through all the newly hidden
+		foreach($examples as $field=>$example){
+			// Make it hidden
+			$this->Set('example', $field, $example);
+		}
+		
+		return true;
 	}
 
 	/**
@@ -375,7 +437,7 @@ class Form {
 		// Require an array
 		if (!is_array($fields))
 			return false;
-
+			
 		// Loop through all the newly hidden
 		foreach($fields as $name){
 			// Make it hidden
@@ -500,24 +562,6 @@ class Form {
 
 		// All options set
 		return true;
-	}
-	
-	/**
-	 * Get Errors
-	 *
-	 * Get a list of all the errors in the class
-	 *
-	 * @return array
-	 */
-	public function GetErrors(){
-		$data = array();
-		
-		// Loop through all the fields
-		foreach($this->fields as $name=>$field)
-			if ($field->Get('error') != '')
-				$data[$name] = $field->Get('error');
-
-		return $data;
 	}
 
 	/**

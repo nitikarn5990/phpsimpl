@@ -74,6 +74,9 @@ class Field {
 	 * @return bool
 	 */
 	public function __construct(){
+		// Set the field to display
+		$this->display = 1;
+		
 		return true;
 	}
 	
