@@ -473,7 +473,7 @@ class Form {
 		
 		// Append the first item to the options if needed
 		if ($first != '')
-			$options = array_merge(array(''=>$first), $options); 
+			$options = array(''=>$first) + $options; 
 
 		// Set the options for the field
 		return $this->Set('options', $field, $options);
