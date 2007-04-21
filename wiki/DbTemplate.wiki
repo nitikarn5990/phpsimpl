@@ -7,6 +7,7 @@ The DbTemplate class is used to mirror a database table. No setup is needed, jus
 
 = Example =
 {{{
+<?php
 // Create the RSVP class to mirror the RSVP table
 class RSVP extends DbTemplate {
   /**
@@ -21,25 +22,37 @@ class RSVP extends DbTemplate {
     $labels = array('first_name' => 'First Name', 'last_name' => 'Last Name', 'email' => 'E-Mail');
     $examples = array();
 
+    // Call the DSbTemplate constructor with the object setup
     $this->DbTemplate($data, $required, $labels, $examples, $table, '', 'my_database');
+    
+    // Set the fields that will display on the form
+    $this->SetDisplay(array('first_name', 'last_name', 'email', 'phone'));
   }
 }
 
 // Create the class
 $myRSVP = new RSVP;
-$display = array('first_name', 'last_name', 'email', 'phone');
 
 // If saving the RSVP
 if ($_POST['submit_button'] == 'RSVP'){
+  // Set the values from the form
   $myRSVP->SetValues($_POST);
-		
-  if ($myRSVP->Validate()){
-    $myRSVP->Save()
+
+  // Try to validate and save the form to the DB
+  if ($myRSVP->Validate() && $myRSVP->Save()){
+    // If successful set a thank you message
+    SetAlert('Thank You, your RSVP has been recieved', 'success');
+    // Reset the values of the form
+    $myRSVP->ResetValues();
   }
 }
 
+// Report status to the user
+Alert(GetAlert('success'),'success');
+?>
+
 <form name="form_rsvp" id="form_rsvp" method="post" action="/">
-<?php $myRSVP->Form($display); ?>
+<?php $myRSVP->Form(); ?>
 <fieldset class="submit_button">
 <div class="submit"><label for="submit_button">&nbsp;</label><input type="submit" name="submit" value="RSVP" class="submit" /></div>
 </fieldset>
@@ -61,25 +74,25 @@ Create the Form class with all the information about the fields. Also if possibl
 
 *GetInfo*
 {{{
-GetInfo($fields) -> Boolean
+GetInfo($fields='') -> Boolean
 }}}
 Get the info from the database based on the primary key of the class. An optional array can be passed to just get certain fields returned for performance. The primary key value must be set in order for this function to query the database.
 
 *Save*
 {{{
-Save($options) -> Boolean
+Save($options=array()) -> Boolean
 }}}
 Save the class data into the database. This will automatically insert or update depending on if the primary key is set. If the function inserts then the newly inserted key will be set in the class. The options array is used primarily to determine the next display order. The same object must be passed in the array with fields set and it will automatically determine the next available display order before inserting into the database.
 
 *Delete*
 {{{
-Delete($options) -> Boolean
+Delete($options=array()) -> Boolean
 }}}
 Deletes from the database where the primary key is equal to the class. The options array is used in the same manner the Save $options is used. If there is a display order a helper class can be passed to ensure the display order stays in intact.
 
 *GetList*
 {{{
-GetList($fields, $order_by, $sort, $offset, $limit) -> Array
+GetList($fields=array(), $order_by='', $sort='', $offset='', $limit='') -> Array
 }}}
 Gets a list of the items in the database matching the values set in the class. The fields array will limit the fields returned. Order_by is the field to order by and Sort is the ASC/DESC. $offset and $limit can be used to only pull certain amounts of fields at a time.
 
@@ -91,13 +104,13 @@ Similar to the GetList except it uses regular expressions to search through the 
 
 *GetAssoc*
 {{{
-GetAssoc($field, $order_by, $sort, $offset, $limit) -> Array
+GetAssoc($field, $order_by='', $sort='', $offset='', $limit='') -> Array
 }}}
 Used to get an associative array for a single field with the primary key as the array key and the value as the array value. This is very helpful when populating a drop down list since this can used directly in an $options array.
 
 *Move*
 {{{
-Move($direction, $options) -> Array
+Move($direction, $options=array()) -> Array
 }}}
 Move the object up or down in display order depending on the options set in the $options array object passed.
 
@@ -109,19 +122,19 @@ Displays an individual xhtml form field to the screen with its options and confi
 
 *Form*
 {{{
-Form($display, $hidden, $options, $config, $omit) -> Null
+Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()) -> Null
 }}}
 Display an xhtml form with all the fields in the $display, if $display is not an array all fields will be displayed that are not in the $omit array.
 
 *View*
 {{{
-View($display, $options) -> Null
+View($display='', $options=array()) -> Null
 }}}
 View all the fields associated with the class and their values in a table format. $display array can limit the fields show and the $options array can be used to associate keys with their values.
 
 *DisplayList*
 {{{
-DisplayList($display, $format, $options, $force_check) -> Null
+DisplayList($display='', $format=array(), $options=array(), $force_check=true) -> Null
 }}}
 Display a list of the $this->results array in a table format. The $display array determines what columns will be shown. The $format array can be used to create links inside of the table cell. $options array can be used to associate keys with their values. And the $force_check boolean can be used to re-pull the data from the database before displaying the table.
 
@@ -145,12 +158,13 @@ Set the $value of a certain $field for the table.
 
 *Results*
 {{{
-Results($type) -> Mixed
+Results($type='array') -> Mixed
 }}}
-Return the results array in various formats. Types are: "array", "json"
+Return the results array in various formats. Types are: "array", "json". Default type is an array.
 
 *Join*
 {{{
-Join($join_class, $join_on, $type) -> Boolean
+Join($join_class, $join_on, $type='INNER') -> Boolean
 }}}
 Used to join the current class with another DbTemplate class. This allows the GetList to cross tables and join another table on the $join_on field with a join $type.
+
