@@ -26,7 +26,10 @@ class RSVP extends DbTemplate {
     $this->DbTemplate($data, $required, $labels, $examples, $table, '', 'my_database');
     
     // Set the fields that will display on the form
-    $this->SetDisplay(array('first_name', 'last_name', 'email', 'phone'));
+    $this->SetDisplay(array('first_name', 'last_name', 'email', 'phone', 'organization', 'special_needs', 'attending'));
+    
+    // Set the options for attending
+    $this->SetOption('attending', array('yes'=>'Yes', 'no'=>'No'));
   }
 }
 
@@ -42,6 +45,7 @@ if ($_POST['submit_button'] == 'RSVP'){
   if ($myRSVP->Validate() && $myRSVP->Save()){
     // If successful set a thank you message
     SetAlert('Thank You, your RSVP has been recieved', 'success');
+
     // Reset the values of the form
     $myRSVP->ResetValues();
   }
@@ -58,6 +62,9 @@ Alert(GetAlert('success'),'success');
 </fieldset>
 </form>
 }}}
+
+== Form Output ==
+http://phpsimpl.com/images/examples/dbtemplate-style.png
 
 = Functions =
 *__construct*
