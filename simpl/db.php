@@ -82,7 +82,7 @@ class DB {
 			
 			// Connect to MySQL
 			$db_link = @mysql_connect($this->config[0], $this->config[1], $this->config[2]);
-	
+			
 			// If there is a link
 	    	if ($db_link){
 				mysql_select_db($this->database);
