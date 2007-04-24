@@ -611,7 +611,7 @@ class Form {
 			if ($hidden != true)
 				$this->fields[$field]->Form($options, $config, $multi);
 			else
-				echo '<input name="' . $field . (($multi)?'[]':'') . '" type="hidden" value="' . stripslashes($this->fields[$field]->Get('value')) . '" />' . "\n";
+				echo '<input name="' . $field . (($multi)?'[]':'') . '" type="hidden" value="' . $this->Output($this->fields[$field]->Get('value')) . '" />' . "\n";
 		}
 	}
 	

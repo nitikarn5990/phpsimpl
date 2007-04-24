@@ -60,8 +60,23 @@ class DbTemplate extends Form {
 		// Set the database
 		$this->database = $database;
 
-		// Construct the class from the DB
-		$this->DbTemplate(array());
+		// Pull the cache if available
+		$cache = $this->Cache('get', 'table_' . $this->table . '.cache.php', '', '1 day');
+
+		// Read the cache if possible
+		if (USE_CACHE == true && $cache != ''){
+			$this->fields = unserialize($cache);
+		}else{
+			// Get the fields and their properties
+			$this->ParseTable();
+
+			// If Use Cache try to save it
+			if (USE_CACHE == true)
+				$this->Cache('set', 'table_' . $this->table . '.cache.php', $this->fields);
+		}
+		
+		// Set the local display
+		$this->display = $this->GetFields();
 
 		return true;
 	}
@@ -79,44 +94,22 @@ class DbTemplate extends Form {
 	* @return bool
 	*/
 	public function DbTemplate($data, $required=array(), $labels=array(), $examples=array(), $table='', $fields=array(), $database=''){
-		global $db;
-
-		// Set the Table
-		if ($table != '')
-			$this->table = $table;
-
-		// Set the database
-		if ($database != '')
-			$this->database = $database;
-
-		// Pull the cache if available
-		$cache = $this->Cache('get', 'table_' . $this->table . '.cache.php', '', '1 day');
-
-		// Read the cache if possible
-		if (USE_CACHE == true && $cache != ''){
-			$this->fields = unserialize($cache);
-		}else{
-			// Get the fields and their properties
-			$this->ParseTable();
-
-			// If Use Cache try to save it
-			if (USE_CACHE == true)
-				$this->Cache('set', 'table_' . $this->table . '.cache.php', $this->fields);
-		}
+		// Call the constructor
+		$this->__construct($table, $database);
 		
-		// Set the values and primary key
-		foreach($this->fields as $name=>$field){
-			$this->SetValue($name, $data[$name]);
-			$this->Set('label', $name, $labels[$name]);
-			$this->Set('example', $name, $examples[$name]);
-			$this->Set('required', $name, ((in_array($name,$required))?1:0));
-			
-			if ($field->Get('primary') == 1)
-				$this->primary = $name;
-		}
+		// Set the required
+		$this->SetRequired($required);
 		
-		// Set the local display
-		$this->display = $this->GetFields();
+		// Set the Labels
+		$this->SetLabels($labels);
+		
+		// Set the examples
+		$this->SetExamples($examples);
+		
+		// Set the data
+		$this->SetValues($data);
+		
+		return true;
 	}
 
 	/**
@@ -319,10 +312,10 @@ class DbTemplate extends Form {
 
 			// Create the filters
 			foreach($values as $name=>$value){
-				$where .= ((string)$value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string')?'LIKE':'=') . ' \'' . $value . '\' AND ':'';
+				$where .= ((string)$value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE':'=') . ' \'' . $value . '\' AND ':'';
 			
 				// Create the search
-				$search .= ($class->search != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string')?'LIKE \'%' . $class->search . '%\'':' = \'' . $class->search . '\'') . ' OR ':'';
+				$search .= ($class->search != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE \'%' . $class->search . '%\'':' = \'' . $class->search . '\'') . ' OR ':'';
 			}
 			
 			// Create the return fields
@@ -671,7 +664,8 @@ class DbTemplate extends Form {
 				$col = 1;
 				foreach($show as $name=>$value){
 					$output .= '<td' . (($col == $col_count)?' class="last"':'') . '>';
-					$str = stripslashes($field[$name]);
+					//$str = stripslashes($field[$name]);
+					$str = $this->Output($field[$name]);
 					
 					if (is_array($options[$name]))
 						$str = $options[$name][$str];
@@ -876,6 +870,10 @@ class DbTemplate extends Form {
 			$tmpField->Set('validate', $this->ValidType($field));
 			$tmpField->Set('primary', $field->primary_key);
 			$tmpField->Set('display', ($field_count+1));
+			
+			// Set the primary if it is
+			if ($field->primary_key == 1)
+				$this->primary = $field->name;
 
 			// Add the field to the list
 			$this->fields[$field->name] = $tmpField;
