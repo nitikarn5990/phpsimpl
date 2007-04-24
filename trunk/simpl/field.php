@@ -232,28 +232,30 @@ class Field {
 			// Multi Options
 			switch($this->Get('config')){
 				case 'radio':
-				foreach($this->Get('options') as $key=>$value){
-					$selected = ($my_value == (string)$key)?' checked="checked"':'';
-					$each .= '<div><input name="' . $this->Get('name') . (($multi)?'[]':'') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
-				}
+					foreach($this->Get('options') as $key=>$value){
+						$selected = ($my_value == (string)$key)?' checked="checked"':'';
+						$each .= '<div><input name="' . $this->Get('name') . (($multi)?'[]':'') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
+					}
+					$output .= '<div class="radio">' . $each . '</div>';
 				break;
 				case 'checkbox':
-				$split = split(',',$my_value);
-				foreach($this->Get('options') as $key=>$value){
-					$selected = (in_array($key,$split))?' checked="checked"':'';
-					$each .= '<div><input name="' . $this->Get('name') . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
-				}
+					$split = split(',',$my_value);
+					foreach($this->Get('options') as $key=>$value){
+						$selected = (in_array($key,$split))?' checked="checked"':'';
+						$each .= '<div><input name="' . $this->Get('name') . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
+					}
+					$output .= '<div class="checkbox">' . $each . '</div>';
 				break;
 				default:
-				$each .= '<select name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . "\n";
-				foreach($this->Get('options') as $key=>$value){
-					$selected = ($my_value == (string)$key)?' selected="selected"':'';
-					$each .= '<option value="' . $key . '"' . $selected . '>' . $this->Output($value) . '</option>' . "\n";
-				}
-				$each .= '</select>';
+					$each .= '<select name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . "\n";
+					foreach($this->Get('options') as $key=>$value){
+						$selected = ($my_value == (string)$key)?' selected="selected"':'';
+						$each .= '<option value="' . $key . '"' . $selected . '>' . $this->Output($value) . '</option>' . "\n";
+					}
+					$each .= '</select>';
+					$output .= '<div class="select">' . $each . '</div>';
 				break;
 			}
-			$output .= '<div class="' . $this->Get('config') . '">' . $each . '</div>';
 		}elseif($this->Get('type') == 'blob' || $this->Get('type') == 'text'){
 			// Textarea
 			$output .= '<div><textarea name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
