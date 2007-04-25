@@ -82,6 +82,12 @@ class Session {
 	public function write($ses_id, $data) {
 		global $db;
 		
+		// If the $db object is not on the page any more recreate it.
+		if (!is_object($db)){
+			$db = new DB;
+			$db->Connect();
+		}
+		
 		if(!isset($this->ses_start))
 			$this->ses_start = time();
 
