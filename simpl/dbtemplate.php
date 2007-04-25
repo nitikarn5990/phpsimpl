@@ -443,6 +443,18 @@ class DbTemplate extends Form {
 	*/
 	public function Search($keywords, $search_fields, $return_fields){
 		global $db;
+		$returns = array();
+		
+		// Push $this into the array
+		array_unshift($this->join_class, $this);
+		array_unshift($this->join_type, '');
+		array_unshift($this->join_on, '');
+		
+		// Setup the return fields
+		if (!isMultiArray($return_fields))
+			array_unshift($returns, $return_fields);
+		else
+			$returns = $return_fields;
 		
 		// Split up the terms
 		$terms = search_split_terms($keywords);
@@ -459,16 +471,41 @@ class DbTemplate extends Form {
 				$parts[] = '`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
 		}
 		$parts = implode(' AND ', $parts);
-	
-		// Create the return values
-		if (is_array($return_fields)){
-			foreach($return_fields as $field)
-				$fields[] = '`' . $this->table . '`.' . $field;
-			$return = implode(', ', $fields);
-		}else{
-			$return = '*';
+		
+		// Loop through all the joined classes
+		foreach($this->join_class as $key=>$class){
+			// Create the return fields
+			if (is_array($returns[$key]) && count($returns[$key]) > 0){
+				// Require primary key returned
+				if (!in_array($class->primary,$returns[$key]))
+					$return .= '`' . $class->table . '`.' . $class->primary . ', ';
+				
+				// List all other fields to be returned
+				foreach($returns[$key] as $field){
+					if (!is_array($field))
+						$return .= (trim($field) != '')?'`' . $class->table . '`.' . $field . ', ':'';
+					else
+						foreach($field as $sub_field)
+							$return .= (trim($sub_field) != '')?'`' . $class->table . '`.' . $sub_field . ', ':'';
+				}
+			}else{
+				// Local class return values
+				if (is_array($returns[$key])){
+					foreach($returns[$key] as $field)
+						$fields[] = '`' . $this->table . '`.' . $field;
+					$return .= implode(', ', $fields);
+				}else{
+					$return .= '`' . $class->table . '`.*, ';
+				}
+			}
+			
+			
+			// Create the Joins
+			if ($key > 0)
+				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->table . '`.' . $this->join_on[$key] . ') ';
 		}
-		$query = 'SELECT ' . $return . ' FROM `' . $this->table . '` WHERE ' . $parts;
+		
+		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->table . '`' . $join . ' WHERE ' . $parts;
 		$result = $db->Query($query, $this->database);
 	
 		$results = array();
@@ -484,6 +521,11 @@ class DbTemplate extends Form {
 			}
 			$results[] = $info;
 		}
+		
+		// Pop $this from the array
+		array_shift($this->join_class);
+		array_shift($this->join_type);
+		array_shift($this->join_on);
 	
 		uasort($results, 'search_sort_results');
 		$this->results = $results;
