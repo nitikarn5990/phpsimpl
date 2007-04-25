@@ -282,6 +282,10 @@ class Form {
 	public function SetValues($data){
 		Debug($data);
 
+		// Make sure data is an array
+		if (!is_array($data))
+			return false;
+
 		// Loop through all the values
 		foreach($this->fields as $name=>$field){
 			// Set the Field Values
