@@ -65,7 +65,15 @@ class DbTemplate extends Form {
 
 		// Read the cache if possible
 		if (USE_CACHE == true && $cache != ''){
+			// Get the cached fields
 			$this->fields = unserialize($cache);
+			
+			// Recover the primary key
+			foreach($this->fields as $name=>$field){
+				// Set the primary if it is
+				if ($field->Get('primary') == 1)
+					$this->primary = $name;
+			}
 		}else{
 			// Get the fields and their properties
 			$this->ParseTable();
@@ -94,8 +102,37 @@ class DbTemplate extends Form {
 	* @return bool
 	*/
 	public function DbTemplate($data, $required=array(), $labels=array(), $examples=array(), $table='', $fields=array(), $database=''){
-		// Call the constructor
-		$this->__construct($table, $database);
+		// Set the Table
+		$this->table = $table;
+
+		// Set the database
+		$this->database = $database;
+
+		// Pull the cache if available
+		$cache = $this->Cache('get', 'table_' . $this->table . '.cache.php', '', '1 day');
+
+		// Read the cache if possible
+		if (USE_CACHE == true && $cache != ''){
+			// Get the cached fields
+			$this->fields = unserialize($cache);
+			
+			// Recover the primary key
+			foreach($this->fields as $name=>$field){
+				// Set the primary if it is
+				if ($field->Get('primary') == 1)
+					$this->primary = $name;
+			}
+		}else{
+			// Get the fields and their properties
+			$this->ParseTable();
+
+			// If Use Cache try to save it
+			if (USE_CACHE == true)
+				$this->Cache('set', 'table_' . $this->table . '.cache.php', $this->fields);
+		}
+		
+		// Set the local display
+		$this->display = $this->GetFields();
 		
 		// Set the required
 		$this->SetRequired($required);
