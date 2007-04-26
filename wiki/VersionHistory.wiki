@@ -1,6 +1,14 @@
 #summary Version History of PHPSimpl
 #labels Phase-Requirements
 
+== Version 0.8.0-rc1 ==
+  * Search now interacts with Joined tables
+  * Issues with PHP 5.2.1 and the DB Sessions have been resolved
+  * A new way to extend DbTemplate was implemented to be the final API
+  * Added the SetLabels and SetExamples functions to the form
+  * Added a GetLabel function for easier access to fields labels
+  * Minor bug fixes
+
 == Version 0.8.0-beta1 ==
   * MultiForm function to extend the Form output
   * Options, Config and Defaults can now be set in a single location
