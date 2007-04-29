@@ -495,8 +495,7 @@ class Form {
 			$this->Set('default', $name, $value);
 		}
 
-		// Set the Values
-		return $this->SetValues($fields);
+		return true;
 	}
 	
 	/**
@@ -533,12 +532,12 @@ class Form {
 	 * @return bool
 	 */
 	public function SetOption($field, $options, $first=''){
-		// Require an array
-		if (!is_array($options) || !$this->IsField($field))
+		// Make sure it is a valid field
+		if (!$this->IsField($field))
 			return false;
 		
 		// Append the first item to the options if needed
-		if ($first != '')
+		if ($first != '' && is_array($options))
 			$options = array(''=>$first) + $options; 
 
 		// Set the options for the field

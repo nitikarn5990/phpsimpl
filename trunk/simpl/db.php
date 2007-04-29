@@ -58,7 +58,7 @@ class DB {
 		
 		// If using DB Sessions start them now
     	if (DB_SESSIONS == true && session_id() == '')
-    		session_start();
+    		@session_start();
 		
 		return true;
 	}
