@@ -179,7 +179,7 @@ class Field {
 	 */
 	public function Form($options='', $config='', $multi=false){
 		// If there is a default value use that
-		$my_value = ($this->Get('value') != '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
+		$my_value = ((string)$this->Get('value') == '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
 		
 		// Change the fieldname to a multi if needed
 		if ($multi) $this->Set('multi', $this->Get('multi')+1);
