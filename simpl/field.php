@@ -179,7 +179,7 @@ class Field {
 	 */
 	public function Form($options='', $config='', $multi=false){
 		// If there is a default value use that
-		$my_value = ($this->Get('value') == '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
+		$my_value = ($this->Get('value') != '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
 		
 		// Change the fieldname to a multi if needed
 		if ($multi) $this->Set('multi', $this->Get('multi')+1);
@@ -262,7 +262,7 @@ class Field {
 		}elseif($this->Get('type') == 'date'){
 			// Date Field
 			$value = ($my_value != '0000-00-00' && $my_value != '')?date("F j, Y",strtotime($my_value)):'';
-			$output .= '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="text" size="18" maxlength="18" value="' . $my_value . '" /><button type="reset" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b">...</button>';	
+			$output .= '<input name="' . $this->Get('name') . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="text" size="18" maxlength="18" value="' . $value . '" /><button type="reset" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b">...</button>';	
 			$output .= '<script type="text/javascript">Calendar.setup({ inputField : "' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '", ifFormat : "%B %e, %Y", button : "' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b"});</script>';
 		}else{
 			// Single Field
