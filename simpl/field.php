@@ -194,6 +194,10 @@ class Field {
 			return true;
 		}
 		
+		// If time display in nice format
+		if ($this->Get('type') == 'time')
+			$my_value = date("g:i a", strtotime($my_value));
+		
 		// Overwrite the options if needed
 		if(is_array($options) || is_object($options))
 			$this->Set('options', $options);
