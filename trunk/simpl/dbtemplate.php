@@ -205,7 +205,7 @@ class DbTemplate extends Form {
 	*/
 	public function Save($options = array()){
 		global $db;
-
+		
 		// Make sure the data validates
 		if ($this->IsError())
 			return false;
@@ -214,18 +214,6 @@ class DbTemplate extends Form {
 		if ($this->GetPrimary() != ''){
 			$type = 'update';
 			$extra = '`' . $this->primary . '` = ' . $this->GetPrimary() . '';
-
-			// Check for the display_order field
-			if ($this->IsField('display_order') && is_object($options['display_order'])){
-				// Find out what the next display order is
-				$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
-				if (count($last_item) == 1){
-					$last = array_shift($last_item);
-					$this->SetValue('display_order',((int)$last['display_order']+1));
-				}else{
-					$this->SetValue('display_order',1);
-				}
-			}
 			
 			// Update and rows that need it
 			$updater = array('last_updated', 'updated_on');
@@ -235,6 +223,19 @@ class DbTemplate extends Form {
 		}else{
 			$type = 'insert';
 			$extra = '';
+			
+			// Check for the display_order field
+			if ($this->IsField('display_order') && is_object($options['display_order'])){
+				// Find out what the next display order is
+				$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
+				
+				if (count($last_item) == 1){
+					$last = array_shift($last_item);
+					$this->SetValue('display_order',((int)$last['display_order']+1));
+				}else{
+					$this->SetValue('display_order',1);
+				}
+			}
 
 			// Update and rows that need it
 			$updater = array('date_entered', 'created_on', 'last_updated', 'updated_on');
