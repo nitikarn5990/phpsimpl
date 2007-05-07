@@ -5,7 +5,8 @@
  * @param $className string
  */
 function __autoload($className){
-	include_once(FS_SIMPL . strtolower($className) . '.php');
+	if (is_file(FS_SIMPL . strtolower($className) . '.php'))
+		include_once(FS_SIMPL . strtolower($className) . '.php');
 }
 
 /**
