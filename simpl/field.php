@@ -5,6 +5,7 @@
  * Used to create individual fields on a form
  *
  * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
  */
 class Field {
 	/**
@@ -81,23 +82,23 @@ class Field {
 	}
 	
 	/**
-	* Get Field Property
-	*
-	* @param $property string
-	* @return bool
-	*/
+	 * Get Field Property
+	 *
+	 * @param $property string
+	 * @return bool
+	 */
 	public function Get($property){
 		// Retrun the value of the property
 		return $this->$property;
 	}
 	
 	/**
-	* Set Field Property
-	*
-	* @param $property string
-	* @param $value mixed
-	* @return bool
-	*/
+	 * Set Field Property
+	 *
+	 * @param $property string
+	 * @param $value mixed
+	 * @return bool
+	 */
 	public function Set($property, $value){
 		// Set the new value to the property
 		if ($value != '' && $property == 'value' && $this->Get('type') == 'int'){

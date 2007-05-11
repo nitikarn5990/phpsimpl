@@ -1,39 +1,41 @@
 <?php
 /**
-* Base Class for Exporting a XLS file
-*
-* @author Rob Vrabel <rvrabel@wayne.edu>
-* @todo This class needs to be rewritten
-*/
+ * Base Class for Exporting a XLS file
+ *
+ * @author Rob Vrabel <jiggilo@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
+ */
 class Export {
 	/**
-	* @var array
-	*/
+	 * @var array
+	 */
 	private $display;
 	/**
-	* @var array
-	*/
+	 * @var array
+	 */
 	private $data;
 	/**
-	* @var string
-	*/
+	 * @var string
+	 */
 	private $file_name;
 	/**
-	* @var string
-	*/
+	 * @var string
+	 */
 	private $output;
 	
 	/**
-	* Class Constructor
-	*
-	* Creates an exported file from a given array
-	*
-	* @param display array, data array
-	* @return NULL
-	*/	
+	 * Class Constructor
+	 *
+	 * Creates an exported file from a given array
+	 *
+	 * @param $data Array of items
+	 * @param $display Array
+	 * @param $file_name String of the filename
+	 * @return null
+	 */	
 	public function __construct($data='', $display='', $file_name='') {
-		$this->display	= $display;
-		$this->data		= $data;
+		$this->display = $display;
+		$this->data	= $data;
 		$this->file_name = $file_name;
 		
 		// If all the data is correct call GetXLS
@@ -41,12 +43,12 @@ class Export {
 	}
 	
 	/**
-	* GetXLS
-	*
-	* Creates an output string from the class data
-	*
-	* @return BOOL
-	*/
+	 * GetXLS
+	 *
+	 * Creates an output string from the class data
+	 *
+	 * @return bool
+	 */
 	public function GetXLS() {
 		// Make sure data is an array
 		if(is_array($this->data)) {
@@ -85,6 +87,7 @@ class Export {
 		}
 		// Debug
 		Debug('GetXLS(), Data is not an array');
+		
 		return false;
 	}
 
@@ -93,15 +96,20 @@ class Export {
 	*
 	* Displays the XLS file
 	*
-	* @return NULL
+	* @return null
 	*/	
 	public function DisplayXLS($output='') {
 		// Check if they are sending ouput, if not just use the classes output
 		($output == '')? $output = $this->output : '';
 		
 		// Display the XLS
+		header("Pragma: public");
+		header("Expires: 0");
+		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+		header("Content-Type: application/force-download");
 		header("Content-type: application/vnd.ms-excel");
 		header("Content-disposition: attachment; filename=" .  str_replace(' ','_',strtolower($this->file_name)) . '_' . date("Y-m-d") . ".xls");
+		header("Content-Transfer-Encoding: binary");
 		print $output;
 		exit;  
 	}

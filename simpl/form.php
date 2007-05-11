@@ -5,6 +5,7 @@
  * Used to create xhtml and validate forms
  *
  * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
  */
 class Form {
 	/**

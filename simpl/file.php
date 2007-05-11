@@ -1,28 +1,31 @@
 <?php
 /**
-* Base File Class
-*
-* Used to manipulate files on the server
-*
-* @author Nick DeNardis <nick.denardis@gmail.com>
-*/
+ * Base File Class
+ *
+ * Used to manipulate files on the server
+ *
+ * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
+ */
 class File extends Folder {
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	public $filename;
 	
 	/**
 	 * File Constructor
 	 * 
-	 * @param $filename		String containing the filename that is in question
-	 * @param $direcotry	The directory where the file is sitting
-	 * @return 				NULL
+	 * @param $filename	String containing the filename that is in question
+	 * @param $direcotry The directory where the file is sitting
+	 * @return null
 	 */
 	public function File($filename,$directory=''){
 		Debug('Constructor(), Intitializing values');
+		
 		// Set the Local variables
 		$this->filename = $filename;
+		
 		// If there is directory passed, set the directory
 		if (isset($directory)) {
 			// Set the Local variables
@@ -144,7 +147,7 @@ class File extends Folder {
 			}else{
 				//change persmissions
 				Debug('MakeWritable(), Changing permissions of file ' . $this->directory . $this->filename);
-				if(chmod($this->directory . $this->filename, 0755)) {
+				if(chmod($this->directory . $this->filename, 0775)) {
 					return true;
 				}
 			}

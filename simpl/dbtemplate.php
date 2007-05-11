@@ -1,14 +1,15 @@
 <?php
 /**
-* DB Template Class
-* Needs to be extended to do anything out of the ordinary
-*
-* @author Nick DeNardis <nick.denardis@gmail.com>
-*/
+ * DB Template Class
+ * Needs to be extended to do anything out of the ordinary
+ *
+ * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
+ */
 class DbTemplate extends Form {
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	public $table;
 	/**
 	* @var string 
@@ -51,7 +52,7 @@ class DbTemplate extends Form {
 	 * @return bool
 	 */
 	public function __construct($table, $database){
-		// Use the global mysql class
+		// Use the global db class
 		global $db;
 
 		// Set the Table
@@ -90,17 +91,19 @@ class DbTemplate extends Form {
 	}
 
 	/**
-	* Main function that does all the work
-	*
-	* @param $data array of key=>value
-	* @param $required array of required keys
-	* @param $labels array of field labels
-	* @param $examples array of field examples
-	* @param $table string of table name
-	* @param $fields array of existing fields
-	* @param $database string of the database name
-	* @return bool
-	*/
+	 * Main function that does all the work
+	 *
+	 * This function will soon be depricated, it was a result of lack of constructors in PHP4
+	 *
+	 * @param $data array of key=>value
+	 * @param $required array of required keys
+	 * @param $labels array of field labels
+	 * @param $examples array of field examples
+	 * @param $table string of table name
+	 * @param $fields array of existing fields
+	 * @param $database string of the database name
+	 * @return bool
+	 */
 	public function DbTemplate($data, $required=array(), $labels=array(), $examples=array(), $table='', $fields=array(), $database=''){
 		// Set the Table
 		$this->table = $table;
@@ -156,7 +159,7 @@ class DbTemplate extends Form {
 	 * @return bool
 	 */
 	public function GetInfo($fields=''){
-		// Use the global mysql class
+		// Use the global db class
 		global $db;
 
 		// Require a primary key
@@ -198,12 +201,13 @@ class DbTemplate extends Form {
 	}
 
 	/**
-	* Saves class information into the database table
-	*
-	* @param $options array of config values
-	* @return bool
-	*/
+	 * Saves class information into the database table
+	 *
+	 * @param $options array of config values
+	 * @return bool
+	 */
 	public function Save($options = array()){
+		// Use the global db class
 		global $db;
 		
 		// Make sure the data validates
@@ -277,14 +281,15 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Deletes the info from the DB
-	*
-	* Deletes the info from the DB accourding to the primary key
-	*
-	* @param $options array of config values
-	* @return bool
-	*/
+	 * Deletes the info from the DB
+	 *
+	 * Deletes the info from the DB accourding to the primary key
+	 *
+	 * @param $options array of config values
+	 * @return bool
+	 */
 	public function Delete($options = array()){
+		// Use the global db class
 		global $db;
 		global $mySimpl;
 		
@@ -316,19 +321,19 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Get a List from the Database
-	*
-	* Returns an array of objects from the Database according to criteria set
-	*
-	* @param $fields An array of field keys to return
-	* @param $order_by A string of a field key to order by (ex. "display_order")
-	* @param $sort A string on how to sort the data (ex "ASC" or "DESC")
-	* @param $offset An int on where to start returning, used mainly for page numbering
-	* @param $limit An int limit on the number of rows to be returned
-	* @return array
-	*/
+	 * Get a List from the Database
+	 *
+	 * Returns an array of objects from the Database according to criteria set
+	 *
+	 * @param $fields An array of field keys to return
+	 * @param $order_by A string of a field key to order by (ex. "display_order")
+	 * @param $sort A string on how to sort the data (ex "ASC" or "DESC")
+	 * @param $offset An int on where to start returning, used mainly for page numbering
+	 * @param $limit An int limit on the number of rows to be returned
+	 * @return array
+	 */
 	public function GetList($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
-		// Use the global mysql class
+		// Use the global db class
 		global $db;
 		$returns = array();
 		
@@ -433,16 +438,17 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Search the info from the DB
-	*
-	* Uses a smarter search engine to search through the fields and return certain fields, puts the results in a local $results array
-	*
-	* @param $keywords A string that we are going to be searching the DB for
-	* @param $search_fields An array of the field keys that we are going to be searching through
-	* @param $return_fields An array of the field keys that are going to be returned
-	* @return int
-	*/
+	 * Search the info from the DB
+	 *
+	 * Uses a smarter search engine to search through the fields and return certain fields, puts the results in a local $results array
+	 *
+	 * @param $keywords A string that we are going to be searching the DB for
+	 * @param $search_fields An array of the field keys that we are going to be searching through
+	 * @param $return_fields An array of the field keys that are going to be returned
+	 * @return int
+	 */
 	public function Search($keywords, $search_fields, $return_fields){
+		// Use the global db class
 		global $db;
 		$returns = array();
 		
@@ -535,15 +541,15 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Get an Associative array
-	*
-	* @param $field A string of a field that it will return
-	* @param $order_by A string of a field key to order by (ex. "display_order")
-	* @param $sort A string on how to sort the data (ex. "ASC" or "DESC")
-	* @param $offset An int on where to start returning, used mainly for page numbering
-	* @param $limit An int limit on the number of rows to be returned
-	* @return array
-	*/
+	 * Get an Associative array
+	 *
+	 * @param $field A string of a field that it will return
+	 * @param $order_by A string of a field key to order by (ex. "display_order")
+	 * @param $sort A string on how to sort the data (ex. "ASC" or "DESC")
+	 * @param $offset An int on where to start returning, used mainly for page numbering
+	 * @param $limit An int limit on the number of rows to be returned
+	 * @return array
+	 */
 	public function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
 		$return = array();
 		
@@ -561,14 +567,14 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Move Item Up or Down in display_order
-	*
-	* @todo figuire out how to get the primary and table values out of the options class without having them public
-	* @param $direction A string containing either 'up' or 'down'
-	* @param $options An array containing the search criteria for the move, if there is a cetain category or list to stay within
-	* @return bool
-	*/
+	 * Move Item Up or Down in display_order
+	 *
+	 * @param $direction A string containing either 'up' or 'down'
+	 * @param $options An array containing the search criteria for the move, if there is a cetain category or list to stay within
+	 * @return bool
+	 */
 	public function Move($direction, $options = array()){
+		// Use the global db class
 		global $db;
 		
 		// Get the Fields
@@ -654,12 +660,12 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Display the Item in Plain Text
-	*
-	* @param $display An array of field keys that are going to be displayed to the screen
-	* @param $display An array of field keys that are going to be displayed to the screen
-	* @return NULL
-	*/
+	 * Display the Item in Plain Text
+	 *
+	 * @param $display An array of field keys that are going to be displayed to the screen
+	 * @param $display An array of field keys that are going to be displayed to the screen
+	 * @return null
+	 */
 	public function View($display='', $options = array()){
 		// Rearrange the Fields if there is a custom display
 		$show = array();
@@ -683,14 +689,14 @@ class DbTemplate extends Form {
 	}
 	
 	/**
-	* Display a list of items
-	*
-	* @param $display An array of field keys that are going to be displayed in the list
-	* @param $format A string that will be passed through a sprintf() and use the ID and the String as the first and second parameters
-	* @param $options An associtive array with the key being the value for a field if there are output options for that field (ex. array("is_active"=>array("no","yes")))
-	* @param $force_check A bool to flag if this function should pull a GetList or not, default it will be in the case a get list has already been done it can be set to false
-	* @return NULL
-	*/
+	 * Display a list of items
+	 *
+	 * @param $display An array of field keys that are going to be displayed in the list
+	 * @param $format A string that will be passed through a sprintf() and use the ID and the String as the first and second parameters
+	 * @param $options An associtive array with the key being the value for a field if there are output options for that field (ex. array("is_active"=>array("no","yes")))
+	 * @param $force_check A bool to flag if this function should pull a GetList or not, default it will be in the case a get list has already been done it can be set to false
+	 * @return NULL
+	 */
 	public function DisplayList($display='',$format=array(),$options=array(),$force_check=true){
 		// Setup the Sort Sessions
 		$_SESSION[$this->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
@@ -856,6 +862,7 @@ class DbTemplate extends Form {
 	 * @return bool
 	 */
 	public function Join($join_class, $join_on, $type='INNER'){
+		// Save the state of the joined object
 		if (is_object($join_class)){
 			$this->join_class[] = $join_class;
 			$this->join_type[] = $type;

@@ -5,23 +5,24 @@
  * Used to manipulate folders on the server
  * 
  * @author 	Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
  */
 class Folder {
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	public $directory;
 	/**
-	* @var string 
-	*/
+	 * @var string 
+	 */
 	protected $folder_name;
 	
 	/**
 	 * Folder Constructor
 	 * 
-	 * @param $folder_name	String containing the folder name that is in question
-	 * @param $directory	The directory where the file is sitting
-	 * @return 				NULL
+	 * @param $folder_name String containing the folder name that is in question
+	 * @param $directory The directory where the file is sitting
+	 * @return null
 	 */
 	public function Folder($folder_name, $directory=''){
 		Debug('Constructor(), Initializing values');
@@ -64,7 +65,6 @@ class Folder {
 	 * 
 	 * The function checks if the folder exists and if it is writable
 	 * 
-	 * @param NULL
 	 * @return bool
 	 */
 	public function IsWritable(){
@@ -108,7 +108,6 @@ class Folder {
 	/**
 	 * Make the folder writable
 	 * 
-	 * @param NULL
 	 * @return bool
 	 */
 	public function MakeWritable(){
@@ -134,8 +133,6 @@ class Folder {
 	 * 
 	 * Private function that deletes the sub files and sub-folders. the function is called from Delete function
 	 * 
-	 * @todo make sure this is a valid directory first
-	 * @todo double check that the directory has really been deleted
 	 * @param $directory directory to be deleted
 	 * @return bool
 	 */
@@ -159,6 +156,7 @@ class Folder {
    		// Delete the sub-directories and the directory itself
    		Debug('delete_recursive(), Deleting directory ' . $directory);
 		rmdir($directory);
+   		
    		return true;
 	}
 	
