@@ -1,19 +1,20 @@
 <?php
 /**
-* Database Interaction Class
-*
-* Used to interact with the database in a sane manner
-*
-* @author Nick DeNardis <nick.denardis@gmail.com>
-*/
+ * Database Interaction Class
+ *
+ * Used to interact with the database in a sane manner
+ *
+ * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
+ */
 class DB {
     /**
-	* @var string 
-	*/
+	 * @var string 
+	 */
     private $database;
     /**
-	* @var int 
-	*/
+	 * @var int 
+	 */
     public $query_count;
 	/**
      * @var bool
@@ -29,12 +30,12 @@ class DB {
     private $config;
     
     /**
-	* Class Constructor
-	*
-	* Creates a DB Class with all the information to use the DB
-	*
-	* @return NULL
-	*/
+	 * Class Constructor
+	 *
+	 * Creates a DB Class with all the information to use the DB
+	 *
+	 * @return null
+	 */
     public function __construct(){
 		$this->connected = false;	
     	$this->query_count = 0;
@@ -43,10 +44,10 @@ class DB {
     /**
 	 * Setup the DB Connection
 	 *
-	 * @param $server A String with the server name
-	 * @param $username A String with the user name
-	 * @param $password A String with the Password
-	 * @param $database A String with the databse to connect to
+	 * @param $server String with the server name
+	 * @param $username String with the user name
+	 * @param $password String with the Password
+	 * @param $database String with the databse to connect to
 	 * @return bool
 	 */
 	public function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
@@ -85,9 +86,13 @@ class DB {
 			
 			// If there is a link
 	    	if ($db_link){
+				// Select the database
 				mysql_select_db($this->database);
+				// Update the state
 				$this->connected = true;
+				// Remove the unneeded variables
 				unset($this->config);
+				
 	    		return true;
 	    	}
 		}
@@ -109,19 +114,21 @@ class DB {
    		// Use the Global Link
 		global $db_link;
 		
-		if (DEBUG_QUERY === true){
-			echo '<pre class="debug query">QUERY:' . "\n";
-			print_r($query);
-			echo '</pre>';
-		}
+		// Debug
+		Debug('QUERY: ' . $query, 'query');
+		
+		// Default is not to read cache
 		$is_cache = false;
 		
-		// Check for Query Cache
+		// If we can look for cache
 		if ($cache && QUERY_CACHE && strtolower(substr($query,0,6)) == 'select' && is_writable(FS_CACHE)){
+			// Format the cache file
 			$cache_file = FS_CACHE . 'query_' . bin2hex(md5($query, TRUE)) . '.cache.php';
 			$is_cache = true;
 			
+			// If there is a cache file
 			if (is_file($cache_file)){
+				// Retrieve and return cached results
 				$this->results = unserialize(file_get_contents($cache_file));
 				return $this->results;
 			}
@@ -138,6 +145,7 @@ class DB {
 		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
+    	
     	// Increment the query counter
     	$this->query_count++;
     	
@@ -153,7 +161,8 @@ class DB {
     		// Create the results array
     		while($info = mysql_fetch_array($result, MYSQL_ASSOC))
     			$this->results[] = $info;
-    			
+    		
+    		// Serialize it and save it
     		$cache = serialize($this->results);
     		$fp = fopen($cache_file ,"w");
 			fwrite($fp,$cache);
@@ -232,6 +241,7 @@ class DB {
 			// Finish off the query
 			$query = substr($query, 0, -2) . ' WHERE ' . $parameters;
 		}
+		
 		return $this->Query($query, $db);
 	}
 	
@@ -265,8 +275,11 @@ class DB {
 		// Make sure we are connected
 		$this->DbConnect();
  		
+ 		// If there is a connection
     	if ($db_link){
+			// Switch DB
 			@mysql_select_db($database);
+			
 			return true;
     	}
     	
@@ -285,8 +298,6 @@ class DB {
 	 * @return null
 	 */
 	public function Error($query, $errno, $error) {
-		// Record the error in the Log
-		
 		// Close the Database Connection
 		$this->Close();
 		
@@ -301,6 +312,7 @@ class DB {
 	 * @return array
 	 */
 	public function FetchArray($result) {
+		// Determine weather to get the result from an array or mysql
 		if (QUERY_CACHE && is_array($this->results))
 			return array_shift($this->results);
 		else
@@ -314,6 +326,7 @@ class DB {
 	 * @return int
 	 */
 	public function NumRows($result) {
+		// Determine where to find the number of rows
 		if (QUERY_CACHE && is_array($result)){
 			return count($this->results);
 		}else{
@@ -387,9 +400,11 @@ class DB {
 	 * @return object
 	 */
 	public function Prepare($string) {
+		// Make sure we are connected first
 		if (!$this->connected)
 			$this->DbConnect();
-			
+		
+		// Escape the values from SQL injection
 		return (is_numeric($string))?addslashes($string):mysql_real_escape_string($string);
 	}
 }

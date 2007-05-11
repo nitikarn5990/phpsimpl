@@ -1,16 +1,18 @@
 <?php
 /**
- * Created on Sep 5, 2006
- * main.php
+ * Base PHPSimpl Class used to control Simpl at its highest level
+ * 
+ * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
  */
 class Simpl {
 	/**
-	* Class Constructor
-	*
-	* Creates a Simpl Class with nothing in it
-	*
-	* @return NULL
-	*/
+	 * Class Constructor
+	 *
+	 * Creates a Simpl Class with nothing in it
+	 *
+	 * @return NULL
+	 */
 	public function __construct(){
 		// Clear the Cache if needed
 		if (isset($_GET['clear']) || CLEAR_CACHE === true)

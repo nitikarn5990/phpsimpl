@@ -5,11 +5,12 @@
  * Used to validate individual fields in a form
  *
  * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
  */
 class Validate {
 	/**
-	* @var array 
-	*/
+	 * @var array 
+	 */
 	private $types = array();
 
 	/**

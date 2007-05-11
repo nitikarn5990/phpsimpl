@@ -113,9 +113,9 @@ if (!function_exists('Pre')){
  * @return NULL
  */
 if (!function_exists('Debug')){
-	function Debug($output){
+	function Debug($output, $class=''){
 		if (DEBUG === true){
-			echo '<pre class="debug">DEBUG:' . "\n";
+			echo '<pre class="debug' . (($class != '')?' ' . $class:'') . '">DEBUG:' . "\n";
 			print_r($output);
 			echo '</pre>';
 		}

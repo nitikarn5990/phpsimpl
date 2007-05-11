@@ -1,7 +1,9 @@
 <?php
 /**
- * Created on Mar 3, 2007
- * Filename session.php
+ * Used to store sessions in the Database
+ *
+ * @author Nick DeNardis <nick.denardis@gmail.com>
+ * @link http://code.google.com/p/phpsimpl/
  */
 class Session {
 	private $ses_id;
@@ -14,44 +16,44 @@ class Session {
 	static private $fingerprintChecks = 0;
 
 	/**
-	* Class Constructor
-	*
-	* @param $db string
-	* @param $table string
-	* @return NULL
-	*/
+	 * Class Constructor
+	 *
+	 * @param $db string
+	 * @param $table string
+	 * @return null
+	 */
 	public function __construct($db, $table = 'session'){
 		$this->db = $db;
 		$this->table = $table;
 	}
 	
 	/**
-	* Open Session
-	*
-	* @param $path string
-	* @param $name string
-	* @return NULL
-	*/
+	 * Open Session
+	 *
+	 * @param $path string
+	 * @param $name string
+	 * @return null
+	 */
 	public function open($path, $name){
 		$this->ses_life = ini_get('session.gc_maxlifetime');
 	}
 	
 	/**
-	* Close Session
-	*
-	* @param $ses_id string
-	* @return NULL
-	*/
+	 * Close Session
+	 *
+	 * @param $ses_id string
+	 * @return null
+	 */
 	public function close(){
 		$this->gc();
 	}
 	
 	/**
-	* Read Session from DB
-	*
-	* @param $ses_id string
-	* @return string
-	*/
+	 * Read Session from DB
+	 *
+	 * @param $ses_id string
+	 * @return string
+	 */
 	public function read($ses_id){
 		global $db;
 		
@@ -73,12 +75,12 @@ class Session {
 	}
 	
 	/**
-	* Write Session data to DB
-	*
-	* @param $ses_id string
-	* @param $data string
-	* @return bool
-	*/
+	 * Write Session data to DB
+	 *
+	 * @param $ses_id string
+	 * @param $data string
+	 * @return bool
+	 */
 	public function write($ses_id, $data) {
 		global $db;
 		
@@ -113,11 +115,11 @@ class Session {
 	}
 	
 	/**
-	* Destroy the session
-	*
-	* @param $ses_id string
-	* @return null
-	*/
+	 * Destroy the session
+	 *
+	 * @param $ses_id string
+	 * @return null
+	 */
 	public function destroy($ses_id){
 		global $db;
 		
@@ -128,10 +130,10 @@ class Session {
 	}
 	
 	/**
-	* Garbase Collector
-	*
-	* @return bool
-	*/
+	 * Garbase Collector
+	 *
+	 * @return bool
+	 */
 	public function gc(){
 		global $db;
 		
