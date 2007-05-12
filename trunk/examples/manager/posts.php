@@ -6,9 +6,9 @@
 	$myPost = new Post;
 	
 	// Setup the Display
-	$display[] = array('title', 'date_entered', 'author_id', 'is_published');
+	$display[] = array('title', 'date_entered', 'author_id', 'status');
 	$locations = array('title' => '<a href="post.php?id={$item_id}">{$data}</a>');
-	$options = array('is_published' => $yesno);
+	$options = array();
 	
 	// Create the Author Class
 	$myAuthor = new Author;
@@ -53,7 +53,7 @@
 	</ul>
 	<?php
 		// Display the List
-		$display = array('title', 'date_entered', 'first_name', 'last_name', 'is_published');
+		$display = array('title', 'first_name', 'last_name', 'date_entered', 'status');
 		$myPost->DisplayList($display, $locations, $options, false);
 	?>
 </div>

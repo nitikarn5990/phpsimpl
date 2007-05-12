@@ -6,22 +6,27 @@ class Post extends DbTemplate {
 	 * @param $data array
 	 * @return null
 	 */
-	function __construct($data=''){
-		// Pull the defined yes/no array
-		global $yesno;
+	function __construct(){
+		// Call the parent constructor
+		parent::__construct('post', DB_DEFAULT);
 		
-		$required = array('title','body');
-		$table = 'post';
-		$labels = array('is_published'=>'Published:','author_id'=>'Author:','category'=>'Category:');
-		$examples = array('category'=>'ex. PHP, MySQL, Cars, XML, PHPSimpl');
+		// Set the required
+		$this->SetRequired(array('title','body'));
 		
-		$this->DbTemplate($data, $required, $labels, $examples, $table);
+		// Set the labels
+		$this->SetLabels(array('status'=>'Status:', 'author_id'=>'Author:', 'category'=>'Category:'));
+		
+		// Set the examples
+		$this->SetExamples(array('category'=>'ex. PHP, MySQL, Cars, XML, PHPSimpl'));
+		
+		// Set the config
+		$this->SetConfig(array('status' => 'radio'));
+
+		// Set the default
+		$this->SetDefaults(array('status' => 'Draft'));
 		
 		// Set the Display
-		$this->SetDisplay(array('title','author_id','category','is_published','body'));
-		
-		// Set the Options
-		$this->SetOptions(array('is_published' => $yesno));
+		$this->SetDisplay(array('title','author_id','category','status','body'));
 	}
 }
 
@@ -32,13 +37,12 @@ class Author extends DbTemplate {
 	 * @param $data array
 	 * @return null
 	 */
-	function __construct($data=''){
-		$required = array('first_name','last_name','email');
-		$table = 'author';
-		$labels = array();
-		$examples = array();
+	function __construct(){
+		// Call the parent constructor
+		parent::__construct('author', DB_DEFAULT);
 		
-		$this->DbTemplate($data, $required, $labels, $examples, $table);
+		// Set the required
+		$this->SetRequired(array('first_name','last_name','email'));
 		
 		// Set the Display
 		$this->SetDisplay(array('first_name','last_name','email'));
