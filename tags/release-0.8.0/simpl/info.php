@@ -1,0 +1,1 @@
+<?php// Used for Debug Only! This file should be removed from production servers!phpinfo();?>
