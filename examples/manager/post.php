@@ -8,14 +8,14 @@
 	// Get a list of all the authors
 	$myAuthor = new Author;
 	$authors = $myAuthor->GetList(array('first_name', 'last_name'),'last_name','DESC');
-	$author_list[] = 'Please Select';
+	$author_list = array();
 	
 	// Format the author list how we would like
 	foreach($authors as $author_id=>$author)
 		$author_list[$author_id] = $author['first_name'] . ' ' . $author['last_name'];
 	
 	// Add State Options
-	$myPost->SetOptions(array('author_id' => $author_list));
+	$myPost->SetOption('author_id', $author_list, 'Please Select');
 	
 	// If they are saving the Information
 	if ($_POST['submit_button'] == 'Save Post'){

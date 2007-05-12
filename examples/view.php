@@ -47,7 +47,7 @@
 	</div>
 	
 	<ul id="options">
-		<li class="back"><a href="blog.php">Return to Blog</a></li>
+		<li class="back"><a href="index.php">Return to Blog</a></li>
 	</ul>
 	
 	<?php
@@ -61,7 +61,4 @@
 		}
 	?>
 </div>
-<?php
-	// Footer
-	include_once('inc/footer.php');
-?>
+<?php include_once('inc/footer.php'); ?>

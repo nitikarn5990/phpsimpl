@@ -3,7 +3,8 @@
 <head>
 <title><?php echo TITLE; echo (defined('PAGE_TITLE'))?' - ' . PAGE_TITLE:''; ?></title>
 <link rel="stylesheet" type="text/css" href="css/main.css" media="all" />
-<link rel="stylesheet" type="text/css" href="css/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="<?php echo ADDRESS . WS_SIMPL . WS_SIMPL_CSS; ?>calendar.css" media="all" />
+<script src="<?php echo ADDRESS . WS_SIMPL . WS_SIMPL_JS; ?>calendar.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="container">
@@ -14,7 +15,9 @@
 	<div id="main-menu">
 		<ul>
 			<li><a href="index.php" title="Return Home">Home</a></li>
-			<li><a href="manager/posts.php" title="Manage Posts">Manage Posts</a></li>
+			<li><a href="authors.php" title="Manage Authors">Manage Authors</a></li>
+			<li><a href="posts.php" title="Manage Posts">Manage Posts</a></li>
+			<li><a href="../" title="View Blog" class="last">View Blog</a></li>
 		</ul>
 	</div>
 	
