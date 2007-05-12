@@ -10,6 +10,7 @@
   * Create a standard API for the Image class
   * CAPTCHA in the Form class
   * Paging in the DisplayList
+  * Zip functionality
 
 == Version 1.0.0 ==
   * Add a controller to the framework to deal with CRUD actions

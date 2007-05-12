@@ -81,7 +81,7 @@ Create the Form class with all the information about the fields. Also if possibl
 
 *GetInfo*
 {{{
-GetInfo($fields='') -> Boolean
+GetInfo($fields) -> Boolean
 }}}
 Get the info from the database based on the primary key of the class. An optional array can be passed to just get certain fields returned for performance. The primary key value must be set in order for this function to query the database.
 
@@ -99,7 +99,7 @@ Deletes from the database where the primary key is equal to the class. The optio
 
 *GetList*
 {{{
-GetList($fields=array(), $order_by='', $sort='', $offset='', $limit='') -> Array
+GetList($fields, $order_by, $sort, $offset, $limit) -> Array
 }}}
 Gets a list of the items in the database matching the values set in the class. The fields array will limit the fields returned. Order_by is the field to order by and Sort is the ASC/DESC. $offset and $limit can be used to only pull certain amounts of fields at a time.
 
@@ -111,13 +111,13 @@ Similar to the GetList except it uses regular expressions to search through the 
 
 *GetAssoc*
 {{{
-GetAssoc($field, $order_by='', $sort='', $offset='', $limit='') -> Array
+GetAssoc($field, $order_by, $sort, $offset, $limit) -> Array
 }}}
 Used to get an associative array for a single field with the primary key as the array key and the value as the array value. This is very helpful when populating a drop down list since this can used directly in an $options array.
 
 *Move*
 {{{
-Move($direction, $options=array()) -> Array
+Move($direction, $options) -> Array
 }}}
 Move the object up or down in display order depending on the options set in the $options array object passed.
 
@@ -129,19 +129,19 @@ Displays an individual xhtml form field to the screen with its options and confi
 
 *Form*
 {{{
-Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()) -> Null
+Form($display, $hidden, $options, $config, $omit) -> Null
 }}}
 Display an xhtml form with all the fields in the $display, if $display is not an array all fields will be displayed that are not in the $omit array.
 
 *View*
 {{{
-View($display='', $options=array()) -> Null
+View($display, $options) -> Null
 }}}
 View all the fields associated with the class and their values in a table format. $display array can limit the fields show and the $options array can be used to associate keys with their values.
 
 *DisplayList*
 {{{
-DisplayList($display='', $format=array(), $options=array(), $force_check=true) -> Null
+DisplayList($display, $format, $options, $force_check) -> Null
 }}}
 Display a list of the $this->results array in a table format. The $display array determines what columns will be shown. The $format array can be used to create links inside of the table cell. $options array can be used to associate keys with their values. And the $force_check boolean can be used to re-pull the data from the database before displaying the table.
 
@@ -165,13 +165,13 @@ Set the $value of a certain $field for the table.
 
 *Results*
 {{{
-Results($type='array') -> Mixed
+Results($type) -> Mixed
 }}}
 Return the results array in various formats. Types are: "array", "json". Default type is an array.
 
 *Join*
 {{{
-Join($join_class, $join_on, $type='INNER') -> Boolean
+Join($join_class, $join_on, $type) -> Boolean
 }}}
 Used to join the current class with another DbTemplate class. This allows the GetList to cross tables and join another table on the $join_on field with a join $type.
 

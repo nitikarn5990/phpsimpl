@@ -1,6 +1,13 @@
 #summary Version History of PHPSimpl
 #labels Phase-Requirements
 
+== Version 0.8.0 ==
+  * SetOption now accepts objects
+  * Compressed the JS and CSS for the calendar
+  * Change the time fields to human readable format
+  * Fixed issue with Save() and display_order
+  * Minor bug fixes
+
 == Version 0.8.0-rc1 ==
   * Search now interacts with Joined tables
   * Issues with PHP 5.2.1 and the DB Sessions have been resolved

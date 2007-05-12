@@ -12,13 +12,13 @@ _Need Example_
 
 *Upload*
 {{{
-Upload(data, directory) -> NULL
+Upload($data, $directory) -> NULL
 }}}
 Upload constructor, takes the $_FILES data from the form and the dirtory where the file will be stored
 
 *CheckData*
 {{{
-CheckData(accepted_types, max_size) -> Array
+CheckData($accepted_types, $max_size) -> Array
 }}}
 Checks the file that will be uploaded against an array of accepted_types and a size constraint in bytes
 

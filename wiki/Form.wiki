@@ -80,7 +80,7 @@ Returns an array of all the fields with errors in an associative array with the 
 
 *GetLabel*
 {{{
-GetLabel($field, $append='') -> String
+GetLabel($field, $append) -> String
 }}}
 Gets the label of any field in the class. This is very useful if trying to formulate email content from a form and instead of showing "is_active: Yes" the GetLabel('is_active', ':') would result in "Active: Yes". A much more human readable format
 
@@ -161,7 +161,7 @@ Set the default options for the fields in the class. This is used to put options
 
 *SetOptions
 {{{
-SetOption($field, $options, $first='') -> Boolean
+SetOption($field, $options, $first) -> Boolean
 }}}
 Set the options for an individual field. You can optionally send a third parameter to prepend an element to the options list. This is useful if you are pulling the data from a database and using GetAssoc() then calling this function like: $myPost->SetOption('author_id', $options, 'Please Select an Author');
 
@@ -179,25 +179,25 @@ Returns the class in a simple format that is human readable. This is very helpfu
 
 *Form*
 {{{
-Form($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()) -> Null
+Form($display, $hidden, $options, $config, $omit) -> Null
 }}}
 Display an XHTML compliant form to the user that includes all the fields in the $display. If $display is not an array it will display all the fields that are not in the $omit array. The $options and $config arrays are associative arrays with the field names as keys. They will be passed to each field individually by their key.
 
 *FormField*
 {{{
-FormField($field, $hidden=false, $options='', $config='') -> Null
+FormField($field, $hidden, $options, $config) -> Null
 }}}
 Display an XHTML compliant individual form field to the user. Will use the predefined hidden, options and config unless passed to this function which will overwrite the defaults.
 
 *MultiForm*
 {{{
-MultiForm($display='', $hidden=array(), $options=array(), $config=array(), $omit=array()) -> Null
+MultiForm($display, $hidden, $options, $config, $omit) -> Null
 }}}
 Display an XHTML compliant form with [] brackets at the end of the input names. This allows the set of fields to be displayed multiple times in a single form element and no data is overwritten. [http://nickdenardis.blogspot.com/2007/04/multiplication.html Example]
 
 *MultiFormField*
 {{{
-MultiFormField($field, $hidden=false, $options='', $config='') -> Null
+MultiFormField($field, $hidden, $options, $config) -> Null
 }}}
 Display an XHTML compliant form field with [] brackets at the end of the input names. This allows the field to be displayed multiple times in a single form element and no data is overwritten.
 
