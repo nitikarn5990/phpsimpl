@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 2.7.0-pl2
+-- version 2.9.1.1-Debian-2ubuntu1
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Nov 11, 2006 at 09:31 AM
--- Server version: 5.0.19
--- PHP Version: 5.1.4
+-- Generation Time: May 11, 2007 at 09:09 PM
+-- Server version: 5.0.38
+-- PHP Version: 5.2.1
 -- 
 -- Database: `simpl_example`
 -- 
@@ -24,7 +24,7 @@ CREATE TABLE `author` (
   `last_name` varchar(32) NOT NULL,
   `email` varchar(48) NOT NULL,
   PRIMARY KEY  (`author_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog authors';
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog authors';
 
 -- --------------------------------------------------------
 
@@ -35,7 +35,7 @@ CREATE TABLE `author` (
 DROP TABLE IF EXISTS `post`;
 CREATE TABLE `post` (
   `post_id` int(10) unsigned NOT NULL auto_increment,
-  `is_published` tinyint(1) unsigned NOT NULL,
+  `status` enum('Draft','Published') NOT NULL,
   `date_entered` datetime NOT NULL,
   `last_updated` datetime NOT NULL,
   `author_id` int(10) unsigned NOT NULL default '0',
@@ -43,7 +43,7 @@ CREATE TABLE `post` (
   `title` varchar(48) NOT NULL,
   `body` text NOT NULL,
   PRIMARY KEY  (`post_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog posts';
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog posts';
 
 -- --------------------------------------------------------
 
@@ -58,4 +58,4 @@ CREATE TABLE `session` (
   `ses_start` int(12) unsigned NOT NULL,
   `ses_value` text NOT NULL,
   PRIMARY KEY  (`ses_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Used to store the sessions data';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Used to store the sessions data';
