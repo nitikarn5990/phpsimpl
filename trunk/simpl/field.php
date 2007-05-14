@@ -196,7 +196,7 @@ class Field {
 		}
 		
 		// If time display in nice format
-		if ($this->Get('type') == 'time')
+		if ($this->Get('type') == 'time' && $this->Get('value') != '')
 			$my_value = date("g:i a", strtotime($my_value));
 		
 		// Overwrite the options if needed
