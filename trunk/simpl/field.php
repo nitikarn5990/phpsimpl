@@ -167,6 +167,10 @@ class Field {
 		// Remove any ":" from the label
 		if (substr($str,-1) == ':')
 			$str = substr($str,0,-1);
+			
+		// If this is a question or period leave it
+		if (substr(strip_tags($str),-1) == '?' || substr(strip_tags($str),-1) == '.')
+			return $str;
 		
 		return $str . $append;
 	}
