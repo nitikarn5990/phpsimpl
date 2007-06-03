@@ -364,7 +364,7 @@ class DbTemplate extends Form {
 			// Create the return fields
 			if (is_array($returns[$key]) && count($returns[$key]) > 0){
 				// Require primary key returned
-				if (!in_array($class->primary,$returns[$key]))
+				if ($class->primary != '' && !in_array($class->primary,$returns[$key]))
 					$return .= '`' . $class->table . '`.' . $class->primary . ', ';
 				
 				// List all other fields to be returned
@@ -425,7 +425,10 @@ class DbTemplate extends Form {
 			$this->results['count'] = $info['count'];		
 		}else{
 			while ($info = $db->FetchArray($result)){
-				$this->results[$info[$this->primary]] = $info;
+				if ($this->primary != '')
+					$this->results[$info[$this->primary]] = $info;
+				else
+					$this->results[] = $info;
 			}
 		}
 		
@@ -559,8 +562,12 @@ class DbTemplate extends Form {
 		// If there are results returned
 		if (is_array($this->results)){			
 			// Loop through each results
-			foreach($this->results as $data)
-				$return[$data[$this->primary]] = $data[$field];
+			foreach($this->results as $data){
+				if ($this->primary != '')
+					$return[$data[$this->primary]] = $data[$field];
+				else
+					$return[] = $data[$field];
+			}
 		}
 		
 		return $return;

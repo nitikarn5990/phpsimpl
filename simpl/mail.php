@@ -308,7 +308,7 @@ class Mail{
 	 */
 	public function Get(){
 		$this->BuildMail();
-		$mail = 'To: ' . $this->strTo . "\n";
+		$mail = 'To: ' . implode( ", ", $this->sendto ) . "\n";
 		$mail .= $this->headers . "\n";
 		$mail .= $this->fullBody;
 		return $mail;
