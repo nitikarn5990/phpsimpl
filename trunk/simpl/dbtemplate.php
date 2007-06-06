@@ -555,6 +555,7 @@ class DbTemplate extends Form {
 	 */
 	public function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
 		$return = array();
+		$this->results = array();
 		
 		// Get the list
 		$this->GetList(array($field), $order_by, $sort, $offset, $limit);
