@@ -280,6 +280,9 @@ class DB {
 			// Switch DB
 			@mysql_select_db($database);
 			
+			// Increment the query counter
+    		$this->query_count++;
+    		
 			return true;
     	}
     	
