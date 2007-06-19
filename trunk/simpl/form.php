@@ -567,7 +567,11 @@ class Form {
 		// All options set
 		return true;
 	}
-
+	
+	public function Nice(){
+		return $this->SimpleFormat();
+	}
+	
 	/**
 	 * Simple Format
 	 *
@@ -594,7 +598,7 @@ class Form {
 		$output .= '<strong>Fields:</strong>' . "\n";
 		if (count($fields) > 0)
 			foreach($fields as $name=>$field)
-				$output .= "\t" . $name . ' => ' . $field->Get('value') . (($errors[$name] != '')?' <strong>:</strong> ' . $errors[$name]:'') . "\n";
+				$output .= "\t" . $field . ' => ' . $this->GetValue($field) . (($errors[$field] != '')?' <strong>:</strong> ' . $errors[$field]:'') . "\n";
 		else
 			$output .= "\t" . 'No Fields' . "\n";
 		
