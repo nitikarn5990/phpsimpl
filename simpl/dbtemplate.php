@@ -675,22 +675,13 @@ class DbTemplate extends Form {
 	 * @return null
 	 */
 	public function View($display='', $options = array()){
-		// Rearrange the Fields if there is a custom display
-		$show = array();
-		if(is_array($display)){
-			// If there is a custome Display make the array
-			foreach($display as $key=>$data)
-				$show[] = $data;
-		}else{
-			// If there is fields in the db table make the show array
-			foreach($this->fields as $key=>$data)
-				$show[] = $key;
-		}
-		
+		// Set the Display
+		$this->SetDisplay($display);
+
 		echo '<table width="98%" border="0" cellspacing="0" cellpadding="2" class="item" summary="View Individual Information">';
 		
 		// Show the fields
-		foreach($show as $field)
+		foreach($this->display as $field)
 			$this->fields[$field]->View($options[$field]);
 		
 		echo '</table>';
