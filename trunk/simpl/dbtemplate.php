@@ -355,10 +355,10 @@ class DbTemplate extends Form {
 
 			// Create the filters
 			foreach($values as $name=>$value){
-				$where .= ((string)$value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE':'=') . ' \'' . $value . '\' AND ':'';
+				$where .= ((string)$value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE':'=') . ' \'' . $db->Prepare($value) . '\' AND ':'';
 			
 				// Create the search
-				$search .= ($class->search != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE \'%' . $class->search . '%\'':' = \'' . $class->search . '\'') . ' OR ':'';
+				$search .= ($class->search != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE \'%' . $db->Prepare($class->search) . '%\'':' = \'' . $db->Prepare($class->search) . '\'') . ' OR ':'';
 			}
 			
 			// Create the return fields
