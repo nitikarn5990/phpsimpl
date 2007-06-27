@@ -1,6 +1,15 @@
 #summary Version History of PHPSimpl
 #labels Phase-Requirements
 
+== Version 0.8.1 ==
+  * Slightly Updated Example
+  * Fixed the form label "?:" issue
+  * Better support for tables without a primary key
+  * Fixed the SimpleFormat to display values properly and renamed it to Nice()
+  * Change DB now counted as a query
+  * View() now goes off the default field display first
+  * Security Updates related to SQL injection
+
 == Version 0.8.0 ==
   * SetOption now accepts objects
   * Compressed the JS and CSS for the calendar
