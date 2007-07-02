@@ -143,6 +143,13 @@ class DB {
 			$this->Change($db);
 		}
 		
+		// Display the query if needed
+		if (DEBUG_QUERY == true){
+			echo '<pre class="debug">';
+			print_r($query);
+			echo '</pre>';
+		}
+		
 		// Do the Query
     	$result = mysql_query($query, $db_link) or $this->Error($query, mysql_errno(), mysql_error());
     	
