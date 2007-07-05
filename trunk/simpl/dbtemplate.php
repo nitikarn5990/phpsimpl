@@ -353,7 +353,7 @@ class DbTemplate extends Form {
 	 * @param $limit An int limit on the number of rows to be returned
 	 * @return array
 	 */
-	public function GetLis($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
+	public function GetList($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
 		global $db;
 		$returns = array();
 		
