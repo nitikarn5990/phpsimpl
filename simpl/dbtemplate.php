@@ -47,18 +47,14 @@ class DbTemplate extends Form {
 	/**
 	 * DbTemplate Constructor
 	 * 
-	 * @param $table string of table name
-	 * @param $database string of database name
+	 * @param string $table Table name
+	 * @param string $database Database name
 	 * @return bool
 	 */
 	public function __construct($table, $database){
-		// Use the global db class
 		global $db;
 
-		// Set the Table
 		$this->table = $table;
-
-		// Set the database
 		$this->database = $database;
 
 		// Pull the cache if available
@@ -95,20 +91,17 @@ class DbTemplate extends Form {
 	 *
 	 * This function will soon be depricated, it was a result of lack of constructors in PHP4
 	 *
-	 * @param $data array of key=>value
-	 * @param $required array of required keys
-	 * @param $labels array of field labels
-	 * @param $examples array of field examples
-	 * @param $table string of table name
-	 * @param $fields array of existing fields
-	 * @param $database string of the database name
+	 * @param array $data In form field=>value
+	 * @param array $required Field names
+	 * @param array $labels array of field labels
+	 * @param array $examples array of field examples
+	 * @param string $table string of table name
+	 * @param array $fields array of existing fields
+	 * @param string $database string of the database name
 	 * @return bool
 	 */
 	public function DbTemplate($data, $required=array(), $labels=array(), $examples=array(), $table='', $fields=array(), $database=''){
-		// Set the Table
 		$this->table = $table;
-
-		// Set the database
 		$this->database = $database;
 
 		// Pull the cache if available
@@ -137,16 +130,9 @@ class DbTemplate extends Form {
 		// Set the local display
 		$this->display = $this->GetFields();
 		
-		// Set the required
 		$this->SetRequired($required);
-		
-		// Set the Labels
 		$this->SetLabels($labels);
-		
-		// Set the examples
 		$this->SetExamples($examples);
-		
-		// Set the data
 		$this->SetValues($data);
 		
 		return true;
@@ -155,31 +141,30 @@ class DbTemplate extends Form {
 	/**
 	 * Get the Item Information
 	 *
-	 * @param $fields List of all the field keys that should be returned
+	 * @param array $fields Names of all the return fields
 	 * @return bool
 	 */
-	public function GetInfo($fields=''){
-		// Use the global db class
+	public function GetInfo($fields=array()){
 		global $db;
-
+		$select = '*';
+		
 		// Require a primary key
-		if (!isset($this->primary) && $this->GetPrimary() != '')
+		if ($this->GetPrimary() == '')
 			return false;
 
 		Debug('GetInfo(), Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 
 		// If there is a limiting field
-		if (is_array($fields)){
-			foreach($fields as $data)
-				$select .= '`' . trim($data) . '`, ';
-			$select = substr($select,0,-1);
-		}else{
-			$select .= '*';
+		if (is_array($fields) && count($fields) > 0){
+			foreach($fields as $field)
+				$select .= ($this->IsField($field))?'`' . trim($field) . '`, ':'';
+			$select = substr($select,1,-1);
 		}
 
 		// Add the rest of the query together
 		$query = 'SELECT ' . $select . ' FROM `' . $this->table . '` WHERE `' . $this->primary . '` = ' . $this->GetPrimary() . ' LIMIT 1';
 		$result = $db->Query($query, $this->database);
+		
 		Debug('GetInfo(), Query: ' . $query);
 
 		// If there is atleast one result
@@ -191,7 +176,7 @@ class DbTemplate extends Form {
 
 			// Loop through all the fields and set the values
 			foreach($this->fields as $key=>$data)
-				Form::SetValue($key,$info[$key]);
+				Form::SetValue($key, $info[$key]);
 			
 			return true;
 		}
@@ -203,53 +188,55 @@ class DbTemplate extends Form {
 	/**
 	 * Saves class information into the database table
 	 *
-	 * @param $options array of config values
+	 * @param array $options config values
 	 * @return bool
 	 */
-	public function Save($options = array()){
-		// Use the global db class
+	public function Save($options=array()){
 		global $db;
+		$info = array();
 		
 		// Make sure the data validates
-		if ($this->IsError())
+		if ($this->IsError() || !$this->Validate())
 			return false;
+			
+		// Default rows to always update
+		$updater = array('last_updated', 'updated_on');
 
 		// Determine the save type
 		if ($this->GetPrimary() != ''){
 			$type = 'update';
-			$extra = '`' . $this->primary . '` = ' . $this->GetPrimary() . '';
+			$extra = '`' . $this->primary . '` =' . $this->GetPrimary();
 			
-			// Update and rows that need it
-			$updater = array('last_updated', 'updated_on');
-			foreach($updater as $key)
-				if ($this->IsField($key))
-					$this->SetValue($key, date("Y-m-d H:i:s"));
+			Debug('Save(), Updating Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
 		}else{
 			$type = 'insert';
 			$extra = '';
 			
-			// Check for the display_order field
-			if ($this->IsField('display_order') && is_object($options['display_order'])){
-				// Find out what the next display order is
-				$last_item = $options['display_order']->GetList(array('display_order'),'display_order','DESC',0,1);
+			Debug('Save(), Inserting New Item: ' . get_class($this));
+			
+			// Add more date fields to update
+			array_push($updater, 'date_entered', 'created_on');
+			
+			// Automate the display order process
+			if (is_object($options['display_order']) && $this->IsField('display_order')){
+				// Default Display order
+				$this->SetValue('display_order', 1);
 				
-				if (count($last_item) == 1){
-					$last = array_shift($last_item);
-					$this->SetValue('display_order',((int)$last['display_order']+1));
-				}else{
-					$this->SetValue('display_order',1);
-				}
+				// Grab the next display order
+				$last_item = $options['display_order']->GetAssoc('display_order', 'display_order','DESC',0,1);
+				if (count($last_item) == 1)
+					$this->SetValue('display_order', current($last_item) + 1);
+					
+				Debug('Save(), Display Order inserting at: ' . $this->GetValue('display_order'));
 			}
-
-			// Update and rows that need it
-			$updater = array('date_entered', 'created_on', 'last_updated', 'updated_on');
-			foreach($updater as $key)
-				if ($this->IsField($key))
-					$this->SetValue($key, date("Y-m-d H:i:s"));
 		}
 		
+		// Set the new dates for updating
+		foreach($updater as $key)
+			if ($this->IsField($key))
+				$this->SetValue($key, date("Y-m-d H:i:s"));
+		
 		// Get the values except for the omitted fields
-		$info = array();
 		$fields = $this->GetFields();
 		foreach($fields as $data)
 			if ($this->Get('display', $data) >= 0)
@@ -261,35 +248,69 @@ class DbTemplate extends Form {
 			$db->Perform($this->table, $info, $type, $extra, $this->database);
 	
 			// Grab the ID if inserting
-			if ($type == 'insert')
+			if ($type == 'insert' && $this->primary != '')
 				$this->SetPrimary($db->InsertID());
 			
-			// If the primary key is set then we are all good
-			if ($this->GetPrimary() != '')
+			// If atleast one row was updated
+			if ($db->RowsAffected() > 0){
+				Debug('Save(), Success Saving Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
+				
 				return true;
+			}
 		}else{
 			// Create file backup if no databse
 			$filename = 'backup_' . $this->table . '_' . date("YmdHis") . '.php';
 			$this->Cache('set', $filename, $this);
 
 			// If the file is written we did all we can do for now
-			if (is_file(FS_CACHE . $filename))
+			if (is_file(FS_CACHE . $filename)){
+				Debug('Save(), Datebase down, saving to: \'' . FS_CACHE . $filename . '\'');
+				
 				return true;
+			}
 		}
+		
+		Debug('Save(), Error Saving Item: ' . get_class($this));
 
 		return false;
 	}
 	
 	/**
-	 * Deletes the info from the DB
+	 * Update an individual value in the database
 	 *
-	 * Deletes the info from the DB accourding to the primary key
-	 *
-	 * @param $options array of config values
+	 * @param string $field
+	 * @param string $value
 	 * @return bool
 	 */
-	public function Delete($options = array()){
-		// Use the global db class
+	public function UpdateValue($field, $value){
+		global $db;
+		
+		// Require a valid field
+		if (!$this->IsField($field))
+			return false;
+		
+		// Require a primary key
+		if ($this->GetPrimary() == '')
+			return false;
+			
+		Debug('UpdateValue(), Field: ' . $field . ', New Value: ' . $value);
+		
+		// Do the Operation
+		$db->Perform($this->table, array($field => $value), 'update', '`' . $this->primary . '` = '. $this->GetPrimary(), $this->database);
+		
+		// Set the new value locally
+		$this->SetValue($field, $value);
+		
+		return true;
+	}
+	
+	/**
+	 * Deletes the record from the database
+	 *
+	 * @param array $options config values
+	 * @return bool
+	 */
+	public function Delete($options=array()){
 		global $db;
 		global $mySimpl;
 		
@@ -297,25 +318,25 @@ class DbTemplate extends Form {
 		if ($this->GetInfo()){
 			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 			
-			// Check to see if we need to cleanup the display order first
-			if (is_object($options['display_order'])){
-				// Move the item all the way down to the bottom
+			// Remove from display order if needed
+			if (is_object($options['display_order']))
 				while ($this->Move('down',$options)){}
-			}
 		
-			// Delete the row
-			$query = "DELETE FROM `" . $this->table . "` WHERE `" . $this->primary . "` = '" . $this->GetPrimary() . "' LIMIT 1";
+			// Delete the entry
+			$query = 'DELETE FROM `' . $this->table . '` WHERE `' . $this->primary . '` = ' . $this->GetPrimary() . ' LIMIT 1';
 			$result = $db->Query($query, $this->database);
 			
 			// Clear the cache
 			$mySimpl->Cache('clear_query');
 			
 			// If it did something the return that everything is gone
-			if ($db->RowsAffected() == 1)
+			if ($db->RowsAffected() == 1){
+				Debug('Delete(), Success Saving Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
 				return true;
-		}else{
-			Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
+			}
 		}
+		
+		Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
 		
 		return false;
 	}
@@ -332,8 +353,7 @@ class DbTemplate extends Form {
 	 * @param $limit An int limit on the number of rows to be returned
 	 * @return array
 	 */
-	public function GetList($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
-		// Use the global db class
+	public function GetLis($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
 		global $db;
 		$returns = array();
 		
@@ -546,16 +566,18 @@ class DbTemplate extends Form {
 	/**
 	 * Get an Associative array
 	 *
-	 * @param $field A string of a field that it will return
-	 * @param $order_by A string of a field key to order by (ex. "display_order")
-	 * @param $sort A string on how to sort the data (ex. "ASC" or "DESC")
-	 * @param $offset An int on where to start returning, used mainly for page numbering
-	 * @param $limit An int limit on the number of rows to be returned
+	 * @param string $field
+	 * @param string $order_by field to order by (ex. "display_order")
+	 * @param string $sort order of sort (ex. "ASC" or "DESC")
+	 * @param int $offset
+	 * @param int $limit
 	 * @return array
 	 */
 	public function GetAssoc($field, $order_by='', $sort='', $offset='', $limit=''){
 		$return = array();
 		$this->results = array();
+		
+		Debug('GetAssoc(), Item: ' . get_class($this) . ', Field: ' . $field);
 		
 		// Get the list
 		$this->GetList(array($field), $order_by, $sort, $offset, $limit);
@@ -571,18 +593,19 @@ class DbTemplate extends Form {
 			}
 		}
 		
+		Debug('GetAssoc(), Found: ' . count($return) . ' Items');
+		
 		return $return;
 	}
 	
 	/**
 	 * Move Item Up or Down in display_order
 	 *
-	 * @param $direction A string containing either 'up' or 'down'
-	 * @param $options An array containing the search criteria for the move, if there is a cetain category or list to stay within
+	 * @param string $direction (ex. "up" or "down")
+	 * @param array $options config values
 	 * @return bool
 	 */
 	public function Move($direction, $options = array()){
-		// Use the global db class
 		global $db;
 		
 		// Get the Fields
@@ -782,7 +805,7 @@ class DbTemplate extends Form {
 	/**
 	 * Set Primary Key Value
 	 *
-	 * @param $value Usually an INT that is the primary key value for this object
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public function SetPrimary($value){
@@ -792,7 +815,7 @@ class DbTemplate extends Form {
 	/**
 	 * Get Primary Key Value
 	 *
-	 * @return bool
+	 * @return mixed
 	 */
 	public function GetPrimary(){
 		return $this->GetValue($this->primary);
@@ -801,8 +824,8 @@ class DbTemplate extends Form {
 	/**
 	 * Set Value of a Field
 	 *
-	 * @param $field String of the field
-	 * @param $value Usually an INT that is the primary key value for this object
+	 * @param string $field
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public function SetValue($field, $value){
@@ -830,7 +853,7 @@ class DbTemplate extends Form {
 	/**
 	 * Display the results in various formats
 	 * 
-	 * @param $type string
+	 * @param string $type
 	 * @return mixed
 	 */
 	public function Results($type='array'){
@@ -855,9 +878,9 @@ class DbTemplate extends Form {
 	/**
 	 * Join this table with another
 	 * 
-	 * @param $join_class A DbTemplate class to join with
-	 * @param $join_on string of the field to join on
-	 * @param $type A type of join "INNER,LEFT"
+	 * @param class $join_class DbTemplate
+	 * @param string $join_on field
+	 * @param string $type (ex. "INNER" or "LEFT")
 	 * @return bool
 	 */
 	public function Join($join_class, $join_on, $type='INNER'){
@@ -873,13 +896,13 @@ class DbTemplate extends Form {
 	/**
 	 * Get or Set Cache
 	 *
-	 * @param $action string of either (get, set)
-	 * @param $filename string of the filename
-	 * @param $data mixed data to be saved
-	 * @param $max_age string of max age
+	 * @param string $action (ex. "get" or "set")
+	 * @param string $filename
+	 * @param mixed $data
+	 * @param string $max_age
 	 * @return string
 	 */
-	private function Cache($action, $filename, $data = '', $max_age = ''){
+	private function Cache($action, $filename, $data='', $max_age=''){
 		// Set the full path
 		$cache_file = FS_CACHE . $filename;
 		$cache = '';
@@ -889,7 +912,7 @@ class DbTemplate extends Form {
 			clearstatcache();
 
 			if (is_file($cache_file))
-				if ($max_age != '' && date ($max_age, filemtime($cache_file)) >= date ($max_age))
+				if ($max_age != '' && date ($max_age, filemtime($cache_file)) >= date($max_age))
 					$cache = file_get_contents($cache_file);
 		}else{
 			if (is_writable(FS_CACHE)){
@@ -912,7 +935,7 @@ class DbTemplate extends Form {
 	/**
 	 * Get the Valid Type of the field
 	 *
-	 * @param $field StdObj of a field
+	 * @param StdObj $field
 	 * @return string
 	 */
 	private function ValidType(&$field){
