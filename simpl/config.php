@@ -1,16 +1,18 @@
 <?php
 // Debug everything, set only if you need to know exactly what is going on
-define('DEBUG',false);
+define('DEBUG', false);
 // Debug only raw queies
-define('DEBUG_QUERY',false);
+define('DEBUG_QUERY', false);
+// Store all the debug info in a debug log file
+define('DEBUG_LOG', false);
 // Use a file cache to store the data structures (recommended)
-define('USE_CACHE',true);
+define('USE_CACHE', true);
 // Pull the ENUM data from database as options (only use if your tables have ENUM data)
-define('USE_ENUM',false);
+define('USE_ENUM', false);
 // Cache query results to a file for faster re-queries
-define('QUERY_CACHE',false);
+define('QUERY_CACHE', false);
 // Store the session data in a table (import the table from the examples)
-define('DB_SESSIONS',false);
+define('DB_SESSIONS', false);
 
 // Where things are sitting
 // Always Include trailing slash "/" in Direcories
