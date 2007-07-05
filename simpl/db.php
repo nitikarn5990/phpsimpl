@@ -44,10 +44,10 @@ class DB {
     /**
 	 * Setup the DB Connection
 	 *
-	 * @param $server String with the server name
-	 * @param $username String with the user name
-	 * @param $password String with the Password
-	 * @param $database String with the databse to connect to
+	 * @param string $server
+	 * @param string $username
+	 * @param string $password
+	 * @param string $database
 	 * @return bool
 	 */
 	public function Connect($server=DB_HOST, $username=DB_USER, $password=DB_PASS, $database=DB_DEFAULT){
@@ -105,16 +105,14 @@ class DB {
 	 * 
 	 * Execute a query on a particular databse
 	 * 
-	 * @param $query The query to be executed
-	 * @param $db THe optional alternative database
+	 * @param string $query
+	 * @param string $db to override default database
 	 * @return Mixed
 	 * 
 	 */
-	public function Query($query, $db = '', $cache = true) {
-   		// Use the Global Link
+	public function Query($query, $db='', $cache=true) {
 		global $db_link;
 		
-		// Debug
 		Debug('QUERY: ' . $query, 'query');
 		
 		// Default is not to read cache
@@ -177,7 +175,6 @@ class DB {
 			chmod ($cache_file, 0777);
     	}
     	
-    	// Return the query results
     	return $result;
 	}
 	
@@ -186,11 +183,11 @@ class DB {
 	 * 
 	 * Use a smart way to create a query from abstract data
 	 * 
-	 * @param $table String of the table that the query is going to act on
-	 * @param $data Array of the data that is going to be inserted/updated
-	 * @param $action Either "update" or "insert"
-	 * @param $parameters String of the additional things that need to go on like "item_id='5'"
-	 * @param $db String of a different database if this is going to happen on another location
+	 * @param string $table 
+	 * @param array $data in form key=>value
+	 * @param string $action (ex. "update" or "insert")
+	 * @param string $parameters additional things that need to go on like "item_id='5'"
+	 * @param string $db to override default database
 	 * @return result
 	 */
 	public function Perform($table, $data, $action = 'insert', $parameters = '', $db = '', $clear = true) {
@@ -272,7 +269,7 @@ class DB {
 	/**
 	 * Change the Database
 	 * 
-	 * @param $database A String with the new database name
+	 * @param string $database
 	 * @return bool
 	 */
 	public function Change($database){
@@ -290,6 +287,8 @@ class DB {
 			// Increment the query counter
     		$this->query_count++;
     		
+    		Debug('DbChange(), Changed database to: ' . $database);
+    		
 			return true;
     	}
     	
@@ -301,15 +300,16 @@ class DB {
 	 * 
 	 * Display the Error to the Screen and Record in DB then Die()
 	 * 
-	 * @todo Log Error in DB
-	 * @param $query The query that was executed
-	 * @param $errno The error number
-	 * @param $error The actual text error
+	 * @param string $query
+	 * @param int $errno
+	 * @param string $error
 	 * @return null
 	 */
 	public function Error($query, $errno, $error) {
 		// Close the Database Connection
 		$this->Close();
+		
+		Debug('DbError(), ' . $errno . ' - ' . $error . ' - ' . $query);
 		
 		// Kill the Script
   		die('<div class="db-error"><h1>' . $errno . ' - ' . $error . '</h1><p>' . $query . '</p></div>');
@@ -318,7 +318,7 @@ class DB {
 	/**
 	 * Fetch the results Array
 	 * 
-	 * @param $result The result that was returned from the database
+	 * @param mixed $result from DB
 	 * @return array
 	 */
 	public function FetchArray($result) {
@@ -332,7 +332,7 @@ class DB {
 	/**
 	 * Number of Rows Returned
 	 * 
-	 * @param $result The result that was returned from the database
+	 * @param mixed $result from DB
 	 * @return int
 	 */
 	public function NumRows($result) {
@@ -342,6 +342,16 @@ class DB {
 		}else{
 			return mysql_num_rows($result);
 		}
+	}
+	
+	/**
+	 * Number of Rows Affected
+	 * 
+	 * @return int
+	 */
+	public function RowsAffected() {
+		global $db_link;
+		return mysql_affected_rows($db_link);
 	}
 	
 	/**
@@ -356,7 +366,7 @@ class DB {
 	/**
 	 * Free Resulting Memory
 	 * 
-	 * @param $result The result that was returned from the database
+	 * @param mixed $result from DB
 	 * @return bool
 	 */
 	public function FreeResult($result) {
@@ -366,7 +376,7 @@ class DB {
 	/**
 	 * Get the Field Information
 	 * 
-	 * @param $result The result that was returned from the database
+	 * @param mixed $result from DB
 	 * @return object
 	 */
 	public function FetchField($result) {
@@ -374,30 +384,21 @@ class DB {
 	}
 	
 	/**
-	 * Get the rows affected
-	 * 
-	 * @return int
-	 */
-	public function RowsAffected(){
-		return mysql_affected_rows();
-	}
-	
-	/**
 	 * Get the Field Length
 	 * 
-	 * @param $result The result that was returned from the database
-	 * @param $field The field number that we are intrested in getting the info for
+	 * @param mixed $result from DB
+	 * @param string $field
 	 * @return object
 	 */
 	public function FieldLength($result,$field) {
-		return mysql_field_len($result,$field);
+		return mysql_field_len($result, $field);
 	}
 	
 	/**
 	 * Format the string for output from the Database
 	 * 
-	 * @param $string A string to be outputted from the database
-	 * @return object
+	 * @param string $string
+	 * @return string
 	 */
 	public function Output($string) {
 		return htmlspecialchars(stripslashes($string));
@@ -406,8 +407,8 @@ class DB {
 	/**
 	 * Format the string for input into the Database
 	 * 
-	 * @param $string A string that is going to be inserted into the database
-	 * @return object
+	 * @param string $string
+	 * @return string
 	 */
 	public function Prepare($string) {
 		// Make sure we are connected first
