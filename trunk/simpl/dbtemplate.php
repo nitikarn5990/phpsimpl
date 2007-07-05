@@ -43,6 +43,10 @@ class DbTemplate extends Form {
 	 * @var int
 	 */
 	private $multi = 0;
+	/**
+	 * @var string
+	 */
+	private $conditions;
 
 	/**
 	 * DbTemplate Constructor
@@ -431,7 +435,7 @@ class DbTemplate extends Form {
 		
 		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->table . '`';
 		$query .= ($join != '')?substr($join,0,-1):'';
-		$query .= ($where != '')?' WHERE ' . substr($where,0,-5):'';
+		$query .= ($where != '' || $this->conditions != '')?' WHERE ' . (($this->conditions != '')?$where . $this->conditions:substr($where,0,-5)):'';
 		$query .= ($order != '')?' ORDER BY ' . $order:'';
 		$query .= ($offset > 0 || $limit > 0)?' LIMIT ' . $offset . ', ' . $limit:'';
 		
@@ -500,7 +504,11 @@ class DbTemplate extends Form {
 			else
 				$parts[] = '`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
 		}
-		$parts = implode(' AND ', $parts);
+			
+		$parts = implode(' OR ', $parts);
+		
+		if ($this->conditions != '')
+			$parts .= ' AND ' . $this->conditions;
 		
 		// Loop through all the joined classes
 		foreach($this->join_class as $key=>$class){
@@ -596,6 +604,21 @@ class DbTemplate extends Form {
 		Debug('GetAssoc(), Found: ' . count($return) . ' Items');
 		
 		return $return;
+	}
+	
+	/**
+	 * Set the conditions to be used for the GetList and Search
+	 *
+	 * @param string $conditions (ex. "date_entered LIKE '2007%'")
+	 * @return bool
+	 */
+	public function SetConditions($conditions){
+		// Set the conditions
+		$this->conditions = $conditions;
+		
+		Debug('SetConditions(), Conditions on ' . get_class($this) . ' Set to: ' . $condititions);
+		
+		return true;
 	}
 	
 	/**
