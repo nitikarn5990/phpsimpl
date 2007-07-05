@@ -680,6 +680,33 @@ class Form {
 	}
 	
 	/**
+	 * Display the error messages in one place
+	 *
+	 * @return string
+	 */
+	public function ErrorMessages(){
+		// Get the errors
+		$errors = $this->GetErrors();
+		
+		$output = '';
+		
+		// If there are errors
+		if (count($errors) > 0){
+			$output .= '<div class="errorExplaination">';
+			$output .= '<h2>' . count($errors) . ' errors prohibited this ' . get_class($this) . ' from being saved</h2>';
+			$output .= '<p>There were problems with the following fields:</p>';
+			$output .= '<ul>';
+			
+			foreach($errors as $field=>$error)
+				$output .= '<li>' . $this->Output($error) . '</li>';
+			$output .= '</ul>';
+			$output .= '</div>';
+		}
+		
+		return $output;
+	}
+	
+	/**
 	 * Format output
 	 *
 	 * @param $string string
