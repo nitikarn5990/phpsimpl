@@ -113,7 +113,7 @@ class DB {
 	public function Query($query, $db='', $cache=true) {
 		global $db_link;
 		
-		Debug('QUERY: ' . $query, 'query');
+		Debug('Query: ' . $query, 'query');
 		
 		// Default is not to read cache
 		$is_cache = false;

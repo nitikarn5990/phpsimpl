@@ -124,7 +124,7 @@ if (!function_exists('Debug')){
 			 if (!$fp = fopen(FS_CACHE . 'debug.log', "a"))
 			 	return;
 			 
-			 if (fwrite($fp, date("Y-m-d H:i:s") . ' ' . $_SERVER['REMOTE_ADDR'] . ' ' . $output . "\n") === FALSE)
+			 if (fwrite($fp, date("Y-m-d H:i:s") . ' ' . $_SERVER['REMOTE_ADDR'] . ' ' . print_r($output, true) . "\n") === FALSE)
 			 	return;
 			 	
 			 fclose($fp);

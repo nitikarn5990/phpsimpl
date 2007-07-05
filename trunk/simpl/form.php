@@ -281,7 +281,7 @@ class Form {
 	 * @return bool
 	 */
 	public function SetValues($data){
-		Debug($data);
+		Debug('SetValues(), Values: ' . print_r($data, true));
 
 		// Make sure data is an array
 		if (!is_array($data))
