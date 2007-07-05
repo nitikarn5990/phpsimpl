@@ -119,6 +119,16 @@ if (!function_exists('Debug')){
 			print_r($output);
 			echo '</pre>';
 		}
+		
+		if (DEBUG_LOG === true){
+			 if (!$fp = fopen(FS_CACHE . 'debug.log', "a"))
+			 	return;
+			 
+			 if (fwrite($fp, date("Y-m-d H:i:s") . ' ' . $_SERVER['REMOTE_ADDR'] . ' ' . $output . "\n") === FALSE)
+			 	return;
+			 	
+			 fclose($fp);
+		}
 	}
 }
 
