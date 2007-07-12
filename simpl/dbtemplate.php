@@ -278,6 +278,26 @@ class DbTemplate extends Form {
 	}
 	
 	/**
+	 * Insert the date from the object into the database
+	 * Mainly used for tables without a primary key
+	 *
+	 * @return bool
+	 */
+	public function Insert(){
+		return false;
+	}
+	
+	/**
+	 * Update the data in the table with a condition
+	 * Mainly used for tables without a primary key
+	 *
+	 * @return bool
+	 */
+	public function Update($condition=''){
+		return false;
+	}
+	
+	/**
 	 * Update an individual value in the database
 	 *
 	 * @param string $field
