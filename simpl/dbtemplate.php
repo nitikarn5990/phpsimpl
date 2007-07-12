@@ -256,11 +256,9 @@ class DbTemplate extends Form {
 				$this->SetPrimary($db->InsertID());
 			
 			// If atleast one row was updated
-			if ($db->RowsAffected() > 0){
-				Debug('Save(), Success Saving Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
-				
-				return true;
-			}
+			Debug('Save(), Success Saving Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
+			
+			return true;
 		}else{
 			// Create file backup if no databse
 			$filename = 'backup_' . $this->table . '_' . date("YmdHis") . '.php';
