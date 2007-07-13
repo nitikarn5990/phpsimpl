@@ -248,6 +248,26 @@ class Folder {
 	}
 	
 	/**
+	 * Set the folder name
+	 * 
+	 * @param string $name
+	 * @return bool 
+	 */
+	public function SetFolderName($name){
+		$this->folder_name = $name . ((substr($name,-1) != '/')?'/':'');
+		return true;
+	}
+	
+	/**
+	 * Get the folder name
+	 * 
+	 * @return bool 
+	 */
+	public function GetFolderName(){
+		return $this->folder_name;
+	}
+	
+	/**
 	 * Creates a folder
 	 * 
 	 * Creates a folder and makes it writable
