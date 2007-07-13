@@ -264,7 +264,7 @@ class Folder {
 	 * @return bool 
 	 */
 	public function GetFolderName(){
-		return $this->folder_name;
+		return ((substr($this->folder_name,-1) != '/')?$this->folder_name:substr($this->folder_name,0,-1));
 	}
 	
 	/**
