@@ -255,9 +255,7 @@ class DbTemplate extends Form {
 			if ($type == 'insert' && $this->primary != '')
 				$this->SetPrimary($db->InsertID());
 			
-			// If atleast one row was updated
 			Debug('Save(), Success Saving Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
-			
 			return true;
 		}else{
 			// Create file backup if no databse
@@ -725,7 +723,7 @@ class DbTemplate extends Form {
 		
 		// Show the fields
 		foreach($this->display as $field)
-				$this->fields[$field]->Form($options[$field], $config[$field], $multi);
+				$this->fields[$field]->Form($options[$field], $config[$field], $multi, $this->prefix);
 		
 		// End the fieldset
 		echo '</fieldset>' . "\n";
