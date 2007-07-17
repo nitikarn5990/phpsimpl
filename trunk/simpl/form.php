@@ -15,7 +15,11 @@ class Form {
 	/**
 	 * @var array 
 	 */
-	protected $display = array();	
+	protected $display = array();
+	/**
+	 * @var string
+	 */
+	protected $prefix;
 
 	/**
 	 * Class Constructor
@@ -568,6 +572,17 @@ class Form {
 		return true;
 	}
 	
+	/**
+	 * Set the Prefix of the form
+	 *
+	 * @param boolean $prefix
+	 * @return bool
+	 */
+	public function SetPrefix($prefix){
+		$this->prefix = $prefix;
+		return true;
+	}
+	
 	public function Nice(){
 		return $this->SimpleFormat();
 	}
@@ -617,9 +632,11 @@ class Form {
 	public function FormField($field, $hidden=false, $options='', $config='', $multi=false){
 		if ($this->IsField($field)){
 			if ($hidden != true)
-				$this->fields[$field]->Form($options, $config, $multi);
-			else
-				echo '<input name="' . $field . (($multi)?'[]':'') . '" type="hidden" value="' . $this->Output($this->fields[$field]->Get('value')) . '" />' . "\n";
+				$this->fields[$field]->Form($options, $config, $multi, $this->prefix);
+			else{
+				$name = ($prefix != '')?$prefix . '[' . $field . ']':$field;
+				echo '<input name="' . $name . (($multi)?'[]':'') . '" type="hidden" value="' . $this->Output($this->fields[$field]->Get('value')) . '" />' . "\n";
+			}
 		}
 	}
 	
@@ -644,7 +661,7 @@ class Form {
 		
 		// Show the fields
 		foreach($this->display as $field)
-				$this->fields[$field]->Form($options[$field], $config[$field], $mutli);
+				$this->fields[$field]->Form($options[$field], $config[$field], $mutli, $this->prefix);
 
 		// End the fieldset
 		echo '</fieldset>' . "\n";
