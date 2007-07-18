@@ -331,6 +331,21 @@ class Form {
 
 		return true;
 	}
+	
+	/**
+	 * Reset Errors
+	 *
+	 * Reset all the Errors of a Class
+	 *
+	 * @return bool
+	 */
+	public function ResetErrors(){
+		// Loop through all the fields
+		foreach($this->fields as $name=>$field)
+			$this->Set('error', $name, '');
+
+		return true;
+	}
 
 	/**
 	 * Get Values
