@@ -1037,6 +1037,7 @@ class DbTemplate extends Form {
 			
 			// Loop through all the fields
 			while ($info = $db->FetchArray($result2)){
+				$options = array();
 				// Split up the type
 				ereg('^([^ (]+)(\((.+)\))?([ ](.+))?$',$info['Type'],$field);
 				if ($field[1] == 'enum' || $field[1] == 'set'){
