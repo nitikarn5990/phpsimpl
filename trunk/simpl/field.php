@@ -188,6 +188,7 @@ class Field {
 		
 		// If prefix is set use the class name
 		$name = ($prefix != '')?$prefix . '[' . $this->Get('name') . ']':$this->Get('name');
+		//Pre($name, '141.217.212.142');
 		
 		// Change the fieldname to a multi if needed
 		if ($multi) $this->Set('multi', $this->Get('multi')+1);
@@ -280,7 +281,7 @@ class Field {
 			// Single Field
 			$type = ($this->Get('config') != '' && $this->Get('config') != 'text')?$this->Get('config'):'text';
 			$size = ($this->Get('length') < 30)?$this->Get('length'):30;
-			$output .= '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . $this->Output($my_value) . '" />';
+			$output .= '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . htmlspecialchars($this->Output($my_value), ENT_QUOTES) . '" />';
 		}
 
 		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . stripslashes($this->Get('example')) . '</p></div>':'';
@@ -300,6 +301,9 @@ class Field {
 	 * @return null
 	 */
 	public function View($options = ''){
+		if ($this->Get('display') <= 0)
+			return;
+		
 		// Overwrite the options for this field if desired
 		if(is_array($options))
 			$this->Set('options', $options);
