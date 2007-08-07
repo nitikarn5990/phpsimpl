@@ -894,6 +894,25 @@ class DbTemplate extends Form {
 	}
 	
 	/**
+	 * Set the Multi count
+	 *
+	 * @param int
+	 * @return bool
+	 */
+	public function SetMultiCount($count){
+		// Set this form to the new count
+		$this->multi = (int)$count;
+		
+		// Set all the fields to the new count
+		$fields = $this->GetFields();
+
+		foreach($fields as $field)
+			$this->fields[$field]->Set('multi', (int)$count);
+		
+		return true;
+	}
+		
+	/**
 	 * Display the results in various formats
 	 * 
 	 * @param string $type
