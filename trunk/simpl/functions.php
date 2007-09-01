@@ -7,6 +7,8 @@
 function __autoload($className){
 	if (is_file(FS_SIMPL . strtolower($className) . '.php'))
 		include_once(FS_SIMPL . strtolower($className) . '.php');
+	else if (defined('DIR_CLASSES') && is_file(DIR_CLASSES . strtolower($className) . '.php'))
+		include_once(DIR_CLASSES . strtolower($className) . '.php');
 }
 
 /**
