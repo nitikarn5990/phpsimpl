@@ -47,6 +47,10 @@ class DbTemplate extends Form {
 	 * @var string
 	 */
 	private $conditions;
+	/**
+	 * @var string
+	 */
+	private $group_by;
 
 	/**
 	 * DbTemplate Constructor
@@ -452,6 +456,7 @@ class DbTemplate extends Form {
 		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->table . '`';
 		$query .= ($join != '')?substr($join,0,-1):'';
 		$query .= ($where != '' || $this->conditions != '')?' WHERE ' . (($this->conditions != '')?$where . $this->conditions:substr($where,0,-5)):'';
+		$query .= ($this->group_by != '')?' GROUP BY ' . $this->group_by:'';
 		$query .= ($order != '')?' ORDER BY ' . $order:'';
 		$query .= ($offset > 0 || $limit > 0)?' LIMIT ' . $offset . ', ' . $limit:'';
 		
@@ -560,6 +565,7 @@ class DbTemplate extends Form {
 		}
 		
 		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->table . '`' . $join . ' WHERE ' . $parts;
+		$query .= ($this->group_by != '')?' GROUP BY ' . $this->group_by:'';
 		$result = $db->Query($query, $this->database);
 	
 		$results = array();
@@ -633,6 +639,21 @@ class DbTemplate extends Form {
 		$this->conditions = $conditions;
 		
 		Debug('SetConditions(), Conditions on ' . get_class($this) . ' Set to: ' . $condititions);
+		
+		return true;
+	}
+	
+	/**
+	 * Set the group by
+	 *
+	 * @param string $group_by (ex. "display_order")
+	 * @return bool
+	 */
+	public function SetGroupBy($group_by){
+		// Set the group
+		$this->group_by = $group_by;
+		
+		Debug('SetGroupBy(), Group By on ' . get_class($this) . ' Set to: ' . $group_by);
 		
 		return true;
 	}
