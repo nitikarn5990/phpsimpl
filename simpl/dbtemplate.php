@@ -379,7 +379,7 @@ class DbTemplate extends Form {
 	 */
 	public function GetList($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
 		global $db;
-		$returns = array();
+		$returns = $this->results = array();
 		
 		// Push $this into the array
 		array_unshift($this->join_class, $this);
