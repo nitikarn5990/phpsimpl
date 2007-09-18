@@ -303,6 +303,10 @@ class Form {
 					if ($data[$name] != '')
 						$this->Set('value', $name, date("H:i",strtotime($data[$name])));
 					break;
+				case 'datetime':
+					if ($data[$name] != '')
+						$this->Set('value', $name, date("Y-m-d H:i:s",strtotime($data[$name])));
+					break;
 				default:
 					if (is_array($data[$name]))
 						$this->Set('value', $name, implode(',', $data[$name]));
