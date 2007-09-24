@@ -47,6 +47,9 @@ class Form {
 			// Add the field to the list
 			$this->fields[$key] = $tmpField;
 		}
+		
+		// Set the local display
+		$this->display = $this->GetFields();
 	}
 
 	/**
