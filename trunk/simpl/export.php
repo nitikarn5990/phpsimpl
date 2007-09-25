@@ -56,9 +56,13 @@ class Export {
 			(!is_array($this->display)) ? Debug('GetXLS(), Display is not an array, gathering display from the data array') : '';
 			
 			// If there is a display go by those, otherwise get all the fields from the data array
-			if(!is_array($this->display))
-				foreach(end($this->data) as $key => $data)
-					$this->display[$key] = ucfirst(str_replace('_',' ',$key));
+			if(!is_array($this->display)){
+				$this->display = array();
+				$fields = array_keys(current($this->data));
+				
+				foreach($fields as $field)
+					$this->display[$field] = ucfirst(str_replace('_',' ',$field));
+			}
 			
 			// Filter these out
 			$bad_output = array("\n", "\r", "\t");
