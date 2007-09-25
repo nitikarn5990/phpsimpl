@@ -188,7 +188,6 @@ class Field {
 		
 		// If prefix is set use the class name
 		$name = ($prefix != '')?$prefix . '[' . $this->Get('name') . ']':$this->Get('name');
-		//Pre($name, '141.217.212.142');
 		
 		// Change the fieldname to a multi if needed
 		if ($multi) $this->Set('multi', $this->Get('multi')+1);
