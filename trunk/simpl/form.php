@@ -302,10 +302,8 @@ class Form {
 					if ($data[$name] != ''){
 						if($time = strtotime($data[$name]))
 							$this->Set('value', $name, date("Y-m-d",$time));
-						else{
+						else
 							$this->Set('error', $name, 'Invalid date (MM/DD/YYYY)');
-							$this->Set('value', $name, $data[$name]);
-						}
 					}
 					break;
 				case 'time':

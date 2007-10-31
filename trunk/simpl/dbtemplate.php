@@ -896,12 +896,20 @@ class DbTemplate extends Form {
 		// Set the Field Values
 		switch($this->Get('type', $field)){
 			case 'date':
-				if ($value != '')
-					Form::SetValue($field,date("Y-m-d",strtotime($value)));
+				if ($value != ''){
+					if($time = strtotime($value))
+						Form::SetValue($field,date("Y-m-d",$time));
+					else
+						Form::SetError($field,'Invalid date (MM/DD/YYYY)');
+				}
 				break;
 			case 'time':
-				if ($value != '')
-					Form::SetValue($field,date("H:i",strtotime($value)));
+				if ($value != ''){
+					if($time = strtotime($value))
+						Form::SetValue($field,date("H:i",$time));
+					else
+						Form::SetError($field,'Invalid time (HH:MM)');
+				}
 				break;
 			default:
 				if (is_array($value))
