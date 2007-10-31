@@ -299,16 +299,30 @@ class Form {
 			// Set the Field Values
 			switch($field->Get('type')){
 				case 'date':
-					if ($data[$name] != '')
-						$this->Set('value', $name, date("Y-m-d",strtotime($data[$name])));
+					if ($data[$name] != ''){
+						if($time = strtotime($data[$name]))
+							$this->Set('value', $name, date("Y-m-d",$time));
+						else{
+							$this->Set('error', $name, 'Invalid date (MM/DD/YYYY)');
+							$this->Set('value', $name, $data[$name]);
+						}
+					}
 					break;
 				case 'time':
-					if ($data[$name] != '')
-						$this->Set('value', $name, date("H:i",strtotime($data[$name])));
+					if ($data[$name] != ''){
+						if($time = strtotime($data[$name]))
+							$this->Set('value', $name, date("H:i",$time));
+						else
+							$this->Set('error', $name, 'Invalid time (HH:MM)');
+					}
 					break;
 				case 'datetime':
-					if ($data[$name] != '')
-						$this->Set('value', $name, date("Y-m-d H:i:s",strtotime($data[$name])));
+					if ($data[$name] != ''){
+						if($time = strtotime($data[$name]))
+							$this->Set('value', $name, date("Y-m-d H:i:s",$time));
+						else
+							$this->Set('error', $name, 'Invalid time (MM/DD/YYYY HH:MM)');
+					}
 					break;
 				default:
 					if (is_array($data[$name]))
