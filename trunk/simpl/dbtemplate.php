@@ -166,7 +166,7 @@ class DbTemplate extends Form {
 		if (is_array($fields) && count($fields) > 0){
 			foreach($fields as $field)
 				$select .= ($this->IsField($field))?'`' . trim($field) . '`, ':'';
-			$select = substr($select,1,-1);
+			$select = substr($select,1,-2);
 		}
 
 		// Add the rest of the query together
