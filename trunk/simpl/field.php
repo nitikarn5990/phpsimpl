@@ -198,7 +198,7 @@ class Field {
 			return true;
 		}else if ($this->Get('display') == 0){
 			// Hidden
-			echo '<input name="' . $name . (($multi)?'[]':'') . '" type="hidden" value="' . $this->Output($my_value) . '" />' . "\n";
+			echo '<input name="' . $name . (($multi)?'[]':'') . '" type="hidden" value="' . urlencode($this->Output($my_value)) . '" />' . "\n";
 			return true;
 		}
 		
