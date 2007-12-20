@@ -403,6 +403,15 @@ class DB {
 	public function Output($string) {
 		return htmlspecialchars(stripslashes($string));
 	}
+	
+	/**
+	 * Return if the DB is connecte
+	 * 
+	 * @return boolean
+	 */
+	public function IsConnected() {
+		return (bool)$this->connected;
+	}
 
 	/**
 	 * Format the string for input into the Database

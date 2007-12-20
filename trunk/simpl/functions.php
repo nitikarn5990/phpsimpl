@@ -117,10 +117,27 @@ if (!function_exists('Pre')){
 if (!function_exists('Debug')){
 	function Debug($output, $class=''){
 		if (DEBUG === true){
+			$backtrace = debug_backtrace();
+			$debug = array();
+			$stack = (isset($backtrace[1]['class']) ? "{$backtrace[1]['class']}::" : '') . (isset($backtrace[1]['function']) ? "{$backtrace[1]['function']}" : '');
+			
+			if ($stack)
+				$debug[] = $stack;
+				
+			$debug[] = "Line {$backtrace[0]['line']} of {$backtrace[0]['file']}";
+			
+			$debug = implode('<br />', $debug);
+			
+			print '<pre class="debug' . (($class != '')?' ' . $class:'') . '">' . "{$label}: {$debug}:<br />" . print_r($output, 1) . "\n";
+		}
+		
+		/*
+		if (DEBUG === true){
 			echo '<pre class="debug' . (($class != '')?' ' . $class:'') . '">DEBUG:' . "\n";
 			print_r($output);
 			echo '</pre>';
 		}
+		*/
 		
 		if (DEBUG_LOG === true){
 			 if (!$fp = fopen(FS_CACHE . 'debug.log', "a"))
