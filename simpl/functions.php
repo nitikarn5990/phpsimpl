@@ -147,6 +147,7 @@ if (!function_exists('Debug')){
 			 	return;
 			 	
 			 fclose($fp);
+			 chmod (FS_CACHE . 'debug.log', 0777);
 		}
 	}
 }
