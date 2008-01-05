@@ -152,15 +152,29 @@ class DbTemplate extends Form {
 	 * @param array $fields Names of all the return fields
 	 * @return bool
 	 */
-	public function GetInfo($fields=array()){
+	public function GetInfo($fields=array(), $conditions=array()){
 		global $db;
 		$select = '*';
 		
+		// If there is conditions
+		if (!is_array($conditions))
+			$conditions = array($conditions);
+		
 		// Require a primary key
-		if ($this->GetPrimary() == '')
+		if ($this->GetPrimary() == '' && count($conditions) < 1)
 			return false;
+		
+		// Figure out what to update on
+		if (count($conditions) > 0){
+			$extra = '';
+			foreach($conditions as $key)
+				$extra .= '`' . $key . '` =\'' . $this->GetValue($key) . '\' AND ';
+			$extra = substr($extra, 0, -4);
+		}else{
+			$extra = '`' . $this->primary . '` = '. $this->GetPrimary();
+		}
 
-		Debug('GetInfo(), Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
+		Debug('GetInfo(), On: ' . $extra . ', Value: ' . $this->GetPrimary());
 
 		// If there is a limiting field
 		if (is_array($fields) && count($fields) > 0){
@@ -170,7 +184,7 @@ class DbTemplate extends Form {
 		}
 
 		// Add the rest of the query together
-		$query = 'SELECT ' . $select . ' FROM `' . $this->table . '` WHERE `' . $this->primary . '` = ' . $this->GetPrimary() . ' LIMIT 1';
+		$query = 'SELECT ' . $select . ' FROM `' . $this->table . '` WHERE ' . $extra . ' LIMIT 1';
 		$result = $db->Query($query, $this->database);
 		
 		Debug('GetInfo(), Query: ' . $query);
@@ -197,9 +211,10 @@ class DbTemplate extends Form {
 	 * Saves class information into the database table
 	 *
 	 * @param array $options config values
+	 * @param string $force (NULL, insert, update)
 	 * @return bool
 	 */
-	public function Save($options=array()){
+	public function Save($options=array(), $force='', $force_on=array()){
 		global $db;
 		$info = array();
 		
@@ -211,11 +226,19 @@ class DbTemplate extends Form {
 		$updater = array('last_updated', 'updated_on');
 
 		// Determine the save type
-		if ($this->GetPrimary() != ''){
+		if ($this->GetPrimary() != '' || $force == 'update'){
 			$type = 'update';
+		
 			$extra = '`' . $this->primary . '` =' . $this->GetPrimary();
 			
-			Debug('Save(), Updating Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
+			if (is_array($force_on) && count($force_on) > 0){
+				$extra = '';
+				foreach($force_on as $key)
+					$extra .= '`' . $key . '` =\'' . $this->GetValue($key) . '\' AND ';
+				$extra = substr($extra, 0, -4);
+			}
+			
+			Debug('Save(), Updating Item: ' . get_class($this) . ', On: ' . $extra);
 		}else{
 			$type = 'insert';
 			$extra = '';
@@ -285,8 +308,8 @@ class DbTemplate extends Form {
 	 *
 	 * @return bool
 	 */
-	public function Insert(){
-		return false;
+	public function Insert($options=array()){
+		return $this->Save($options, 'insert');
 	}
 	
 	/**
@@ -295,8 +318,11 @@ class DbTemplate extends Form {
 	 *
 	 * @return bool
 	 */
-	public function Update($condition=''){
-		return false;
+	public function Update($options=array(), $conditions=array()){
+		if (!is_array($conditions))
+			$conditions = array($conditions);
+		
+		return $this->Save($options, 'update', $conditions);
 	}
 	
 	/**
@@ -306,21 +332,35 @@ class DbTemplate extends Form {
 	 * @param string $value
 	 * @return bool
 	 */
-	public function UpdateValue($field, $value){
+	public function UpdateValue($field, $value, $conditions=array()){
 		global $db;
 		
 		// Require a valid field
 		if (!$this->IsField($field))
 			return false;
 		
+		// If there is conditions
+		if (!is_array($conditions))
+			$conditions = array($conditions);
+		
 		// Require a primary key
-		if ($this->GetPrimary() == '')
+		if ($this->GetPrimary() == '' && count($conditions) < 1)
 			return false;
+		
+		// Figure out what to update on
+		if (count($conditions) > 0){
+			$extra = '';
+			foreach($conditions as $key)
+				$extra .= '`' . $key . '` =\'' . $this->GetValue($key) . '\' AND ';
+			$extra = substr($extra, 0, -4);
+		}else{
+			$extra = '`' . $this->primary . '` = '. $this->GetPrimary();
+		}
 			
-		Debug('UpdateValue(), Field: ' . $field . ', New Value: ' . $value);
+		Debug('UpdateValue(), Field: ' . $field . ', New Value: ' . $value . ', On: ' . $extra);
 		
 		// Do the Operation
-		$db->Perform($this->table, array($field => $value), 'update', '`' . $this->primary . '` = '. $this->GetPrimary(), $this->database);
+		$db->Perform($this->table, array($field => $value), 'update', $extra, $this->database);
 		
 		// Set the new value locally
 		$this->SetValue($field, $value);
@@ -334,20 +374,34 @@ class DbTemplate extends Form {
 	 * @param array $options config values
 	 * @return bool
 	 */
-	public function Delete($options=array()){
+	public function Delete($options=array(), $conditions=array()){
 		global $db;
 		global $mySimpl;
 		
+		// If there is conditions
+		if (!is_array($conditions))
+			$conditions = array($conditions);
+			
+		// Figure out what to delete on
+		if (count($conditions) > 0){
+			$extra = '';
+			foreach($conditions as $key)
+				$extra .= '`' . $key . '` =\'' . $this->GetValue($key) . '\' AND ';
+			$extra = substr($extra, 0, -4);
+		}else{
+			$extra = '`' . $this->primary . '` = '. $this->GetPrimary();
+		}
+		
 		// If we can get the info then we can delete it
-		if ($this->GetInfo()){
-			Debug('Delete(), Item Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
+		if ($this->GetInfo(NULL, $conditions)){
+			Debug('Delete(), Item Found, On: ' . $extra);
 			
 			// Remove from display order if needed
 			if (is_object($options['display_order']))
-				while ($this->Move('down',$options)){}
+				while ($this->Move('down', $options)){}
 		
 			// Delete the entry
-			$query = 'DELETE FROM `' . $this->table . '` WHERE `' . $this->primary . '` = ' . $this->GetPrimary() . ' LIMIT 1';
+			$query = 'DELETE FROM `' . $this->table . '` WHERE ' . $extra;
 			$result = $db->Query($query, $this->database);
 			
 			// Clear the cache
@@ -355,12 +409,12 @@ class DbTemplate extends Form {
 			
 			// If it did something the return that everything is gone
 			if ($db->RowsAffected() == 1){
-				Debug('Delete(), Success Saving Item: ' . get_class($this) . ', Primary Key: ' . $this->GetPrimary());
+				Debug('Delete(), Success Deleted Item: ' . get_class($this) . ', On: ' . $extra);
 				return true;
 			}
 		}
 		
-		Debug('Delete(), Item Not Found, Primary Field: ' . $this->primary . ', Value: ' . $this->GetPrimary());
+		Debug('Delete(), No Items Found, On: ' . $extra);
 		
 		return false;
 	}
