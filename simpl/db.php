@@ -85,9 +85,7 @@ class DB {
 			$db_link = @mysql_connect($this->config[0], $this->config[1], $this->config[2]);
 			
 			// If there is a link
-	    	if ($db_link){
-				// Select the database
-				mysql_select_db($this->database);
+	    	if ($db_link && @mysql_select_db($this->database)){
 				// Update the state
 				$this->connected = true;
 				// Remove the unneeded variables
@@ -280,10 +278,7 @@ class DB {
 		$this->DbConnect();
  		
  		// If there is a connection
-    	if ($db_link){
-			// Switch DB
-			@mysql_select_db($database);
-			
+    	if ($db_link && @mysql_select_db($database)){
 			// Increment the query counter
     		$this->query_count++;
     		
