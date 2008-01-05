@@ -1,6 +1,39 @@
 #summary Version History of PHPSimpl
 #labels Phase-Requirements
 
+== Version 0.8.4 ==
+  * Removed all dependency on a Primary Key except for the Move() function
+  * Added the IsConnected() function for the DB object 
+  * Added the Insert() and Update() functions for tables without primary key
+  * Added the ID to the hidden form fields.
+  * Fixed issue with double quotes being in hidden fields, the would close the HTML tag.
+  * Fix for 12/31/1969 problem in DbTemplate:SetValue()
+  * Fixed problem with IE-7 and popup-calendar location
+  * Fix for invalid date input on Form::SetValues()
+  * Fixed an issue with the export when there is no display passed
+
+== Version 0.8.3 ==
+  * Added the SetConditions() function.
+  * Added some accessor and setter functions for the folder name since it is protected. 
+  * Added the SetPrefix() function to the form class which will transform the field names from just the name to a prefix array so name="first_name" would turn into name="personal[first_name]". 
+  * Added the ResetErrors() function to reset the errors from a form Validate(). 
+  * Added to the view not to display if a field is hidden or omitted. 
+  * Added the SetMultiCount() to the DbTemplate so the menu count can be set manually if an object is individualized and not grouped. 
+  * Added the DIR_CLASSES lookup to the autoload function. This will allow autoloading of the actual application classes automatically instead of by hand. 
+  * Added the GroupBy() function which works like the SetConditions(). 
+  * Forced the DbTemplate results array to always be reset on GetList() it was in all the other query functions except GetList(). 
+  * Fixed issue where the form fields were not being created correctly in the Form class. 
+  * A few bug fixes. 
+
+== Version 0.8.2 ==
+  * Added a debug.log file to debug a live site in real time, best used with “tail -f” 
+  * Added the ErrorMessages() function to summarize a forms errors, similar to Rails.
+  * Added the SetConditions() function so querying for >, <, <=, LIKE and OR’s are all possible now.
+  * Added a Get and Set Folder name functions in the Folder Class.
+  * DisplayList() now uses the options of a field to display in the list.
+  * RowsAffected() now works like it should.
+  * Fixed the Debug Query to work again.
+
 == Version 0.8.1 ==
   * Slightly Updated Example
   * Fixed the form label "?:" issue
