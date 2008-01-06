@@ -13,8 +13,8 @@
 	
 	<div id="main-menu">
 		<ul>
-			<li><a href="index.php" title="Return Home">Home</a></li>
-			<li><a href="manager/posts.php" title="Manage Posts">Manage Posts</a></li>
+			<li><a href="index.php" title="Blog Home">Blog Home</a></li>
+			<li><a href="manager/posts.php" title="Blog Manager">Blog Manager</a></li>
 		</ul>
 	</div>
 	
