@@ -1,25 +1,24 @@
 <?php
 	// Prerequisites
-	include_once('application_top.php');
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/inc/application_top.php');
 	
-		// Create the Post Class
+	// Create the post instance
 	$myPost = new Post;
+	
+	// Only show the published posts
 	$myPost->SetValue('status', 'Published');
 	
-	// Setup the Display
+	// Setup the fields to pull from the post table
 	$display[] = array('title', 'date_entered', 'author_id', 'category', 'body');
 	
-	// Create the Author Class
+	// Create the author instance
 	$myAuthor = new Author;
-	$display[] = array('first_name','last_name','email');
+	
+	// Join the author and post tables on the author_id
 	$myPost->Join($myAuthor,'author_id','LEFT');
 	
-	// Add some Filtering
-	if (trim($_GET['q']) != '')
-		$myPost->search = trim($_GET['q']);
-		
-	// Set some filters to only get the published Posts
-	$myPost->SetValue('is_published','1');
+	// Setup the fields to pull from the author table
+	$display[] = array('first_name','last_name','email');
 		
 	// Get the List
 	$myPost->GetList($display);
@@ -29,15 +28,17 @@
 	include_once('inc/header.php');
 ?>
 <div id="main-info">
-	<h1>Answers are always in the simplest items</h1>
+	<h1>Example blog written with PHPSimpl framework</h1>
 </div>
 <div id="data">
 	<?php
-		if (is_array($myPost->results) && count($myPost->results) > 0){
+		// If there is results returned
+		if (count($myPost->results) > 0){
 			echo '<dl id="posts">' . "\n";
 			
+			// Loop through each result
 			foreach($myPost->results as $post){
-				echo '<dt><a href="view.php?id=' . $post['post_id'] . '" title="' . htmlspecialchars($post['title']) . '">' . htmlspecialchars($post['title']) . '</a></dt>' . "\n";
+				echo '<dt><a href="view.php?id=' . $post['post_id'] . '" title="' . htmlspecialchars($post['title']) . '">' . stripslashes(htmlspecialchars($post['title'])) . '</a></dt>' . "\n";
 				echo '<dd>' . htmlspecialchars(substr($post['body'],0,350)) . 
 					"\n" . '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($post['date_entered'])) . 
 					(($post['category'] != '')?' in ' . htmlspecialchars($post['category']):'') . 
