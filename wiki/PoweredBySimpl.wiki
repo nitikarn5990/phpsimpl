@@ -8,8 +8,8 @@ On this page put your site that is using PHPSimpl. This does not have to mean th
 
 == Websites using PHPSimpl ==
 
-  * Wayne State University
+  * [http://wayne.edu/ Wayne State University]
     * [http://events.wayne.edu/ Events Calendar], [http://admissions.wayne.edu/ Admissions], [http://orientation.wayne.edu/ Orientation], [http://summer.wayne.edu/ Spring/Summer], [http://wbw.wayne.edu/ Welcome Back Week], [http://president.wayne.edu/ Office of the President], [http://campusmap.wayne.edu/ Campus Map], [http://ccbe.wayne.edu/ Center for Community-Based Education], [http://childrensbridge.wayne.edu/ Childrens Bridge Conference], [http://honors.wayne.edu/ Honors], [http://life.wayne.edu/ Life@Wayne]
   * [http://bioactivelipidsconf.wayne.edu/ Bioactive Lipids in Cancer Conference] - The goal of this meeting series is to promote the exchange of ideas between scientists of diverse backgrounds from around the world.
   * [http://www.eicosanoidresearchfoundation.org/ Eicosanoid Research Foundation] - The ERF holds biennial conferences highlighting data from research at the cutting edge of science on the role of lipid mediators in various physiological and pathological processes.
-
+  * [http://www.wdetfm.org/ WDET 101.9FM] - WDET was given to Wayne State University in 1952 by the UAW to continue the station's tradition of public service programming. Over the decades, WDET has been recognized with countless awards for its music programming and news reporting.
