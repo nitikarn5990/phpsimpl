@@ -45,8 +45,8 @@ define('FS_CACHE', DIR_ABS . 'cache/');
 
 
 // Database Connection Options
-define('DB_USER', 'nick');
-define('DB_PASS', 'trysk8ting');
-define('DB_HOST', 'localhost');
+define('DB_USER', '');
+define('DB_PASS', '');
+define('DB_HOST', '');
 define('DB_DEFAULT', 'simpl_example');
 ?>
