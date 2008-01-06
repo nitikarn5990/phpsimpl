@@ -902,6 +902,10 @@ class DbTemplate extends Form {
 					$int_options = $this->Get('options', $name);
 					if (is_array($int_options) && $int_options[$str] != '')
 						$str = $int_options[$str];
+						
+					// Make sure the str is not NULL
+					if (strlen($str) == 0)
+						$str = '&nbsp;';
 					
 					$output .= $str . '</td>' . "\n";
 					$col++;
