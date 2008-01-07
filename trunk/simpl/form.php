@@ -669,7 +669,7 @@ class Form {
 				$this->fields[$field]->Form($options, $config, $multi, $this->prefix);
 			else{
 				$name = ($prefix != '')?$prefix . '[' . $field . ']':$field;
-				echo '<input name="' . $name . (($multi)?'[]':'') . '" type="hidden" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" value="' . urlencode($this->Output($this->fields[$field]->Get('value'))) . '" />' . "\n";
+				echo '<input name="' . $name . (($multi)?'[]':'') . '" type="hidden" id="' . $name . (($multi)?'_' . $this->Get('multi'):'') . '" value="' . urlencode($this->Output($this->fields[$field]->Get('value'))) . '" />' . "\n";
 			}
 		}
 	}
