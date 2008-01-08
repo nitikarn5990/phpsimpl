@@ -30,5 +30,5 @@ define('FS_CACHE',FS_SIMPL . WS_CACHE);
 define('DB_USER',DBUSER);
 define('DB_HOST',DBHOST);
 define('DB_PASS',DBPASS);
-define('DB_DEFAULT','db1');
+define('DB_DEFAULT', NULL);
 ?>
