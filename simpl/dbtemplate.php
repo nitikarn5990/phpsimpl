@@ -580,7 +580,7 @@ class DbTemplate extends Form {
 				$parts[] = '`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
 		}
 			
-		$parts = implode(' OR ', $parts);
+		$parts = '(' . implode(' OR ', $parts) . ')';
 		
 		if ($this->conditions != '')
 			$parts .= ' AND ' . $this->conditions;
