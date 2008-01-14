@@ -108,6 +108,14 @@ form {
 	margin: 0px 0px 10px 0px;
 }
 
+#content #table_post #title, #content #table_post #category {
+	width: 300px;
+}
+#content #table_post #body {
+	width: 500px;
+	height: 200px;
+}
+
 /* Post List */
 dl#posts {
 	margin: 0px 0px 0px 5px;
@@ -206,16 +214,20 @@ table.small td.last, table.small th.last {
 /* Options */
 ul#options {
 	margin: 0px;
-	padding: 7px 0px;
+	padding: 8px 0px;
 	list-style: none;
 }
-li.back {
-	background: url(../images/bullet_back.png) no-repeat left center;
-	padding: 0px 0px 0px 17px;	
+ul#options li.back {
+	background: url(../images/back.gif) no-repeat left center;
+	padding: 1px 0px 1px 20px;	
 }
-li.add {
-	background: url(../images/bullet_add.png) no-repeat left center;
-	padding: 0px 0px 0px 17px;	
+ul#options li.add {
+	background: url(../images/add.gif) no-repeat left center;
+	padding: 1px 0px 1px 20px;	
+}
+ul#options li.export {
+	background: url(../images/export.gif) no-repeat left center;
+	padding: 1px 0px 1px 20px;	
 }
 
 /* Form */

@@ -1,6 +1,6 @@
 <?php
 	// Prerequisites
-	include_once('application_top.php');
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/manager/inc/application_top.php');
 	
 	// Create the Author Class
 	$myAuthor = new Author;

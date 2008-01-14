@@ -14,7 +14,7 @@
 	
 	<div id="main-menu">
 		<ul>
-			<li><a href="index.php" title="Return Home">Home</a></li>
+			<li><a href="index.php" title="Manager Home">Manager Home</a></li>
 			<li><a href="authors.php" title="Manage Authors">Manage Authors</a></li>
 			<li><a href="posts.php" title="Manage Posts">Manage Posts</a></li>
 			<li><a href="../" title="View Blog" class="last">View Blog</a></li>

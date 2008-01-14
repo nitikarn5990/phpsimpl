@@ -205,12 +205,8 @@ ul#options {
 	list-style: none;
 }
 li.back {
-	background: url(../images/bullet_back.png) no-repeat left center;
-	padding: 0px 0px 0px 17px;	
-}
-li.add {
-	background: url(../images/bullet_add.png) no-repeat left center;
-	padding: 0px 0px 0px 17px;	
+	background: url(../images/back.gif) no-repeat left center;
+	padding: 0px 0px 0px 20px;	
 }
 
 /* Alerts */

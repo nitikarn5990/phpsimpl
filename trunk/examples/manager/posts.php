@@ -1,6 +1,6 @@
 <?php
 	// Prerequisites
-	include_once('application_top.php');
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/manager/inc/application_top.php');
 	
 	// Create the Post Class
 	$myPost = new Post;
@@ -12,8 +12,8 @@
 	
 	// Create the Author Class
 	$myAuthor = new Author;
-	$display[] = array('first_name','last_name');
 	$myPost->Join($myAuthor,'author_id','LEFT');
+	$display[] = array('first_name','last_name');
 	
 	// Add some Filtering
 	if (trim($_GET['q']) != '')
@@ -25,6 +25,13 @@
 	
 	// Get the List
 	$myPost->GetList($display, $_SESSION[$myPost->table . '_sort'], $_SESSION[$myPost->table . '_order']);
+	
+	// Reformat the display for the list
+	$display = array('title', 'first_name', 'last_name', 'date_entered', 'status');
+	
+	// If exporting
+	if (isset($_GET['export']))
+		$myPost->Export('csv', $display, 'posts', 'download');
 	
 	// Header
 	define('PAGE_TITLE','Edit Posts');
@@ -50,10 +57,10 @@
 
 	<ul id="options">
 		<li class="add"><a href="post.php" title="A New Blog Post">Add New Post</a></li>
+		<li class="export"><a href="posts.php?export">Export Posts</a></li>
 	</ul>
 	<?php
 		// Display the List
-		$display = array('title', 'first_name', 'last_name', 'date_entered', 'status');
 		$myPost->DisplayList($display, $locations, $options, false);
 	?>
 </div>
