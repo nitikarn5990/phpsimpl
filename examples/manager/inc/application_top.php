@@ -1,6 +1,6 @@
 <?php
 	// Global Defines
-	include_once('../inc/define.php');
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/inc/define.php');
 	
 	// Simpl Framework
 	include_once(FS_SIMPL . 'simpl.php');

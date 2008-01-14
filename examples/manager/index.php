@@ -1,9 +1,6 @@
 <?php
 	// Prerequisites
-	include_once('application_top.php');
-	
-	// Prerequisites
-	include_once('application_top.php');
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/manager/inc/application_top.php');
 	
 	// Grab some Information about the Blog
 	$myAuthor = new Author;
@@ -20,7 +17,7 @@
 	<h1>Blog Manager</h1>
 </div>
 <div id="data">
-	<p>Welcome to the Blog Manager, Please select an option on the left.</p>
+	<p>Welcome to the Blog Manager, Please select an option on the right.</p>
 	<ul>
 		<li>Authors: <?php echo $authors['count']; ?></li>
 		<li>Posts: <?php echo $posts['count']; ?></li>

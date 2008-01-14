@@ -1,6 +1,6 @@
 <?php
 	// Prerequisites
-	include_once('application_top.php');
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/manager/inc/application_top.php');
 	
 	// Create the Author Class
 	$myAuthor = new Author;
@@ -11,7 +11,7 @@
 		$myAuthor->SetValues($_POST);
 		
 		// Save the info to the DB if there is no errors
-		if ($myAuthor->Validate() && $myAuthor->Save())
+		if ($myAuthor->Save())
 			SetAlert('Author Information Saved.','success');
 	}
 	
@@ -21,7 +21,7 @@
 		$myAuthor->SetValues($_POST);
 		
 		// Remove the info from the DB
-		if ( $myAuthor->Delete()){
+		if ($myAuthor->Delete()){
 			// Set alert and redirect
 			SetAlert('Author Deleted Successfully','success');
 			header('location:authors.php');
@@ -67,7 +67,8 @@
 	<form action="author.php<?php echo ($myAuthor->GetPrimary() != '')?'?id=' . $myAuthor->GetPrimary():''; ?>" method="post" name="edit_author">
 		<?php $myAuthor->Form(); ?>
 		<fieldset class="submit_button">
-			<label for="submit_button">&nbsp;</label><input name="submit_button" id="submit_button" type="submit" value="Save Author" class="submit" /><?php echo ($myAuthor->GetPrimary() != '')?' <input name="submit_button" type="submit" value="Delete" class="submit" />':''; ?>
+			<label for="submit_button">&nbsp;</label><input name="submit_button" type="submit" value="Save Author" class="submit" />
+			<?php echo ($myAuthor->GetPrimary() != '')?' <input name="submit_button" type="submit" value="Delete" class="submit" />':''; ?>
 		</fieldset>
 	</form>
 </div>

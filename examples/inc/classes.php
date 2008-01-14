@@ -14,19 +14,16 @@ class Post extends DbTemplate {
 		$this->SetRequired(array('title','body'));
 		
 		// Set the labels
-		$this->SetLabels(array('status'=>'Status:', 'author_id'=>'Author:', 'category'=>'Category:'));
+		$this->SetLabels(array('author_id'=>'Author:', 'category'=>'Category:'));
 		
 		// Set the examples
 		$this->SetExamples(array('category'=>'ex. PHP, MySQL, Cars, XML, PHPSimpl'));
-		
-		// Set the config
-		$this->SetConfig(array('status' => 'radio'));
 
 		// Set the default
 		$this->SetDefaults(array('status' => 'Draft'));
 		
 		// Set the Display
-		$this->SetDisplay(array('title','author_id','category','status','body'));
+		$this->SetDisplay(array('title','author_id','category','body'));
 	}
 }
 

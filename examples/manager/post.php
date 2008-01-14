@@ -1,7 +1,7 @@
 <?php
 	// Prerequisites
-	include_once('application_top.php');
-	
+	include_once($_SERVER["DOCUMENT_ROOT"] . '/examples/manager/inc/application_top.php');
+		
 	// Create the Post Class
 	$myPost = new Post;
 	
@@ -18,13 +18,33 @@
 	$myPost->SetOption('author_id', $author_list, 'Please Select');
 	
 	// If they are saving the Information
-	if ($_POST['submit_button'] == 'Save Post'){
+	if ($_POST['submit_button'] == 'Save Draft and Continue Editing' || $_POST['submit_button'] == 'Save' || $_POST['submit_button'] == 'Save and Publish'){
+		$redirect = true;
+		
 		// Get all the Form Data
 		$myPost->SetValues($_POST);
 		
+		switch($_POST['submit_button']){
+			case 'Save Draft and Continue Editing':
+				$myPost->SetValue('status', 'Draft');
+				$redirect = false;
+				break;
+			case 'Save and Publish':
+				$myPost->SetValue('status', 'Published');
+			default:
+				break;
+		}
+		
 		// Save the info to the DB if there is no errors
-		if ($myPost->Validate() && $myPost->Save())
+		if ($myPost->Save()){
 			SetAlert('Post Information Saved.','success');
+			
+			// Redirect if needed
+			if ($redirect){
+				header('location:posts.php');
+				die();
+			}	
+		}
 	}
 	
 	// If Deleting the Page
@@ -44,7 +64,7 @@
 	}
 	
 	// Set the requested primary key and get its info
-	if ($_GET['id'] != ''){
+	if ($_GET['id'] != '' && $myPost->GetPrimary() == ''){
 		// Set the primary key
 		$myPost->SetPrimary((int)$_GET['id']);
 		
@@ -79,7 +99,10 @@
 	<form action="post.php<?php echo ($myPost->GetPrimary() != '')?'?id=' . $myPost->GetPrimary():''; ?>" method="post" name="edit_post">
 		<?php $myPost->Form(); ?>
 		<fieldset class="submit_button">
-			<label for="submit_button">&nbsp;</label><input name="submit_button" id="submit_button" type="submit" value="Save Post" class="submit" /><?php echo ($myPost->GetPrimary() != '')?' <input name="submit_button" type="submit" value="Delete" class="submit" />':''; ?>
+			<label for="submit_button">&nbsp;</label><input name="submit_button" type="submit" value="Save Draft and Continue Editing" class="submit" />
+			<input name="submit_button" type="submit" value="Save" class="submit" />
+			<input name="submit_button" type="submit" value="Save and Publish" class="submit" />
+			<?php echo ($myPost->GetPrimary() != '')?' <input name="submit_button" type="submit" value="Delete" class="submit" />':''; ?>
 		</fieldset>
 	</form>
 </div>
