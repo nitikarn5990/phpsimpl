@@ -580,7 +580,7 @@ class DbTemplate extends Form {
 				$parts[] = '`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
 		}
 			
-		$parts = '(' . implode(' OR ', $parts) . ')';
+		$parts = implode(' OR ', $parts);
 		
 		if ($this->conditions != '')
 			$parts .= ' AND ' . $this->conditions;
@@ -1040,6 +1040,57 @@ class DbTemplate extends Form {
 			$this->join_on[] = $join_on;
 			return true;
 		}
+	}
+	
+	/**
+	 * Export this class's data
+	 * 
+	 * @param string $type (csv, json, xml, sql)
+	 * @param array $display
+	 * @param string $filename
+	 * @param string $action (return, download)
+	 * @return bool
+	 */
+	public function Export($type, $display=NULL, $filename=NULL, $action='return'){
+		// Create the export object
+		$myExport = new Export;
+		
+		// Set the filename
+		$myExport->SetFilename(($filename != NULL)?$filename:get_class($this));
+		
+		// If display array, reorganize
+		if (is_array($display)){
+			$data = array();
+			$i = 0;
+			
+			// Grab the labels
+			foreach($display as $field){
+				if ($this->IsField($field))
+					$data[$i][$field] = $this->GetLabel($field);
+				else
+					$data[$i][$field] = $field;
+			}
+			
+			// Grab the data
+			foreach($this->results as $key=>$row){
+				$i++;
+				foreach($display as $field)
+					$data[$i][$field] = $row[$field];
+			}
+		}else{
+			$data = $this->results;
+		}
+		
+		// Set the data
+		$myExport->SetData($data);
+		
+		// Do requested action
+		if ($action == 'return')
+			return $myExport->Retrieve($type);
+		else
+			$myExport->Download($type);
+	
+		return false;
 	}
 
 	/**

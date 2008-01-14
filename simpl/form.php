@@ -469,6 +469,17 @@ class Form {
 	}
 	
 	/**
+	 * Get Display
+	 *
+	 * Get the display fields in the class
+	 *
+	 * @return array
+	 */
+	public function GetDisplay(){
+		return $this->display;
+	}
+	
+	/**
 	 * Set Hidden
 	 *
 	 * Set the hidden fields in the class

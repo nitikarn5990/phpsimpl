@@ -1,108 +1,212 @@
 <?php
 /**
- * Base Class for Exporting a XLS file
+ * Base class for exporting data in various formats
  *
- * @author Rob Vrabel <jiggilo@gmail.com>
+ * @author Nick DeNardis <nick.denardis@gmail.com>
  * @link http://code.google.com/p/phpsimpl/
  */
 class Export {
 	/**
 	 * @var array
 	 */
-	private $display;
+	private $display = array();
 	/**
 	 * @var array
 	 */
-	private $data;
+	private $data = array();
 	/**
 	 * @var string
 	 */
-	private $file_name;
+	private $filename = 'export';
 	/**
 	 * @var string
 	 */
-	private $output;
+	private $output = array();
 	
 	/**
 	 * Class Constructor
 	 *
-	 * Creates an exported file from a given array
+	 * Creates an exported file from a given array or DbTemplate
 	 *
 	 * @param $data Array of items
 	 * @param $display Array
 	 * @param $file_name String of the filename
 	 * @return null
-	 */	
-	public function __construct($data='', $display='', $file_name='') {
-		$this->display = $display;
-		$this->data	= $data;
-		$this->file_name = $file_name;
+	 */
+	public function __construct($data='', $display='', $filename=''){
+		// Set the data
+		$this->SetData($data);
 		
-		// If all the data is correct call GetXLS
-		(is_array($this->data)) ? $this->GetXLS() : '';
+		// Set the display
+		$this->SetDisplay($display);
+			
+		// Set the filename
+		$this->SetFilename($filename);
 	}
 	
 	/**
-	 * GetXLS
+	 * Set Filename
+	 *
+	 * @param $filename String
+	 * @return bool
+	 */
+	public function SetFilename($filename){
+		// Cut out bad chars
+		$filename = preg_replace("/[^A-Za-z0-9-]/i", "_", $filename);
+	
+		// Require not null
+		if ((string)$filename == '')
+			return false;
+		
+		// Set the filename
+		$this->filename = (string)$filename;
+			
+		return true;
+	}
+	
+	/**
+	 * Set Display
+	 *
+	 * @param $display Array
+	 * @return bool
+	 */
+	public function SetDisplay($display){
+		// Require array
+		if (!is_array($display))
+			return false;
+		
+		// Overwrite the display
+		$this->display = $display;
+			
+		return true;
+	}
+	
+	/**
+	 * Set Data
+	 *
+	 * @param $data Array of items
+	 * @return bool
+	 */
+	public function SetData($data){
+		// Setup the export to work with the info supplied
+		if (is_object($data)){
+			// Set the data
+			if (is_array($data->results))
+				$this->data = $data->results;
+				
+			// Set the display
+			$this->display = $data->GetDisplay();
+		}else if (is_array($data)){
+			$this->data = $data;
+		}else{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Retrieve the desired format to the output
+	 *
+	 * @param $type string (csv, json, xml, sql)
+	 * @return string
+	 */
+	public function Retrieve($type){
+		switch(strtolower($type)){
+			case 'csv':
+			default:
+				return $this->CreateCSV();
+				break;
+		}
+	}
+	
+	/**
+	 * Download the desired format to the output
+	 *
+	 * @param $type string (csv, json, xml, sql)
+	 * @return null
+	 */
+	public function Download($type){
+		switch(strtolower($type)){
+			case 'csv':
+			default:
+				header("Pragma: public");
+				header("Expires: 0");
+				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+				header("Content-Type: application/force-download");
+				header("Content-type: text/comma-separated-values");
+				header("Content-disposition: attachment; filename=" .  $this->filename . ".csv");
+				header("Content-Transfer-Encoding: binary");
+				print $this->CreateCSV();
+				die();
+				
+				break;
+		}
+	}
+	
+	/**
+	 * Actually create the CSV string
+	 *
+	 * @return string
+	 */
+	private function CreateCSV(){
+		// Reset this output string
+		$this->output[$type] = NULL;
+		
+		// Filter these out
+		$bad_output = array('"');
+		$good_output = array('""');
+		
+		// Line Ending
+		$end = "\r\n";
+		
+		// Loop through all the fields in display to create the titles
+		foreach($this->display as $title)
+			$this->output[$type] .= '"' . str_replace($bad_output, $good_output, $title) . '",';
+
+		// End the header
+		$this->output[$type] = substr($this->output[$type], 0, -1) . $end;
+		
+		// Loop through each row
+		foreach($this->data as $line=>$set){
+			if (is_array($set)){
+				// Loop through each column
+				foreach($set as $data)
+					$this->output[$type] .= '"' . str_replace($bad_output, $good_output, $data) . '",';
+				
+				// End the line
+				$this->output[$type] = substr($this->output[$type], 0, -1) . $end;
+			}
+		}
+		
+		return $this->output[$type];
+	}
+	
+	/**
+	 * DEPRICATED! GetXLS
 	 *
 	 * Creates an output string from the class data
 	 *
 	 * @return bool
 	 */
 	public function GetXLS() {
-		// Make sure data is an array
-		if(is_array($this->data)) {
-			// Debug
-			(!is_array($this->display)) ? Debug('GetXLS(), Display is not an array, gathering display from the data array') : '';
-			
-			// If there is a display go by those, otherwise get all the fields from the data array
-			if(!is_array($this->display)){
-				$this->display = array();
-				$fields = array_keys(current($this->data));
-				
-				foreach($fields as $field)
-					$this->display[$field] = ucfirst(str_replace('_',' ',$field));
-			}
-			
-			// Filter these out
-			$bad_output = array("\n", "\r", "\t");
-			
-			// Start the output
-			$this->output = '';
-			
-			// Loop through all the fields in display to create the titles
-			foreach($this->display as $key=>$title)
-				$this->output .= $title . "\t";
-				
-			// Create a blank Line
-			$this->output = substr($this->output,0,-1) . "\n";
-
-			// Loop through all the data
-			foreach($this->data as $id => $data){
-				// Loop through all the displays
-				foreach($this->display as $key => $display) {
-					// Replace badchars 
-					$this->output .= str_replace($bad_output, '', $data[$key]) . "\t";
-				}
-				// Create a new line
-				$this->output = substr($this->output,0,-1) . "\n";
-			}				
-			return $this->output;
-		}
 		// Debug
-		Debug('GetXLS(), Data is not an array');
+		Debug('DEPRICATED! GetXLS(). Please update your code. "New function: Retrieve(\'csv\')"');
 		
-		return false;
+		return $this->Retrieve('csv');
 	}
-
+	
 	/**
-	* DisplayXLS
+	* DEPRICATED! DisplayXLS
 	*
 	* Displays the XLS file
 	*
 	* @return null
 	*/	
 	public function DisplayXLS($output='') {
+		// Debug
+		Debug('DEPRICATED! DisplayXLS(). Please update your code. "New function: Download(\'csv\')"');
+		
 		// Check if they are sending ouput, if not just use the classes output
 		($output == '')? $output = $this->output : '';
 		
@@ -111,11 +215,11 @@ class Export {
 		header("Expires: 0");
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 		header("Content-Type: application/force-download");
-		header("Content-type: application/vnd.ms-excel");
-		header("Content-disposition: attachment; filename=" .  str_replace(' ','_',strtolower($this->file_name)) . '_' . date("Y-m-d") . ".xls");
+		header("Content-type: text/comma-separated-values");
+		header("Content-disposition: attachment; filename=" .  $this->filename . ".csv");
 		header("Content-Transfer-Encoding: binary");
 		print $output;
-		exit;  
+		exit;
 	}
 }
 ?>
