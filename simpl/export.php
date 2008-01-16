@@ -113,6 +113,9 @@ class Export {
 	 */
 	public function Retrieve($type){
 		switch(strtolower($type)){
+			case 'xml':
+				return $this->CreateXML();
+				break;
 			case 'csv':
 			default:
 				return $this->CreateCSV();
@@ -128,6 +131,18 @@ class Export {
 	 */
 	public function Download($type){
 		switch(strtolower($type)){
+			case 'xml':
+				header("Pragma: public");
+				header("Expires: 0");
+				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+				header("Content-Type: application/force-download");
+				header("Content-type: application/xml");
+				header("Content-disposition: attachment; filename=" .  $this->filename . ".xml");
+				header("Content-Transfer-Encoding: binary");
+				print $this->CreateXML();
+				die();
+				
+				break;
 			case 'csv':
 			default:
 				header("Pragma: public");
@@ -151,7 +166,7 @@ class Export {
 	 */
 	private function CreateCSV(){
 		// Reset this output string
-		$this->output[$type] = NULL;
+		$this->output['cvs'] = NULL;
 		
 		// Filter these out
 		$bad_output = array('"');
@@ -162,24 +177,55 @@ class Export {
 		
 		// Loop through all the fields in display to create the titles
 		foreach($this->display as $title)
-			$this->output[$type] .= '"' . str_replace($bad_output, $good_output, $title) . '",';
+			$this->output['cvs'] .= '"' . str_replace($bad_output, $good_output, $title) . '",';
 
 		// End the header
-		$this->output[$type] = substr($this->output[$type], 0, -1) . $end;
+		$this->output['cvs'] = substr($this->output['cvs'], 0, -1) . $end;
 		
 		// Loop through each row
 		foreach($this->data as $line=>$set){
 			if (is_array($set)){
 				// Loop through each column
 				foreach($set as $data)
-					$this->output[$type] .= '"' . str_replace($bad_output, $good_output, $data) . '",';
+					$this->output['cvs'] .= '"' . str_replace($bad_output, $good_output, stripslashes($data)) . '",';
 				
 				// End the line
-				$this->output[$type] = substr($this->output[$type], 0, -1) . $end;
+				$this->output['cvs'] = substr($this->output['cvs'], 0, -1) . $end;
 			}
 		}
 		
-		return $this->output[$type];
+		return $this->output['cvs'];
+	}
+	
+	/**
+	 * Actually create the XML string
+	 *
+	 * @return string
+	 */
+	private function CreateXML(){
+		// Reset this output string
+		$this->output['xml'] = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<items>' . "\n";
+		
+		// Filter these out
+		$bad_output = array('&', "'", '"', '>', '<');
+		$good_output = array('&amp;', '&apos;', '&quot;', '&gt;', '&lt;');
+		
+		// Loop through each row
+		foreach($this->data as $line=>$set){
+			if (is_array($set)){
+				$this->output['xml'] .= "\t" . '<item>' . "\n";
+				
+				// Loop through each column
+				foreach($set as $name=>$data)
+					$this->output['xml'] .= "\t\t" . '<' . $name . '>' . str_replace($bad_output, $good_output, stripslashes($data)) . '</' . $name . '>' . "\n";
+				
+				$this->output['xml'] .= "\t" . '</item>' . "\n";
+			}
+		}
+		
+		$this->output['xml'] .= '</items>';
+
+		return $this->output['xml'];
 	}
 	
 	/**
