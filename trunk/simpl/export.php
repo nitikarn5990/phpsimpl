@@ -113,6 +113,9 @@ class Export {
 	 */
 	public function Retrieve($type){
 		switch(strtolower($type)){
+			case 'json':
+				return $this->CreateJSON();
+				break;
 			case 'xml':
 				return $this->CreateXML();
 				break;
@@ -131,6 +134,18 @@ class Export {
 	 */
 	public function Download($type){
 		switch(strtolower($type)){
+			case 'json':
+				header("Pragma: public");
+				header("Expires: 0");
+				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+				header("Content-Type: application/force-download");
+				header("Content-type: application/json");
+				header("Content-disposition: attachment; filename=" .  $this->filename . ".json");
+				header("Content-Transfer-Encoding: binary");
+				print $this->CreateJSON();
+				die();
+				
+				break;
 			case 'xml':
 				header("Pragma: public");
 				header("Expires: 0");
@@ -226,6 +241,21 @@ class Export {
 		$this->output['xml'] .= '</items>';
 
 		return $this->output['xml'];
+	}
+	
+	/**
+	 * Actually create the JSON string
+	 *
+	 * @return string
+	 */
+	private function CreateJSON(){
+		// Reset this output string
+		$this->output['json'] = NULL;
+		
+		$myJson = new Json;
+		$this->output['json'] = $myJson->encode($this->data);
+		
+		return $this->output['json'];
 	}
 	
 	/**
