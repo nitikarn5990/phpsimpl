@@ -1058,28 +1058,37 @@ class DbTemplate extends Form {
 		// Set the filename
 		$myExport->SetFilename(($filename != NULL)?$filename:get_class($this));
 		
+		// Reset all data going in
+		$data = array();
+		$i = 0;
+		
 		// If display array, reorganize
 		if (is_array($display)){
-			$data = array();
-			$i = 0;
-			
-			// Grab the labels
-			foreach($display as $field){
-				if ($this->IsField($field))
-					$data[$i][$field] = $this->GetLabel($field);
-				else
-					$data[$i][$field] = $field;
-			}
-			
-			// Grab the data
-			foreach($this->results as $key=>$row){
-				$i++;
-				foreach($display as $field)
-					$data[$i][$field] = stripslashes($row[$field]);
+			// Add the first row titles if CSV
+			if ($type == 'csv'){
+				// Grab the labels
+				foreach($display as $field){
+					if ($this->IsField($field))
+						$data[$i][$field] = $this->GetLabel($field);
+					else
+						$data[$i][$field] = $field;
+				}
 			}
 		}else{
-			$data = $this->results;
+			// Default display is all the fields
+			$display = $this->GetFields();
 		}
+		
+		// Grab the data in order of display
+		foreach($this->results as $key=>$row){
+			$i++;
+			foreach($display as $field)
+				$data[$i][$field] = stripslashes($row[$field]);
+		}
+		
+		// Set the display
+		if ($type != 'csv')
+			$myExport->SetDisplay($display);
 		
 		// Set the data
 		$myExport->SetData($data);
