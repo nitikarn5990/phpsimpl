@@ -113,6 +113,9 @@ class Export {
 	 */
 	public function Retrieve($type){
 		switch(strtolower($type)){
+			case 'sql':
+				return $this->CreateSQL();
+				break;
 			case 'json':
 				return $this->CreateJSON();
 				break;
@@ -134,6 +137,18 @@ class Export {
 	 */
 	public function Download($type){
 		switch(strtolower($type)){
+			case 'sql':
+				header("Pragma: public");
+				header("Expires: 0");
+				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+				header("Content-Type: application/force-download");
+				header("Content-type: text/plain sql");
+				header("Content-disposition: attachment; filename=" .  $this->filename . ".sql");
+				header("Content-Transfer-Encoding: binary");
+				print $this->CreateSQL();
+				die();
+				
+				break;
 			case 'json':
 				header("Pragma: public");
 				header("Expires: 0");
@@ -256,6 +271,45 @@ class Export {
 		$this->output['json'] = $myJson->encode($this->data);
 		
 		return $this->output['json'];
+	}
+	
+	/**
+	 * Actually create the SQL string
+	 *
+	 * @return string
+	 */
+	private function CreateSQL(){
+		// Require filename
+		if ($this->filename == '')
+			return '';
+		
+		// Reset this output string
+		$this->output['sql'] = 'INSERT INTO `' . $this->filename . '` (';
+		
+		// List the field names
+		foreach($this->display as $title)
+			$this->output['sql'] .= '`' . $title . '`,';
+			
+		// Chop off the comma
+		$this->output['sql'] = substr($this->output['sql'], 0, -1) .  ') VALUES ' . "\n";
+		
+		// Loop through each row
+		foreach($this->data as $set){
+			if (is_array($set)){
+				$this->output['sql'] .= '(';
+				
+				// Loop through each column
+				foreach($set as $data)
+					$this->output['sql'] .= '\'' . addslashes(stripslashes($data)) . '\',';
+					
+				// Chop off the comma
+				$this->output['sql'] = substr($this->output['sql'], 0, -1) . '),' . "\n";
+			}
+		}
+		
+		$this->output['sql'] = substr($this->output['sql'], 0, -2) . ';';
+
+		return $this->output['sql'];
 	}
 	
 	/**

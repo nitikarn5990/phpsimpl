@@ -31,7 +31,7 @@
 	
 	// If exporting
 	if (isset($_GET['export']))
-		$myPost->Export('csv', $display, 'posts', 'download');
+		$myPost->Export('csv', $display, 'posts','download');
 	
 	// Header
 	define('PAGE_TITLE','Edit Posts');
