@@ -110,7 +110,7 @@ class DbTemplate extends Form {
 	 */
 	public function DbTemplate($data, $required=array(), $labels=array(), $examples=array(), $table='', $fields=array(), $database=''){
 		$this->table = $table;
-		$this->database = $database;
+		$this->database = (trim($database) != '')?$database:DB_DEFAULT;
 
 		// Pull the cache if available
 		$cache = $this->Cache('get', 'table_' . $this->table . '.cache.php', '', '1 day');
