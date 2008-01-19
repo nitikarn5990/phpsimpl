@@ -453,33 +453,33 @@ class DbTemplate extends Form {
 
 			// Create the filters
 			foreach($values as $name=>$value){
-				$where .= ((string)$value != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE':'=') . ' \'' . $db->Prepare($value) . '\' AND ':'';
+				$where .= ((string)$value != '')?'`' . $class->database . '`.`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE':'=') . ' \'' . $db->Prepare($value) . '\' AND ':'';
 			
 				// Create the search
-				$search .= ($class->search != '')?'`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE \'%' . $db->Prepare($class->search) . '%\'':' = \'' . $db->Prepare($class->search) . '\'') . ' OR ':'';
+				$search .= ($class->search != '')?'`' . $class->database . '`.`' . $class->table . '`.' . $name . ' ' . (($class->Get('type',$name) == 'string' || $class->Get('type',$name) == 'blob')?'LIKE \'%' . $db->Prepare($class->search) . '%\'':' = \'' . $db->Prepare($class->search) . '\'') . ' OR ':'';
 			}
 			
 			// Create the return fields
 			if (is_array($returns[$key]) && count($returns[$key]) > 0){
 				// Require primary key returned
 				if ($class->primary != '' && !in_array($class->primary,$returns[$key]))
-					$return .= '`' . $class->table . '`.' . $class->primary . ', ';
+					$return .= '`' . $class->database . '`.`' . $class->table . '`.' . $class->primary . ', ';
 				
 				// List all other fields to be returned
 				foreach($returns[$key] as $field){
 					if (!is_array($field))
-						$return .= (trim($field) != '')?'`' . $class->table . '`.' . $field . ', ':'';
+						$return .= (trim($field) != '')?'`' . $class->database . '`.`' . $class->table . '`.' . $field . ', ':'';
 					else
 						foreach($field as $sub_field)
-							$return .= (trim($sub_field) != '')?'`' . $class->table . '`.' . $sub_field . ', ':'';
+							$return .= (trim($sub_field) != '')?'`' . $class->database . '`.`' . $class->table . '`.' . $sub_field . ', ':'';
 				}
 			}else{
-				$return .= '`' . $class->table . '`.*, ';
+				$return .= '`' . $class->database . '`.`' . $class->table . '`.*, ';
 			}
 			
 			// Create the Joins
 			if ($key > 0)
-				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->table . '`.' . $this->join_on[$key] . ') ';
+				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->database . '`.`' . $this->table . '`.' . $this->join_on[$key] . ') ';
 			
 			// Add the search to the where
 			if ($search != '')
@@ -496,9 +496,9 @@ class DbTemplate extends Form {
 		// Get the order
 		if(is_array($order_by)){
 			foreach($order_by as $key=>$field)
-				$order .= '`' . $this->table . '`.' . $field . ((is_array($sort) && $sort[$key] != '')?' ' . $sort[$key] . ', ':', ');
+				$order .= '`' . $this->database . '`.`' . $this->table . '`.' . $field . ((is_array($sort) && $sort[$key] != '')?' ' . $sort[$key] . ', ':', ');
 		}else{
-			$order = ($order_by != '')?'`' . $this->table . '`.' . $order_by . ', ':'';
+			$order = ($order_by != '')?'`' . $this->database . '`.`' . $this->table . '`.' . $order_by . ', ':'';
 		}
 		
 		$order = substr($order,0,-2);
@@ -507,7 +507,7 @@ class DbTemplate extends Form {
 		if (!is_array($sort) && $sort != '')
 			$order .= ' ' . $sort;
 		
-		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->table . '`';
+		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->database . '`.`' . $this->table . '`';
 		$query .= ($join != '')?substr($join,0,-1):'';
 		$query .= ($where != '' || $this->conditions != '')?' WHERE ' . (($this->conditions != '')?$where . $this->conditions:substr($where,0,-5)):'';
 		$query .= ($this->group_by != '')?' GROUP BY ' . $this->group_by:'';
@@ -575,9 +575,9 @@ class DbTemplate extends Form {
 		foreach($terms_db as $term_db){
 			if (is_array($search_fields))
 				foreach($search_fields as $field)
-					$parts[] = '`' . $this->table . '`.' . $field . ' RLIKE \'' . $term_db . '\'';
+					$parts[] = '`' . $this->database . '`.`' . $this->table . '`.' . $field . ' RLIKE \'' . $term_db . '\'';
 			else
-				$parts[] = '`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
+				$parts[] = '`' . $this->database . '`.`' . $this->table . '`.' . $search_fields . ' RLIKE \'' . $term_db . '\'';
 		}
 			
 		$parts = '(' . implode(' OR ', $parts) . ')';
@@ -591,34 +591,34 @@ class DbTemplate extends Form {
 			if (is_array($returns[$key]) && count($returns[$key]) > 0){
 				// Require primary key returned
 				if (!in_array($class->primary,$returns[$key]))
-					$return .= '`' . $class->table . '`.' . $class->primary . ', ';
+					$return .= '`' . $class->database . '`.`' . $class->table . '`.' . $class->primary . ', ';
 				
 				// List all other fields to be returned
 				foreach($returns[$key] as $field){
 					if (!is_array($field))
-						$return .= (trim($field) != '')?'`' . $class->table . '`.' . $field . ', ':'';
+						$return .= (trim($field) != '')?'`' . $class->database . '`.`' . $class->table . '`.' . $field . ', ':'';
 					else
 						foreach($field as $sub_field)
-							$return .= (trim($sub_field) != '')?'`' . $class->table . '`.' . $sub_field . ', ':'';
+							$return .= (trim($sub_field) != '')?'`' . $class->database . '`.`' . $class->table . '`.' . $sub_field . ', ':'';
 				}
 			}else{
 				// Local class return values
 				if (is_array($returns[$key])){
 					foreach($returns[$key] as $field)
-						$fields[] = '`' . $this->table . '`.' . $field;
+						$fields[] = '`' . $this->database . '`.`' . $this->table . '`.' . $field;
 					$return .= implode(', ', $fields);
 				}else{
-					$return .= '`' . $class->table . '`.*, ';
+					$return .= '`' . $class->database . '`.`' . $class->table . '`.*, ';
 				}
 			}
 			
 			
 			// Create the Joins
 			if ($key > 0)
-				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->table . '`.' . $this->join_on[$key] . ') ';
+				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->database . '`.`' . $this->table . '`.' . $this->join_on[$key] . ') ';
 		}
 		
-		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->table . '`' . $join . ' WHERE ' . $parts;
+		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->database . '`.`' . $this->table . '`' . $join . ' WHERE ' . $parts;
 		$query .= ($this->group_by != '')?' GROUP BY ' . $this->group_by:'';
 		$result = $db->Query($query, $this->database);
 	
