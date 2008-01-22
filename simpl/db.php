@@ -155,6 +155,10 @@ class DB {
     	
     	// Increment the query counter
     	$this->query_count++;
+    	
+    	// Change the DB back is needed
+    	if ($db != '' && $db != $this->database)
+    		$this->Change($old_db);
     		
     	// Cache the Query if possible
     	if ($is_cache){
