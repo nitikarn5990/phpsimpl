@@ -196,7 +196,7 @@ class Export {
 	 */
 	private function CreateCSV(){
 		// Reset this output string
-		$this->output['cvs'] = NULL;
+		$this->output['csv'] = NULL;
 		
 		// Filter these out
 		$bad_output = array('"');
@@ -207,24 +207,24 @@ class Export {
 		
 		// Loop through all the fields in display to create the titles
 		foreach($this->display as $title)
-			$this->output['cvs'] .= '"' . str_replace($bad_output, $good_output, $title) . '",';
+			$this->output['csv'] .= '"' . str_replace($bad_output, $good_output, $title) . '",';
 
 		// End the header
-		$this->output['cvs'] = substr($this->output['cvs'], 0, -1) . $end;
+		$this->output['csv'] = substr($this->output['csv'], 0, -1) . $end;
 		
 		// Loop through each row
 		foreach($this->data as $line=>$set){
 			if (is_array($set)){
 				// Loop through each column
 				foreach($set as $data)
-					$this->output['cvs'] .= '"' . str_replace($bad_output, $good_output, stripslashes($data)) . '",';
+					$this->output['csv'] .= '"' . str_replace($bad_output, $good_output, stripslashes($data)) . '",';
 				
 				// End the line
-				$this->output['cvs'] = substr($this->output['cvs'], 0, -1) . $end;
+				$this->output['csv'] = substr($this->output['csv'], 0, -1) . $end;
 			}
 		}
 		
-		return $this->output['cvs'];
+		return $this->output['csv'];
 	}
 	
 	/**
@@ -337,9 +337,11 @@ class Export {
 		// Debug
 		Debug('DEPRICATED! DisplayXLS(). Please update your code. "New function: Download(\'csv\')"');
 		
-		// Check if they are sending ouput, if not just use the classes output
-		($output == '')? $output = $this->output : '';
+		$this->Retrieve('csv');
 		
+		// Check if they are sending ouput, if not just use the classes output
+		$output = ($output == '')?$this->output['csv'] : $output;
+
 		// Display the XLS
 		header("Pragma: public");
 		header("Expires: 0");
