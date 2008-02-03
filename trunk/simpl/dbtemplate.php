@@ -14,7 +14,7 @@ class DbTemplate extends Form {
 	/**
 	* @var string 
 	*/
-	protected $database;
+	public $database;
 	/**
 	* @var string 
 	*/
