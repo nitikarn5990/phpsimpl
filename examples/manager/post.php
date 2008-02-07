@@ -4,18 +4,7 @@
 		
 	// Create the Post Class
 	$myPost = new Post;
-	
-	// Get a list of all the authors
-	$myAuthor = new Author;
-	$authors = $myAuthor->GetList(array('first_name', 'last_name'),'last_name','DESC');
-	$author_list = array();
-	
-	// Format the author list how we would like
-	foreach($authors as $author_id=>$author)
-		$author_list[$author_id] = $author['first_name'] . ' ' . $author['last_name'];
-	
-	// Add State Options
-	$myPost->SetOption('author_id', $author_list, 'Please Select');
+	$myTag = new Tag;
 	
 	// If they are saving the Information
 	if ($_POST['submit_button'] == 'Save Draft and Continue Editing' || $_POST['submit_button'] == 'Save' || $_POST['submit_button'] == 'Save and Publish'){
@@ -37,6 +26,11 @@
 		
 		// Save the info to the DB if there is no errors
 		if ($myPost->Save()){
+			// Sync in the Tags
+			$myPostTag = new PostTag;
+			$myPostTag->SetValue('post_id', $myPost->GetPrimary());
+			$myPostTag->Sync($myPost->GetValue('category'));
+		
 			SetAlert('Post Information Saved.','success');
 			
 			// Redirect if needed
