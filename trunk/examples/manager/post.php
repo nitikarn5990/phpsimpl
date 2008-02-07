@@ -29,7 +29,7 @@
 			// Sync in the Tags
 			$myPostTag = new PostTag;
 			$myPostTag->SetValue('post_id', $myPost->GetPrimary());
-			$myPostTag->Sync($myPost->GetValue('category'));
+			$myPostTag->Sync($myPost->GetValue('tags'));
 		
 			SetAlert('Post Information Saved.','success');
 			
