@@ -14,16 +14,16 @@ class Post extends DbTemplate {
 		$this->SetRequired(array('title','body'));
 		
 		// Set the labels
-		$this->SetLabels(array('author_id'=>'Author:', 'category'=>'Category:'));
+		$this->SetLabels(array('author_id'=>'Author:'));
 		
 		// Set the examples
-		$this->SetExamples(array('category'=>'ex. PHP, MySQL, Cars, XML, PHPSimpl'));
+		$this->SetExamples(array('tags'=>'ex. PHP, MySQL, Cars, XML, PHPSimpl'));
 
 		// Set the default
 		$this->SetDefaults(array('status' => 'Draft'));
 		
 		// Set the Display
-		$this->SetDisplay(array('title','author_id','category','body'));
+		$this->SetDisplay(array('title', 'author_id', 'tags', 'body'));
 	}
 	
 	/**
@@ -104,26 +104,59 @@ class PostTag extends DbTemplate {
 	}
 	
 	public function Sync($tag_list){
+		// Requere a valid post_id
+		$myPost = new Post;
+		$myPost->SetPrimary($this->GetValue('post_id'));
+		
+		if (!$myPost->GetInfo())
+			return false;
+		
+		// Get a list of all the tags for this post
+		$tmpPostTag = new PostTag;
+		$tmpPostTag->SetValue('post_id', $myPost->GetPrimary());
+		$tmpTag = new Tag;
+		$tmpPostTag->Join($tmpTag, 'tag_id', 'LEFT');
+		$tmpPostTag->GetList();
+		
+		// Create an array worth using
+		$old_tags = array();
+		foreach($tmpPostTag->results as $tag)
+			$old_tags[$tag['post_tag_id']] = $tag['tag'];
+		
 		// Split up the categories and make sure there is tags
-		$tags = split(',', $tag_list);		
+		$new_tags = split(',', strtolower($tag_list));
+		foreach($new_tags as $key=>$data)
+			$new_tags[$key] = trim($data);
 		
-		// Get a list of all the tags currently
-	
+		// Get the difference
+		$diff_tags = array_diff($new_tags, $old_tags);
 		
-		$post_tags = array();
-		foreach($tags as $tag){
-			$myTag->ResetValues();
-			$myTag->SetValue('tag', trim($tag));
-			$myTag->GetList('tag_id', 'tag_id', 'ASC', 0, 1);
-			if (count($myTag->results) == 1){
+		// Add the different tags to the database
+		foreach($diff_tags as $tag){
+			// Save the Tag
+			$tmpTag->ResetValues();
+			$tmpTag->SetValue('tag', $tag);
+			$item = $tmpTag->GetAssoc('tag', 'tag', 'ASC', 0, 1);
+			if (count($item) == 1)
+				$tmpTag->SetPrimary(key($item));
+			else
+				$tmpTag->Save();
 			
-			}else{
-				$myTag->Save();
-				$post_tag = array($tag, $myTag->GetPrimary());
-			}			
+			$tmpPostTag->ResetValues();
+			$tmpPostTag->SetValue('post_id', $myPost->GetPrimary());
+			$tmpPostTag->SetValue('tag_id', $tmpTag->GetPrimary());
+			$tmpPostTag->Save();
 		}
 		
-		Pre($category_list);
+		// Get a list of the tags to remove
+		$rem_tags = array_diff($old_tags, $new_tags);
+		
+		// Remove the non-needed tags
+		foreach($rem_tags as $id=>$tag){
+			$tmpPostTag->ResetValues();
+			$tmpPostTag->SetPrimary($id);
+			$tmpPostTag->Delete();
+		}
 	}
 }
 ?>

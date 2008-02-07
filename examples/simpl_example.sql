@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Feb 06, 2008 at 09:16 PM
+-- Generation Time: Feb 06, 2008 at 10:16 PM
 -- Server version: 5.0.45
 -- PHP Version: 5.2.3-1ubuntu6.3
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `author` (
   `last_name` varchar(32) NOT NULL,
   `email` varchar(48) NOT NULL,
   PRIMARY KEY  (`author_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog authors';
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog authors';
 
 -- --------------------------------------------------------
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `post` (
   `date_entered` datetime NOT NULL,
   `last_updated` datetime NOT NULL,
   `author_id` int(10) unsigned NOT NULL default '0',
-  `category` varchar(32) default NULL,
+  `tags` varchar(254) default NULL,
   `title` varchar(48) NOT NULL,
   `body` text NOT NULL,
   PRIMARY KEY  (`post_id`),
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `post_tag` (
   `tag_id` int(5) unsigned NOT NULL,
   PRIMARY KEY  (`post_tag_id`),
   KEY `post_id` (`post_id`,`tag_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -92,4 +92,4 @@ CREATE TABLE IF NOT EXISTS `tag` (
   `tag` varchar(24) NOT NULL,
   PRIMARY KEY  (`tag_id`),
   UNIQUE KEY `tag` (`tag`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
