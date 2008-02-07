@@ -15,23 +15,24 @@
 	$myPost->Join($myAuthor,'author_id','LEFT');
 	$display[] = array('first_name','last_name');
 	
-	// Add some Filtering
-	if (trim($_GET['q']) != '')
-		$myPost->search = trim($_GET['q']);
+	// Reformat the display for the list
+	$display_list = array('title', 'first_name', 'last_name', 'date_entered', 'status');
 	
 	// Figure out the display type and order, Taken from DisplayList(), Need to find a better way to do this, it does not work with joined orders
 	$_SESSION[$myPost->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$myPost->table . '_sort'];
 	$_SESSION[$myPost->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$myPost->table . '_order'];
 	
-	// Get the List
-	$myPost->GetList($display, $_SESSION[$myPost->table . '_sort'], $_SESSION[$myPost->table . '_order']);
-	
-	// Reformat the display for the list
-	$display = array('title', 'first_name', 'last_name', 'date_entered', 'status');
+	// Add some Filtering
+	if (trim($_GET['q']) != ''){
+		$myPost->Search(trim($_GET['q']), array('title','body'), $display);
+	}else{
+		// Get the full list
+		$myPost->GetList($display, $_SESSION[$myPost->table . '_sort'], $_SESSION[$myPost->table . '_order']);
+	}
 	
 	// If exporting
 	if (isset($_GET['export']))
-		$myPost->Export('csv', $display, 'posts','download');
+		$myPost->Export('csv', $display_list, 'posts','download');
 	
 	// Header
 	define('PAGE_TITLE','Edit Posts');
@@ -61,7 +62,7 @@
 	</ul>
 	<?php
 		// Display the List
-		$myPost->DisplayList($display, $locations, $options, false);
+		$myPost->DisplayList($display_list, $locations, $options, false);
 	?>
 </div>
 <?php

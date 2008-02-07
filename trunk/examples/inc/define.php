@@ -7,6 +7,7 @@ switch ($mode){
 		define('LOGGING', true);
 		define('DEBUG', false);
 		define('DEBUG_QUERY', false);
+		define('DEBUG_LOG', false);
 		define('USE_CACHE', true);
 		define('USE_ENUM', true);
 		define('QUERY_CACHE', true);
@@ -20,6 +21,7 @@ switch ($mode){
 		define('LOGGING', true);
 		define('DEBUG', false);
 		define('DEBUG_QUERY', false);
+		define('DEBUG_LOG', true);
 		define('USE_CACHE', true);
 		define('USE_ENUM', true);
 		define('QUERY_CACHE', false);
