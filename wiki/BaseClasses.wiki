@@ -7,7 +7,7 @@
 _Used to load classes and clear the cache_
 
 [Field]
-_Used to store each fields structure, value, error, example, and label_
+_Used to store each field structure, value, error, example, and label_
 
 [Form]
 _Used to store multiple fields and set required fields, examples and labels_

@@ -7,59 +7,87 @@ The DbTemplate class is used to mirror a database table. No setup is needed, jus
 
 = Example =
 {{{
-<?php
-// Create the RSVP class to mirror the RSVP table
-class RSVP extends DbTemplate {
-  /**
-   * Class Constuctor
-   * 
-   * @param $data array
-   * @return null
-   */
-  function __construct($data=''){
-    $required = array('first_name', 'last_name', 'email', 'phone');
-    $table = 'rsvp';
-    $labels = array('first_name' => 'First Name', 'last_name' => 'Last Name', 'email' => 'E-Mail');
-    $examples = array();
+CREATE TABLE `author` (
+  `author_id` int(10) unsigned NOT NULL auto_increment,
+  `date_entered` datetime NOT NULL,
+  `first_name` varchar(32) NOT NULL,
+  `last_name` varchar(32) NOT NULL,
+  `email` varchar(48) NOT NULL,
+  PRIMARY KEY  (`author_id`),
+  UNIQUE KEY `email` (`email`)
+)
 
-    // Call the DSbTemplate constructor with the object setup
-    $this->DbTemplate($data, $required, $labels, $examples, $table, '', 'my_database');
-    
-    // Set the fields that will display on the form
-    $this->SetDisplay(array('first_name', 'last_name', 'email', 'phone', 'organization', 'special_needs', 'attending'));
-    
-    // Set the options for attending
-    $this->SetOption('attending', array('yes'=>'Yes', 'no'=>'No'));
-  }
+class Author extends DbTemplate {
+	/**
+	 * Class Constuctor
+	 * 
+	 * @param $data array
+	 * @return null
+	 */
+	function __construct(){
+		// Call the parent constructor
+		parent::__construct('author', DB_DEFAULT);
+		
+		// Set the required
+		$this->SetRequired(array('first_name','last_name','email'));
+		
+		// Set the Display
+		$this->SetDisplay(array('first_name','last_name','email'));
+	}
 }
 
-// Create the class
-$myRSVP = new RSVP;
+// Create the Author Class
+$myAuthor = new Author;
 
-// If saving the RSVP
-if ($_POST['submit_button'] == 'RSVP'){
-  // Set the values from the form
-  $myRSVP->SetValues($_POST);
+// If they are saving the Information
+if ($_POST['submit_button'] == 'Save Author'){
+	// Get all the Form Data
+	$myAuthor->SetValues($_POST);
+	
+	// Save the info to the DB if there is no errors
+	if ($myAuthor->Save())
+		SetAlert('Author Information Saved.','success');
+}
 
-  // Try to validate and save the form to the DB
-  if ($myRSVP->Validate() && $myRSVP->Save()){
-    // If successful set a thank you message
-    SetAlert('Thank You, your RSVP has been recieved', 'success');
+// If Deleting the Page
+if ($_POST['submit_button'] == 'Delete'){
+	// Get all the form data
+	$myAuthor->SetValues($_POST);
+	
+	// Remove the info from the DB
+	if ($myAuthor->Delete()){
+		// Set alert and redirect
+		SetAlert('Author Deleted Successfully','success');
+		header('location:authors.php');
+		die();
+	}else{
+		SetAlert('Error Deleting Author, Please Try Again');
+	}
+}
 
-    // Reset the values of the form
-    $myRSVP->ResetValues();
-  }
+// Set the requested primary key and get its info
+if ($_GET['id'] != '' && $myAuthor->GetPrimary() == ''){
+	// Set the priarmy key
+	$myAuthor->SetPrimary((int)$_GET['id']);
+	
+	// Try to get the information
+	if (!$myAuthor->GetInfo()){
+		SetAlert('Invalid Author, please try again');
+		$myAuthor->ResetValues();
+	}
 }
 
 // Report status to the user
 Alert(GetAlert('success'),'success');
-?>
 
-<form name="form_rsvp" id="form_rsvp" method="post" action="/">
-<?php $myRSVP->Form(); ?>
-<fieldset class="submit_button">
-<div class="submit"><label for="submit_button">&nbsp;</label><input type="submit" name="submit" value="RSVP" class="submit" /></div>
-</fieldset>
+<form name="form_author" id="form_author" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+  <?php $myAuthor->Form(); ?>
+  <fieldset class="submit_button">
+    <div class="submit">
+      <label for="submit_button">&nbsp;</label><input type="submit" name="submit_button" id="submit_button" value="Save Author" />
+      <?php echo ($myAuthor->GetPrimary() != '')?' <input name="submit_button" type="submit" value="Delete" />':''; ?>
+    </div>
+  </fieldset>
 </form>
 }}}
 
@@ -73,17 +101,11 @@ __construct($table, $database) -> Boolean
 }}}
 Creates an instance of the DbTemplate class. This function is actually not called since this class should always be extended.
 
-*DbTemplate*
+*[DbTemplate.GetInfo GetInfo]*
 {{{
-DbTemplate($data, $required, $labels, $examples, $table, $fields, $database) -> Boolean
+GetInfo($fields, $conditions) -> Boolean
 }}}
-Create the Form class with all the information about the fields. Also if possible define the database and table of the class.
-
-*GetInfo*
-{{{
-GetInfo($fields) -> Boolean
-}}}
-Get the info from the database based on the primary key of the class. An optional array can be passed to just get certain fields returned for performance. The primary key value must be set in order for this function to query the database.
+Pull a single result from the database based on the primary_key or based on a set of conditions. All fields will be pulled in to the class unless the $fields array is passed to the function.
 
 *Save*
 {{{
