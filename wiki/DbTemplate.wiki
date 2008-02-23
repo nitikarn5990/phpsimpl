@@ -101,7 +101,7 @@ __construct($table, $database) -> Boolean
 }}}
 Creates an instance of the DbTemplate class. This function is actually not called since this class should always be extended.
 
-*[DbTemplate.GetInfo GetInfo]*
+*[DbTemplate_GetInfo GetInfo]*
 {{{
 GetInfo($fields, $conditions) -> Boolean
 }}}
@@ -196,4 +196,3 @@ Return the results array in various formats. Types are: "array", "json". Default
 Join($join_class, $join_on, $type) -> Boolean
 }}}
 Used to join the current class with another DbTemplate class. This allows the GetList to cross tables and join another table on the $join_on field with a join $type.
-
