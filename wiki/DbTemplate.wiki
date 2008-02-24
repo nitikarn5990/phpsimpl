@@ -107,7 +107,7 @@ GetInfo($fields, $conditions) -> Boolean
 }}}
 Pull a single result from the database based on the primary_key or based on a set of conditions. All fields will be pulled in to the class unless the $fields array is passed to the function.
 
-*Save*
+*[DbTemplate_Save Save]*
 {{{
 Save($options=array()) -> Boolean
 }}}
