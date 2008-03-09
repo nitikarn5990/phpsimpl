@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Feb 06, 2008 at 10:16 PM
+-- Generation Time: Mar 09, 2008 at 08:08 AM
 -- Server version: 5.0.45
 -- PHP Version: 5.2.3-1ubuntu6.3
 
@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS `author` (
   `first_name` varchar(32) NOT NULL,
   `last_name` varchar(32) NOT NULL,
   `email` varchar(48) NOT NULL,
-  PRIMARY KEY  (`author_id`)
+  PRIMARY KEY  (`author_id`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Used to keep track of all the blog authors';
 
 -- --------------------------------------------------------
