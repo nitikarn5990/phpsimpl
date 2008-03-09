@@ -2,14 +2,19 @@
 #labels Phase-Requirements
 
 == SVN ==
+
+== Version 0.8.5 ==
   * Updated example
   * Completely rewritten Export class with CVS, JSON, XML and SQL support
   * Export() function on DbTemplate for seamless exporting
   * Removed the requirement to have DB_DEFAULT defined
   * DisplayList() now places a &nbsp; for NULL table values for IE border support
   * GetList() and Join() now support cross database queries
-  * Added the lazy DB change, half's the number of DB changes needed
-  * a few other bug fixes
+  * Added the "required" class to the field items that are required
+  * DisplayList() $options can now take a function name as a value for a field.
+  * Added the DateTimeDiff() function to the global functions to produce a human readable "time ago" output.
+  * Added a type of "settings" for forms to manipulate the Form::Form() function output.
+  * A few bug fixes.
 
 == Version 0.8.4 ==
   * Removed all dependency on a Primary Key except for the Move() function
