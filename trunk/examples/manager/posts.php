@@ -8,7 +8,7 @@
 	// Setup the Display
 	$display[] = array('title', 'date_entered', 'author_id', 'status');
 	$locations = array('title' => '<a href="post.php?id={$item_id}">{$data}</a>');
-	$options = array();
+	$options = array('date_entered' => 'DateTimeDiff');
 	
 	// Create the Author Class
 	$myAuthor = new Author;
