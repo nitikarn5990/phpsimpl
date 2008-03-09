@@ -150,6 +150,7 @@ class DbTemplate extends Form {
 	 * Get the Item Information
 	 *
 	 * @param array $fields Names of all the return fields
+	 * @param array $conditions Key=>Value to match up an info on
 	 * @return bool
 	 */
 	public function GetInfo($fields=array(), $conditions=array()){
@@ -891,7 +892,10 @@ class DbTemplate extends Form {
 					
 					if (is_array($options[$name]))
 						$str = $options[$name][$str];
-					else if ($options[$name] == 'move')
+					else if (function_exists($options[$name])){
+						$func = $options[$name];
+						$str = $func($str);
+					}else if ($options[$name] == 'move')
 						$str = '<div class="center">' . (($row != 1)?'<a href="?item=' . $field[$this->primary] . '&amp;move=up">&uarr;</a>':'') . (($row != $count)?'<a href="?item=' . $field[$this->primary] . '&amp;move=down">&darr;</a>':'') . '</div>';
 					
 					if ($format[$name] != ''){
