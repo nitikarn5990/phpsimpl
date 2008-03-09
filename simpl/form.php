@@ -20,6 +20,7 @@ class Form {
 	 * @var string
 	 */
 	protected $prefix;
+	
 
 	/**
 	 * Class Constructor
@@ -615,6 +616,39 @@ class Form {
 
 		// All options set
 		return true;
+	}
+	
+	/**
+	 * Set Setting
+	 *
+	 * @param $setting string
+	 * @param $value string
+	 * @return bool
+	 */
+	public function SetSetting($setting, $value){
+		global $mySimpl;
+		
+		// Make sure it is a valid setting
+		if (!array_key_exists($setting, $mySimpl->settings['form']))
+			return false;
+
+		// Set the Setting
+		$mySimpl->settings['form'][$setting] = $value;
+		
+		return true;
+	}
+	
+	/**
+	 * Get Setting
+	 *
+	 * @param $setting string
+	 * @return bool
+	 */
+	public function GetSetting($setting){
+		global $mySimpl;
+		
+		// Get the Setting
+		return $mySimpl->settings['form'][$setting];
 	}
 	
 	/**
