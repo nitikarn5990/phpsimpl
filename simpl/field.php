@@ -259,7 +259,7 @@ class Field {
 					$output .= '<div class="checkbox">' . $each . '</div>';
 				break;
 				default:
-					$each .= '<select name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . "\n";
+					$each .= '<select name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '"' . (($this->Get('required'))?' class="required"':'') . '>' . "\n";
 					foreach($this->Get('options') as $key=>$value){
 						$selected = ($my_value == (string)$key)?' selected="selected"':'';
 						$each .= '<option value="' . $key . '"' . $selected . '>' . $this->Output($value) . '</option>' . "\n";
@@ -270,7 +270,7 @@ class Field {
 			}
 		}elseif($this->Get('type') == 'blob' || $this->Get('type') == 'text'){
 			// Textarea
-			$output .= '<div><textarea name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
+			$output .= '<div><textarea name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '"' . (($this->Get('required'))?' class="required"':'') . ' cols="50" rows="4">' . $this->Output($my_value) . '</textarea></div>' . "\n";
 		}elseif($this->Get('type') == 'date'){
 			// Date Field
 			$value = ($my_value != '0000-00-00' && $my_value != '')?date("F j, Y",strtotime($my_value)):'';
@@ -280,7 +280,7 @@ class Field {
 			// Single Field
 			$type = ($this->Get('config') != '' && $this->Get('config') != 'text')?$this->Get('config'):'text';
 			$size = ($this->Get('length') < 30)?$this->Get('length'):30;
-			$output .= '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="' . $type . '" size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . htmlspecialchars($this->Output($my_value), ENT_QUOTES) . '" />';
+			$output .= '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="' . $type . '"' . (($this->Get('required'))?' class="required"':'') . ' size="' . $size . '" maxlength="' . $this->Get('length') . '" value="' . htmlspecialchars($this->Output($my_value), ENT_QUOTES) . '" />';
 		}
 
 		$output .= ($this->Get('example') != '')?'<div class="example"><p>' . stripslashes($this->Get('example')) . '</p></div>':'';
