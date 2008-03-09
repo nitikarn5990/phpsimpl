@@ -9,7 +9,7 @@
 	$myPost->SetValue('status', 'Published');
 	
 	// Setup the fields to pull from the post table
-	$display[] = array('title', 'date_entered', 'author_id', 'category', 'body');
+	$display[] = array('title', 'date_entered', 'author_id', 'body');
 	
 	// Create the author instance
 	$myAuthor = new Author;
@@ -21,7 +21,7 @@
 	$display[] = array('first_name','last_name','email');
 		
 	// Get the List
-	$myPost->GetList($display);
+	$myPost->GetList($display, 'date_entered', 'DESC', 0 , 10);
 		
 	// Header
 	define('PAGE_TITLE','Welcome');

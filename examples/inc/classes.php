@@ -24,6 +24,9 @@ class Post extends DbTemplate {
 		
 		// Set the Display
 		$this->SetDisplay(array('title', 'author_id', 'tags', 'body'));
+		
+		$this->SetSetting('required_indicator', 'before');
+		$this->SetSetting('label_ending', '');
 	}
 	
 	/**
