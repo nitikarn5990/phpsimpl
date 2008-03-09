@@ -183,6 +183,9 @@ class Field {
 	 * @return bool
 	 */
 	public function Form($options='', $config='', $multi=false, $prefix=''){
+		global $mySimpl;
+		$settings = $mySimpl->settings['form'];
+
 		// If there is a default value use that
 		$my_value = ((string)$this->Get('value') == '' && $this->Get('default') != '')?$this->Get('default'):$this->Get('value');
 		
@@ -216,8 +219,9 @@ class Field {
 		
 		$output = '<div class="field_' . $this->Get('name') . '">';
 		$output .= '<label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">';
-		$output .= ($this->Get('required'))?'<em>*</em>':'';
-		$output .= $this->Label(':');
+		$output .= ($this->Get('required') && ($settings['required_indicator'] == 'before' || $settings['required_indicator'] == ''))?'<em>*</em>':'';
+		$output .= $this->Label($settings['label_ending']);
+		$output .= ($this->Get('required') && $settings['required_indicator'] == 'after')?'<em>*</em>':'';
 		$output .= '</label>';
 		$output .= ($this->Get('error') != '')?'<div class="error">':'';
 

@@ -7,6 +7,14 @@
  */
 class Simpl {
 	/**
+	 * @var array 
+	 */
+	public $settings = array('form' => array(
+		'required_indicator' => 'before',
+		'label_ending' => ':'
+	));
+		
+	/**
 	 * Class Constructor
 	 *
 	 * Creates a Simpl Class with nothing in it
