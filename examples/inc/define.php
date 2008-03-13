@@ -42,7 +42,8 @@ define('DIR_CSS', 'css/');
 define('DIR_MANAGER', 'manager/');
 
 // Simpl Directories
-define('FS_SIMPL', DIR_ABS . 'simpl/');
+// Change this to where simpl is installed on your server
+define('FS_SIMPL', DIR_ABS . '../simpl/');
 define('FS_CACHE', DIR_ABS . 'cache/');
 
 
