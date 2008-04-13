@@ -159,68 +159,51 @@ if (!function_exists('Debug')){
  * @return string
  */
 if (!function_exists('DateTimeDiff')){
-function DateTimeDiff($data_ref){
-	$current_date = date('Y-m-d H:i:s');
-
-	// Extract $current_date
-	$current_year = substr($current_date,0,4);	
-	$current_month = substr($current_date,5,2);
-	$current_day = substr($current_date,8,2);
-
-	// Extract from $data_ref
-	$ref_year = substr($data_ref,0,4);
-	$ref_month = substr($data_ref,5,2);
-	$ref_day = substr($data_ref,8,2);
-
-	// create a string yyyymmdd 20071021
-	$tempMaxDate = $current_year . $current_month . $current_day;
-	$tempDataRef = $ref_year . $ref_month . $ref_day;
-
-	$tempDifference = $tempMaxDate-$tempDataRef;
-
-	// If the difference is GT 10 days show the date
-	if($tempDifference >= 10){
-		$str = 'F j, Y \\a\\t g:i a';
-		if (date('Y', strtotime($data_ref)) == date('Y'))
-			$str = 'F j \\a\\t g:i a';
-		
-		return date($str, strtotime($data_ref));
-	}else{
-		// Extract $current_date H:m:ss
-		$current_hour = substr($current_date,11,2);
-		$current_min = substr($current_date,14,2);
-		$current_seconds = substr($current_date,17,2);
-
-		// Extract $data_ref Date H:m:ss
-		$ref_hour = substr($data_ref,11,2);
-		$ref_min = substr($data_ref,14,2);
-		$ref_seconds = substr($data_ref,17,2);
-	
-		$hDf = $current_hour-$ref_hour;
-		$mDf = $current_min-$ref_min;
-		$sDf = $current_seconds-$ref_seconds;
-	
-		// Show time difference ex: 2 min 54 sec ago.
-		if($dDf<1){
-			if($hDf>0){
-				if($mDf<0){
-					$mDf = 60 + $mDf;
-					$hDf = $hDf - 1;
-					return $mDf . ' min ago';
-				} else {
-					return $hDf. ' hr ' . $mDf . ' min ago';
-				}
-			} else {
-				if($mDf>0){
-					return $mDf . ' min ' . $sDf . ' sec ago';
-				} else {
-					return $sDf . ' sec ago';
-				}
-			}
-		} else {
-			return $dDf . ' days ago';
-		}
-	}
+function DateTimeDiff($time, $opt = array('parts' => 3)) {
+	$time = strtotime($time);
+    
+    // The default values
+    $defOptions = array(
+        'to' => 0,
+        'parts' => 1,
+        'precision' => 'second',
+        'distance' => TRUE,
+        'separator' => ', '
+    );
+    $opt = array_merge($defOptions, $opt);
+    // Default to current time if no to point is given
+    (!$opt['to']) && ($opt['to'] = time());
+    // Init an empty string
+    $str = '';
+    // To or From computation
+    $diff = ($opt['to'] > $time) ? $opt['to']-$time : $time-$opt['to'];
+    // An array of label => periods of seconds;
+    $periods = array(
+        'decade' => 315569260,
+        'year' => 31556926,
+        'month' => 2629744,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'minute' => 60,
+        'second' => 1
+    );
+    // Round to precision
+    if ($opt['precision'] != 'second') 
+        $diff = round(($diff/$periods[$opt['precision']])) * $periods[$opt['precision']];
+    // Report the value is 'less than 1 ' precision period away
+    (0 == $diff) && ($str = 'less than 1 '.$opt['precision']);
+    // Loop over each period
+    foreach ($periods as $label => $value) {
+        // Stitch together the time difference string
+        (($x=floor($diff/$value))&&$opt['parts']--) && $str.=($str?$opt['separator']:'').($x.' '.$label.($x>1?'s':''));
+        // Stop processing if no more parts are going to be reported.
+        if ($opt['parts'] == 0 || $label == $opt['precision']) break;
+        // Get ready for the next pass
+        $diff -= $x*$value;
+    }
+    $opt['distance'] && $str.=($str&&$opt['to']>$time)?' ago':' away';
+    return $str;
 }
 }
 
