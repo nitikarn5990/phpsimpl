@@ -870,7 +870,7 @@ class DbTemplate extends Form {
 			$output .= '<table border="0" cellspacing="0" cellpadding="2" width="98%" class="small" summary="List of Records from ' . $this->Output($this->table) . '" id="table_' . $this->Output($this->table) . '">' . "\n";
 			
 			// Display the header
-			$output .= '<tr>';
+			$output .= '<thead><tr>';
 			foreach($show as $key=>$column){
 				$output .= '<th scope="col" class="col_' . $key .'"><a href="' . $_SERVER['PHP_SELF'] . '?sort=' . $key . '&amp;order=' . $order . '" title="Order by ' . $column . '">';
 				$output .= $column;
@@ -878,7 +878,7 @@ class DbTemplate extends Form {
 					$output .= ($order == 'asc')?' &uarr;':' &darr;';
 				$output .= '</a></th>';
 			}
-			$output .= '</tr>' . "\n";
+			$output .= '</tr></thead><tbody>' . "\n";
 			
 			// Display each row
 			$row = 1;
@@ -920,7 +920,7 @@ class DbTemplate extends Form {
 			}
 			
 			// End the table
-			$output .= '</table>';
+			$output .= '</tbody></table>';
 		}else{
 			$output .= '<p>Currently there are no items, please try again later.</p>' . "\n";
 		}

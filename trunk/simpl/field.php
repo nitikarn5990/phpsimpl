@@ -241,7 +241,7 @@ class Field {
 				default:
 					// Custom Form
 					$obj = $this->Get('options');
-					$output .= $obj->Form($this, $this->Get('config'));
+					$output .= $obj->Form($this, $this->Get('config'), $multi, $prefix);
 					break;
 			}
 		}else if (is_array($this->Get('options')) && count($this->Get('options')) > 0){
