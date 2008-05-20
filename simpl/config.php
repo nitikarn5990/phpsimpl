@@ -14,6 +14,9 @@ define('QUERY_CACHE', false);
 // Store the session data in a table (import the table from the examples)
 define('DB_SESSIONS', false);
 
+// Table Stripes
+define('SIMPL_TABLE_STRIPES', true);
+
 // Where things are sitting
 // Always Include trailing slash "/" in Direcories
 define('DIR_ABS','./');
