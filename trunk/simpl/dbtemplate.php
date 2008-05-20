@@ -883,7 +883,7 @@ class DbTemplate extends Form {
 			// Display each row
 			$row = 1;
 			foreach($this->results as $key=>$field){
-				$output .= '<tr' . (($row%2 == 0)?' class="odd"':'') . '>';
+				$output .= '<tr' . ((SIMPL_TABLE_STRIPES != false && $row%2 == 0)?' class="odd"':'') . '>';
 				$col = 1;
 				foreach($show as $name=>$value){
 					$output .= '<td' . (($col == $col_count)?' class="last"':'') . '>';
