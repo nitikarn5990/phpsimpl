@@ -227,7 +227,7 @@ class DbTemplate extends Form {
 		$updater = array('last_updated', 'updated_on');
 
 		// Determine the save type
-		if ($this->GetPrimary() != '' || $force == 'update'){
+		if ($force == 'update' || ($force == '' && $this->GetPrimary() != '')){
 			$type = 'update';
 		
 			$extra = '`' . $this->primary . '` =' . $this->GetPrimary();
