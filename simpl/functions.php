@@ -109,6 +109,18 @@ if (!function_exists('Pre')){
 }
 
 /**
+ * Display text from DB in HTML safe format
+ *
+ * @param $text String
+ * @return string
+ */
+if (!function_exists('h')){
+	function h($text){
+		return htmlspecialchars(stripslashes($text));
+	}
+}
+
+/**
  * Display Debug Information if set
  *
  * @param $output A mixed variable that needs to be outputted with predefined formatting
