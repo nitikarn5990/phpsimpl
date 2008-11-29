@@ -39,7 +39,7 @@
 			// Loop through each result
 			foreach($myPost->results as $post){
 				echo '<dt><a href="view.php?id=' . $post['post_id'] . '" title="' . htmlspecialchars($post['title']) . '">' . stripslashes(htmlspecialchars($post['title'])) . '</a></dt>' . "\n";
-				echo '<dd>' . htmlspecialchars(substr($post['body'],0,350)) . 
+				echo '<dd>' . h(substr($post['body'],0,350)) . 
 					"\n" . '<div class="details">Posted on ' .date("F j, Y \\a\\t g:i a", strtotime($post['date_entered'])) . 
 					(($post['category'] != '')?' in ' . htmlspecialchars($post['category']):'') . 
 					(($post['first_name'] != '')?' by <a href="mailto:' . htmlspecialchars($post['email']) . '" title="Email this Author">' . htmlspecialchars($post['first_name']) . ' ' . htmlspecialchars($post['last_name']) . '</a>':' by Anonymous') . '</div></dd>' . "\n";
