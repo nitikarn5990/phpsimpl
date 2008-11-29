@@ -250,7 +250,7 @@ class Field {
 				case 'radio':
 					foreach($this->Get('options') as $key=>$value){
 						$selected = ($my_value == (string)$key)?' checked="checked"':'';
-						$each .= '<div><input name="' . $name . (($multi)?'[]':'') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
+						$each .= '<div><input name="' . $name . (($multi)?'_' . $this->Get('multi') . '[]':'') . '" type="radio" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';
 					}
 					$output .= '<div class="radio">' . $each . '</div>';
 				break;
