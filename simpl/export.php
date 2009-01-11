@@ -232,9 +232,12 @@ class Export {
 	 *
 	 * @return string
 	 */
-	private function CreateXML(){
+	private function CreateXML($raw = false){
 		// Reset this output string
-		$this->output['xml'] = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<items>' . "\n";
+		$this->output['xml'] = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+		
+		if (!$raw)
+			$this->output['xml'] .= '<items>' . "\n";
 		
 		// Filter these out
 		$bad_output = array('&', "'", '"', '>', '<');
@@ -243,17 +246,20 @@ class Export {
 		// Loop through each row
 		foreach($this->data as $line=>$set){
 			if (is_array($set)){
-				$this->output['xml'] .= "\t" . '<item>' . "\n";
+				if (!$raw)
+					$this->output['xml'] .= "\t" . '<item>' . "\n";
 				
 				// Loop through each column
 				foreach($set as $name=>$data)
 					$this->output['xml'] .= "\t\t" . '<' . $name . '>' . str_replace($bad_output, $good_output, stripslashes($data)) . '</' . $name . '>' . "\n";
 				
-				$this->output['xml'] .= "\t" . '</item>' . "\n";
+				if (!$raw)
+					$this->output['xml'] .= "\t" . '</item>' . "\n";
 			}
 		}
 		
-		$this->output['xml'] .= '</items>';
+		if (!$raw)
+			$this->output['xml'] .= '</items>';
 
 		return $this->output['xml'];
 	}
