@@ -275,6 +275,12 @@ class DbTemplate extends Form {
 		
 		// Get the values except for the omitted fields
 		$fields = $this->GetFields();
+		
+		// If there is a specific field list to update
+		if (is_array($options['fields'])){
+			$save_fields = array_intersect($options['fields'], $fields);
+		}
+		
 		foreach($fields as $data)
 			if ($this->Get('display', $data) >= 0)
 				$info[$data] = $this->GetValue($data);
