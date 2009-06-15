@@ -278,9 +278,19 @@ class DbTemplate extends Form {
 		
 		// If there is a specific field list to update
 		if (is_array($options['fields'])){
-			$save_fields = array_intersect($options['fields'], $fields);
+			// Make sure these fields are always in the list
+			$always_updated = array_merge(array($this->primary), $updater);
+			
+			// Join the arrays
+			$save_fields = array_merge($options['fields'], $always_updated);
+		
+			// Filter out any fields not in the table
+			$fields = array_intersect($save_fields, $fields);
+			
+			Debug('Save(), Updating only these fields: \'' . implode(',', $fields) . '\'');
 		}
 		
+		// Create the field=>values array for saving
 		foreach($fields as $data)
 			if ($this->Get('display', $data) >= 0)
 				$info[$data] = $this->GetValue($data);
