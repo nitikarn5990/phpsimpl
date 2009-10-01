@@ -324,10 +324,11 @@ class Form {
 					}
 					break;
 				default:
-					if (is_array($data[$name]))
+					if (is_array($data[$name])){
 						$this->Set('value', $name, implode(',', $data[$name]));
-					else
-						$this->Set('value', $name, $data[$name]);
+					}else{
+						$this->Set('value', $name, (($field->Get('display') == 0)?urldecode($data[$name]):$data[$name]));
+					}
 					break;
 			}
 		}
