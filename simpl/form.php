@@ -310,9 +310,9 @@ class Form {
 				case 'time':
 					if ($data[$name] != ''){
 						if($time = strtotime(urldecode($data[$name])))
-							$this->Set('value', $name, date("H:i",$time));
+							$this->Set('value', $name, date("H:i:s",$time));
 						else
-							$this->Set('error', $name, 'Invalid time (HH:MM)');
+							$this->Set('error', $name, 'Invalid time (HH:MM:SS)');
 					}
 					break;
 				case 'datetime':
@@ -320,7 +320,7 @@ class Form {
 						if($time = strtotime(urldecode($data[$name])))
 							$this->Set('value', $name, date("Y-m-d H:i:s",$time));
 						else
-							$this->Set('error', $name, 'Invalid time (MM/DD/YYYY HH:MM)');
+							$this->Set('error', $name, 'Invalid time (MM/DD/YYYY HH:MM:SS)');
 					}
 					break;
 				default:
