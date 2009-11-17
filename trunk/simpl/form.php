@@ -317,8 +317,14 @@ class Form {
 					break;
 				case 'datetime':
 					if ($data[$name] != ''){
-						if($time = strtotime(urldecode($data[$name])))
-							$this->Set('value', $name, date("Y-m-d H:i:s",$time));
+						// Try to get the time
+						$time = urldecode($data[$name]);
+						
+						if ($time != '0000-00-00 00:00:00')
+							$time = date("Y-m-d H:i:s",strtotime($time));
+							
+						if($time != '')
+							$this->Set('value', $name, $time);
 						else
 							$this->Set('error', $name, 'Invalid time (MM/DD/YYYY HH:MM:SS)');
 					}
