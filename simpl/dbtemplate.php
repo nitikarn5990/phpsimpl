@@ -1230,12 +1230,12 @@ class DbTemplate extends Form {
 			while ($info = $db->FetchArray($result2)){
 				$options = array();
 				// Split up the type
-				ereg('^([^ (]+)(\((.+)\))?([ ](.+))?$',$info['Type'],$field);
-				if ($field[1] == 'enum' || $field[1] == 'set'){
-					// Split the options
-					$opts = split("','",substr($field[3],1,-1));
-					foreach($opts as $key=>$value)
+				preg_match_all('/\'(.*?)\'/', $info['Type'], $field);
+				
+				if (is_array($field[1]) && count($field[1]) > 0){
+					foreach($field[1] as $key=>$value)
 						$options[$value] = $value;
+						
 					$this->SetOption($info['Field'], $options);
 				}
 			}

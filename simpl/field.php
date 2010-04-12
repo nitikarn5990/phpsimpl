@@ -255,7 +255,7 @@ class Field {
 					$output .= '<div class="radio">' . $each . '</div>';
 				break;
 				case 'checkbox':
-					$split = split(',',$my_value);
+					$split = explode(',',$my_value);
 					foreach($this->Get('options') as $key=>$value){
 						$selected = (in_array($key,$split))?' checked="checked"':'';
 						$each .= '<div><input name="' . $name . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $key . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '"' . $selected . ' /><label for="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_' . $key . '">' . $this->Output($value) . '</label></div>';

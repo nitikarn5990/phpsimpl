@@ -127,7 +127,7 @@ class PostTag extends DbTemplate {
 			$old_tags[$tag['post_tag_id']] = $tag['tag'];
 		
 		// Split up the categories and make sure there is tags
-		$new_tags = split(',', strtolower($tag_list));
+		$new_tags = explode(',', strtolower($tag_list));
 		foreach($new_tags as $key=>$data)
 			$new_tags[$key] = trim($data);
 		
