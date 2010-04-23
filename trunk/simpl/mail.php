@@ -326,7 +326,7 @@ class Mail{
 			$address = $regs[1];
 			
 		// Check to see if it is in valid format
-		return preg_match("^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,4}$"'/^[^\W][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\@[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\.[a-zA-Z]{2,4}$/', $address);
+		return preg_match("^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,4}$", $address);
 	}
 	
 	/**
