@@ -1,16 +1,27 @@
 <?php
-/**
- * Autoload classes (no need to include them one by one)
- *
- * @param $className string
- */
+if (!function_exists('__autoload')){
 function __autoload($className){
 	if (is_file(FS_SIMPL . strtolower($className) . '.php'))
 		include_once(FS_SIMPL . strtolower($className) . '.php');
 	else if (defined('DIR_CLASSES') && is_file(DIR_CLASSES . strtolower($className) . '.php'))
 		include_once(DIR_CLASSES . strtolower($className) . '.php');
 }
+}
+//spl_autoload_register('simplAutoload');
 
+/**
+ * Autoload classes (no need to include them one by one)
+ *
+ * @param $className string
+
+function simplAutoload($className){
+	if (is_file(FS_SIMPL . strtolower($className) . '.php'))
+		include_once(FS_SIMPL . strtolower($className) . '.php');
+	else if (defined('DIR_CLASSES') && is_file(DIR_CLASSES . strtolower($className) . '.php'))
+		include_once(DIR_CLASSES . strtolower($className) . '.php');
+}
+ */
+ 
 /**
  * Display an array of alerts with a div class
  *
