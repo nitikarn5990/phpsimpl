@@ -322,7 +322,7 @@ class Mail{
 	 */
 	public function ValidEmail($address){
 		// Get the email address out
-		if(ereg( ".*<(.+)>", $address, $regs))
+		if (preg_match('!<(.*?)>!', $address, $regs))
 			$address = $regs[1];
 			
 		// Check to see if it is in valid format
