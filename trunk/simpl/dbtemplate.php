@@ -255,7 +255,7 @@ class DbTemplate extends Form {
 			array_push($updater, 'date_entered', 'created_on');
 			
 			// Automate the display order process
-			if (is_object($options['display_order']) && $this->IsField('display_order')){
+			if (isset($options['display_order']) && is_object($options['display_order']) && $this->IsField('display_order')){
 				// Default Display order
 				$this->SetValue('display_order', 1);
 				
@@ -277,7 +277,7 @@ class DbTemplate extends Form {
 		$fields = $this->GetFields();
 		
 		// If there is a specific field list to update
-		if (is_array($options['fields'])){
+		if (isset($options['fields']) && is_array($options['fields'])){
 			// Make sure these fields are always in the list
 			$always_updated = array_merge(array($this->primary), $updater);
 			
@@ -419,7 +419,7 @@ class DbTemplate extends Form {
 			Debug('Delete(), Item Found, On: ' . $extra);
 			
 			// Remove from display order if needed
-			if (is_object($options['display_order']))
+			if (isset($options['display_order']) && is_object($options['display_order']))
 				while ($this->Move('down', $options)){}
 		
 			// Delete the entry
@@ -467,6 +467,9 @@ class DbTemplate extends Form {
 			array_unshift($returns, $fields);
 		else
 			$returns = $fields;
+			
+		// Initiate all vars
+		$where = $search = $return = $join = '';
 		
 		// Loop through all the joined classes
 		foreach($this->join_class as $key=>$class){
@@ -820,7 +823,7 @@ class DbTemplate extends Form {
 		
 		// Show the fields
 		foreach($this->display as $field)
-				$this->fields[$field]->Form($options[$field], $config[$field], $multi, $this->prefix);
+				$this->fields[$field]->Form((isset($options[$field]))?$options[$field]:'', (isset($config[$field]))?$config[$field]:'', $multi, $this->prefix);
 		
 		// End the fieldset
 		echo '</fieldset>' . "\n";
@@ -857,8 +860,8 @@ class DbTemplate extends Form {
 	 */
 	public function DisplayList($display='',$format=array(),$options=array(),$force_check=true){
 		// Setup the Sort Sessions
-		$_SESSION[$this->table . '_sort'] = ($_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
-		$_SESSION[$this->table . '_order'] = ($_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . '_order'];
+		$_SESSION[$this->table . '_sort'] = (isset($_GET['sort']) && $_GET['sort'] != '')?$_GET['sort']:$_SESSION[$this->table . '_sort'];
+		$_SESSION[$this->table . '_order'] = (isset($_GET['order']) && $_GET['order'] != '')?$_GET['order']:$_SESSION[$this->table . '_order'];
 		
 		// Get the list of items if forced
 		if ($force_check == true )
@@ -911,15 +914,15 @@ class DbTemplate extends Form {
 					//$str = stripslashes($field[$name]);
 					$str = $this->Output($field[$name]);
 					
-					if (is_array($options[$name]))
+					if (isset($options[$name]) && is_array($options[$name]))
 						$str = $options[$name][$str];
-					else if (function_exists($options[$name])){
+					else if (isset($options[$name]) && function_exists($options[$name])){
 						$func = $options[$name];
 						$str = $func($str);
-					}else if ($options[$name] == 'move')
+					}else if (isset($options[$name]) && $options[$name] == 'move')
 						$str = '<div class="center">' . (($row != 1)?'<a href="?item=' . $field[$this->primary] . '&amp;move=up">&uarr;</a>':'') . (($row != $count)?'<a href="?item=' . $field[$this->primary] . '&amp;move=down">&darr;</a>':'') . '</div>';
 					
-					if ($format[$name] != ''){
+					if (isset($format[$name]) && $format[$name] != ''){
 						$replace = array($field[$this->primary], $str);
 						$str = str_replace($find, $replace, $format[$name]);
 					}

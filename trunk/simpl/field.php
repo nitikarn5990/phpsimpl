@@ -263,7 +263,7 @@ class Field {
 					$output .= '<div class="checkbox">' . $each . '</div>';
 				break;
 				default:
-					$each .= '<select name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '"' . (($this->Get('required'))?' class="required"':'') . '>' . "\n";
+					$each = '<select name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '"' . (($this->Get('required'))?' class="required"':'') . '>' . "\n";
 					foreach($this->Get('options') as $key=>$value){
 						$selected = ($my_value == (string)$key)?' selected="selected"':'';
 						$each .= '<option value="' . $key . '"' . $selected . '>' . $this->Output($value) . '</option>' . "\n";
