@@ -277,7 +277,7 @@ class Form {
 	 * @return bool
 	 */
 	public function IsField($field){
-		return (is_object($this->fields[$field]));
+		return (isset($this->fields[$field]) && is_object($this->fields[$field]));
 	}
 
 	/**
