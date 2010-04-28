@@ -52,6 +52,10 @@ class Mail{
 	 * @var	string Boundary of types in mail
 	 */
 	private $boundary;
+	/**
+	 * @var	string Actual email body
+	 */
+	private $body;
 	
 	/**
 	 * Mail contructor
@@ -326,7 +330,7 @@ class Mail{
 			$address = $regs[1];
 			
 		// Check to see if it is in valid format
-		return preg_match("^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,4}$", $address);
+		return preg_match('/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i', $address);
 	}
 	
 	/**
