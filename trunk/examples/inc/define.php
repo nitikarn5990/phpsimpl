@@ -48,8 +48,8 @@ define('FS_CACHE', DIR_ABS . 'cache/');
 
 
 // Database Connection Options
-define('DB_USER', 'root');
-define('DB_PASS', 'wayne-wcs');
-define('DB_HOST', 'localhost');
-define('DB_DEFAULT', 'phpsimpl');
+define('DB_USER', '');
+define('DB_PASS', '');
+define('DB_HOST', '');
+define('DB_DEFAULT', '');
 ?>
