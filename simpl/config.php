@@ -1,37 +1,39 @@
 <?php
 // Debug everything, set only if you need to know exactly what is going on
-define('DEBUG', false);
+if (!defined('DEBUG')) define('DEBUG', false);
 // Debug only raw queies
-define('DEBUG_QUERY', false);
+if (!defined('DEBUG_QUERY')) define('DEBUG_QUERY', false);
 // Store all the debug info in a debug log file
-define('DEBUG_LOG', false);
+if (!defined('DEBUG_LOG')) define('DEBUG_LOG', false);
 // Use a file cache to store the data structures (recommended)
-define('USE_CACHE', true);
+if (!defined('USE_CACHE')) define('USE_CACHE', true);
 // Pull the ENUM data from database as options (only use if your tables have ENUM data)
-define('USE_ENUM', false);
+if (!defined('USE_ENUM')) define('USE_ENUM', false);
 // Cache query results to a file for faster re-queries
-define('QUERY_CACHE', false);
+if (!defined('QUERY_CACHE')) define('QUERY_CACHE', false);
 // Store the session data in a table (import the table from the examples)
-define('DB_SESSIONS', false);
+if (!defined('DB_SESSIONS')) define('DB_SESSIONS', false);
+// For clearing the cache
+if (!defined('CLEAR_CACHE')) define('CLEAR_CACHE', false);
 
 // Table Stripes
-define('SIMPL_TABLE_STRIPES', true);
+if (!defined('SIMPL_TABLE_STRIPES')) define('SIMPL_TABLE_STRIPES', true);
 
 // Where things are sitting
 // Always Include trailing slash "/" in Direcories
-define('DIR_ABS','./');
-define('WS_SIMPL','simpl/');
-define('WS_SIMPL_IMAGE','img/');
-define('WS_SIMPL_INC','inc/');
-define('WS_SIMPL_CSS','css/');
-define('WS_SIMPL_JS','js/');
-define('WS_CACHE','cache/');
-define('FS_SIMPL',DIR_ABS . WS_SIMPL);
-define('FS_CACHE',FS_SIMPL . WS_CACHE);
+if (!defined('DIR_ABS')) define('DIR_ABS','./');
+if (!defined('WS_SIMPL')) define('WS_SIMPL','simpl/');
+if (!defined('WS_SIMPL_IMAGE')) define('WS_SIMPL_IMAGE','img/');
+if (!defined('WS_SIMPL_INC')) define('WS_SIMPL_INC','inc/');
+if (!defined('WS_SIMPL_CSS')) define('WS_SIMPL_CSS','css/');
+if (!defined('WS_SIMPL_JS')) define('WS_SIMPL_JS','js/');
+if (!defined('WS_CACHE')) define('WS_CACHE','cache/');
+if (!defined('FS_SIMPL')) define('FS_SIMPL',DIR_ABS . WS_SIMPL);
+if (!defined('FS_CACHE')) define('FS_CACHE',FS_SIMPL . WS_CACHE);
 
 // Database Connection Option
-define('DB_USER',DBUSER);
-define('DB_HOST',DBHOST);
-define('DB_PASS',DBPASS);
-define('DB_DEFAULT', NULL);
+if (!defined('DB_USER')) define('DB_USER',DBUSER);
+if (!defined('DB_HOST')) define('DB_HOST',DBHOST);
+if (!defined('DB_PASS')) define('DB_PASS',DBPASS);
+if (!defined('DB_DEFAULT')) define('DB_DEFAULT', NULL);
 ?>
