@@ -186,7 +186,7 @@ class Mail{
 	 * @param $charset String containing the charset (us-ascii)
 	 * @return null
 	 */
-	public function Body($body, $content_type='', $charset=''){
+	public function Body($body, $content_type='', $charset='', $encoding=''){
 		$this->body = $body;
 		
 		if ($content_type != '')
@@ -196,6 +196,9 @@ class Mail{
 			$this->charset = strtolower($charset);
 			if( $this->charset != 'us-ascii')
 				$this->ctencoding = '8bit';
+			
+			if ($encoding != '')
+				$this->ctencoding = $encoding;
 		}
 	}
 	
