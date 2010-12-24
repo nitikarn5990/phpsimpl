@@ -10,8 +10,6 @@ function __autoload($className){
 }
 */
 
-spl_autoload_register('simplAutoload');
-
 /**
  * Autoload classes (no need to include them one by one)
  *
@@ -25,6 +23,8 @@ function simplAutoload($className){
 		include_once(DIR_CLASSES . strtolower($className) . '.php');
 }
 }
+
+spl_autoload_register('simplAutoload');
 
  
 /**
