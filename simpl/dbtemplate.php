@@ -504,7 +504,7 @@ class DbTemplate extends Form {
 			
 			// Create the Joins
 			if ($key > 0)
-				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->database . '`.`' . $this->table . '`.' . $this->join_on[$key] . ') ';
+				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key][0] . ' = `' . $this->database . '`.`' . $this->table . '`.' . $this->join_on[$key][1] . ') ';
 			
 			// Add the search to the where
 			if ($search != '')
@@ -640,7 +640,7 @@ class DbTemplate extends Form {
 			
 			// Create the Joins
 			if ($key > 0)
-				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key] . ' = `' . $this->database . '`.`' . $this->table . '`.' . $this->join_on[$key] . ') ';
+				$join .= ' ' . $this->join_type[$key] . ' JOIN `' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '` ON (`' . $this->join_class[$key]->database . '`.`' . $this->join_class[$key]->table . '`.' . $this->join_on[$key][0] . ' = `' . $this->database . '`.`' . $this->table . '`.' . $this->join_on[$key][1] . ') ';
 		}
 		
 		$query = 'SELECT ' . substr($return,0,-2) . ' FROM `' . $this->database . '`.`' . $this->table . '`' . $join . ' WHERE ' . $parts;
@@ -1056,7 +1056,7 @@ class DbTemplate extends Form {
 	 * Join this table with another
 	 * 
 	 * @param class $join_class DbTemplate
-	 * @param string $join_on field
+	 * @param string $join_on field or fields (join_class.field = local_class.field)
 	 * @param string $type (ex. "INNER" or "LEFT")
 	 * @return bool
 	 */
@@ -1065,7 +1065,7 @@ class DbTemplate extends Form {
 		if (is_object($join_class)){
 			$this->join_class[] = $join_class;
 			$this->join_type[] = $type;
-			$this->join_on[] = $join_on;
+			$this->join_on[] = (stripos($join_on, '=') !== FALSE)?explode('=', $join_on, 2):array($join_on, $join_on);
 			return true;
 		}
 	}
