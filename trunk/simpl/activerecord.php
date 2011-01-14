@@ -39,6 +39,14 @@ class ActiveRecord extends DbTemplate {
 		parent::__construct($table, $database);
 	}
 	
+	/**
+	 * Dynamic Function Call
+	 * Used to call connections directly
+	 * 
+	 * @param string $method Class name
+	 * @param string $args Any variables
+	 * @return bool
+	 */
 	public function __call($method, $args){
 		// Make sure the class called is valid
 		if (!class_exists($method))
@@ -105,12 +113,12 @@ class ActiveRecord extends DbTemplate {
 	 * @param array $display Fields to be returned
 	 * @return array Of relationship items
 	 */
-	public function Items($display=''){
+	public function Items($fields=array(), $order_by='', $sort='', $offset='', $limit=''){
 		// Make sure there is a primary key set
 		// @todo Not sure how to do this from here
 				
 		// Join all the tables and determine the count
-		$this->GetList($display);
+		$this->GetList($fields, $order_by, $sort, $offset, $limit);
 		
 		// Return the count		
 		return $this->Results();
