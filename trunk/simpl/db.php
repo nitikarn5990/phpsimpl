@@ -112,8 +112,14 @@ class DB {
 	 * @return Mixed
 	 * 
 	 */
-	public function Query($query, $db='', $cache=true) {
+	public function Query($query, $db='', $cache=true, $log=true) {
 		global $db_link;
+		
+		// Track the start time of the query
+		if (DB_LOG && $log){
+			$start = explode(' ',microtime());
+			$start = (float)$start[1] + (float)$start[0];
+		}
 		
 		Debug('Query: ' . $query, 'query');
 		
@@ -159,6 +165,16 @@ class DB {
     	// Change the DB back is needed
     	if ($db != '' && $db != $this->database)
     		$this->Change($old_db);
+    		
+    	// Track the total time of the request
+    	if (DB_LOG && $log){
+			$end = explode(' ',microtime());
+			$end = (float)$end[1] + (float)$end[0];
+			$time_take = sprintf('%.6f',(float)$end - (float)$start);
+			
+			// Actually log the query, cross your fingers the table and DB exist
+			
+		}
     		
     	// Cache the Query if possible
     	if ($is_cache){
