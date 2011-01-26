@@ -1139,7 +1139,7 @@ class DbTemplate extends Form {
 	 * @param string $max_age
 	 * @return string
 	 */
-	private function Cache($action, $filename, $data='', $max_age=''){
+	protected function Cache($action, $filename, $data='', $max_age=''){
 		// Set the full path
 		$cache_file = FS_CACHE . $filename;
 		$cache = '';
