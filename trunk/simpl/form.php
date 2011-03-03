@@ -699,7 +699,7 @@ class Form {
 		$output .= '<strong>Fields:</strong>' . "\n";
 		if (count($fields) > 0)
 			foreach($fields as $name=>$field)
-				$output .= "\t" . $field . ' => ' . $this->GetValue($field) . (($errors[$field] != '')?' <strong>:</strong> ' . $errors[$field]:'') . "\n";
+				$output .= "\t" . $field . ' => ' . $this->GetValue($field) . ((!empty($errors[$field]))?' <strong>:</strong> ' . $errors[$field]:'') . "\n";
 		else
 			$output .= "\t" . 'No Fields' . "\n";
 		
