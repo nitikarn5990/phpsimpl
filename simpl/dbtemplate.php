@@ -538,7 +538,7 @@ class DbTemplate extends Form {
 		$query .= ($this->group_by != '')?' GROUP BY ' . $this->group_by:'';
 		$query .= ($order != '')?' ORDER BY ' . $order:'';
 		$query .= ($offset > 0 || $limit > 0)?' LIMIT ' . $offset . ', ' . $limit:'';
-		
+
 		// Do the Query
 		$result = $db->Query($query, $this->database);
 		Debug('GetList(), Query: ' . $query);
@@ -555,7 +555,6 @@ class DbTemplate extends Form {
 					$this->results[] = $info;
 			}
 		}
-		
 		// Pop $this from the array
 		array_shift($this->join_class);
 		array_shift($this->join_type);
@@ -1148,9 +1147,20 @@ class DbTemplate extends Form {
 			// Clear the file stats
 			clearstatcache();
 
-			if (is_file($cache_file))
-				if ($max_age != '' && date ($max_age, filemtime($cache_file)) >= date($max_age))
+			if (is_file($cache_file) && $max_age != ''){
+				// Make sure $max_age is negitive
+				if (is_string($max_age) && substr($max_age, 0 , 1) != '-')
+					$max_age = '-' . $max_age;
+				
+				// Make sure $max_age is an INT
+				if (!is_int($max_age))
+					$max_age = strtotime($max_age);
+			
+				// Test to see if the file is still fresh enough
+				if (filemtime($cache_file) >= date($max_age)){
 					$cache = file_get_contents($cache_file);
+				}
+			}
 		}else{
 			if (is_writable(FS_CACHE)){
 				// Serialize the Fields
