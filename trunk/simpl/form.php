@@ -316,7 +316,7 @@ class Form {
 					}
 					break;
 				case 'datetime':
-					if ($data[$name] != ''){
+					if (!empty($data[$name])){
 						// Try to get the time
 						$time = urldecode($data[$name]);
 						
@@ -330,10 +330,15 @@ class Form {
 					}
 					break;
 				default:
-					if (is_array($data[$name])){
-						$this->Set('value', $name, implode(',', $data[$name]));
+					// If there is a value being passed
+					if (isset($data[$name]) && (!empty($data[$name]) || (string)$data[$name] == '0')){
+						if (is_array($data[$name]))
+							$this->Set('value', $name, implode(',', $data[$name]));
+						else
+							$this->Set('value', $name, (($field->Get('display') == 0)?urldecode($data[$name]):$data[$name]));
 					}else{
-						$this->Set('value', $name, (($field->Get('display') == 0)?urldecode($data[$name]):$data[$name]));
+						// If no value, set the value to default
+						$this->Set('value', $name, $this->Get('default', $name));
 					}
 					break;
 			}
