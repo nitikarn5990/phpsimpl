@@ -232,7 +232,7 @@ class Field {
 				case 'Upload':
 					// If there is something in the field
 					if ($my_value != ''){
-						$output .=  '<div id="form_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . $my_value . ' <input name="remove' . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" /> Remove File</div>';
+						$output .=  '<div id="form_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '">' . $my_value . ' <label><input name="remove' . (($multi)?'[]':'') . '[]" type="checkbox" value="' . $this->Get('name') . '" id="remove_' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" /> Remove File</label></div>';
 						$output .=  '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="hidden" value="' . $my_value . '" />' . "\n";
 					}else{
 						$output .=  '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="file" />';
