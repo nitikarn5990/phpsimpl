@@ -716,7 +716,7 @@ class DbTemplate extends Form {
 		// Set the conditions
 		$this->conditions = $conditions;
 		
-		Debug('SetConditions(), Conditions on ' . get_class($this) . ' Set to: ' . $condititions);
+		Debug('SetConditions(), Conditions on ' . get_class($this) . ' Set to: ' . $conditions);
 		
 		return true;
 	}
