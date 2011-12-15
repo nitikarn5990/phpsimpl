@@ -278,7 +278,7 @@ class Field {
 		}elseif($this->Get('type') == 'date'){
 			// Date Field
 			$value = ($my_value != '0000-00-00' && $my_value != '')?date("F j, Y",strtotime($my_value)):'';
-			$output .= '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="text" size="18" maxlength="18" value="' . $value . '" /><button type="reset" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b">...</button>';	
+			$output .= '<input name="' . $name . (($multi)?'[]':'') . '" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '" type="text" size="19" maxlength="19" value="' . $value . '" /><button type="reset" id="' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b">...</button>';	
 			$output .= '<script type="text/javascript">Calendar.setup({ inputField : "' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '", ifFormat : "%B %e, %Y", button : "' . $this->Get('name') . (($multi)?'_' . $this->Get('multi'):'') . '_b"});</script>';
 		}else{
 			// Single Field
