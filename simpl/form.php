@@ -722,9 +722,14 @@ class Form {
 	 */
 	public function FormField($field, $hidden=false, $options='', $config='', $multi=false){
 		if ($this->IsField($field)){
-			if ($hidden != true)
+			if ($hidden != true){
+				// Force Display value for $field if display for the $field is hidden (0) or omitted (-1)
+				if($this->fields[$field]->Get('display') <= 0){
+					$this->fields[$field]->Set('display', 1);
+				}
+				
 				$this->fields[$field]->Form($options, $config, $multi, $this->prefix);
-			else{
+			}else{
 				$name = ($prefix != '')?$prefix . '[' . $field . ']':$field;
 				echo '<input name="' . $name . (($multi)?'[]':'') . '" type="hidden" id="' . $name . (($multi)?'_' . $this->Get('multi'):'') . '" value="' . urlencode($this->Output($this->fields[$field]->Get('value'))) . '" />' . "\n";
 			}
