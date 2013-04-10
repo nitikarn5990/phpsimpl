@@ -1,4 +1,8 @@
 <?php
+// Override the IP address if in a load balanced environment
+if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+	$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
 // Include the Config
 if (defined('FS_SIMPL'))
 	include_once(FS_SIMPL . 'config.php');
