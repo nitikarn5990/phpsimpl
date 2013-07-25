@@ -137,6 +137,20 @@ if (!function_exists('h')){
 }
 
 /**
+ * Get an array value safely without notices
+ *
+ * @param $array Array
+ * @param $index String
+ * @return string
+ */
+function a(&$array, $index){
+	if (is_array($array) && isset($index[$array]))
+		return $array[$index];
+		
+	return false;
+}
+
+/**
  * Display Debug Information if set
  *
  * @param $output A mixed variable that needs to be outputted with predefined formatting
@@ -156,7 +170,7 @@ if (!function_exists('Debug')){
 			
 			$debug = implode('<br />', $debug);
 			
-			print '<pre class="debug' . (($class != '')?' ' . $class:'') . '">' . "{$label}: {$debug}:<br />" . print_r($output, 1) . "\n";
+			print '<pre class="debug' . (($class != '')?' ' . $class:'') . '">' . "{$class}: {$debug}:<br />" . print_r($output, 1) . "\n";
 		}
 		
 		/*
