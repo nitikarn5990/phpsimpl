@@ -9,19 +9,19 @@
  */
 class Validate {
 	/**
-	 * @var array 
+	 * @var array
 	 */
 	private $types = array();
 
 	/**
 	 * Validate Constructor
-	 * 
+	 *
 	 * Used to setup all the validation types
 	 *
 	 * @return bool
 	 */
 	public function __construct(){
-		$this->types = array('email' => '/^[^\W][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\@[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\.[a-zA-Z]{2,4}$/',
+		$this->types = array('email' => '/^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\@[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\.[a-zA-Z]{2,4}$/',
 				'phone' => '/^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,3})|(\(?\d{2,3}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$',
 				'int' => '/^([0-9])+$/',
 				//'unsigned' => '^[0-9]*$',
@@ -44,7 +44,7 @@ class Validate {
 		// Check for the type
 		if ((string)$value != '' && array_key_exists($type, $this->types))
 			return preg_match($this->types[$type], $value);
-		
+
 		return true;
 	}
 
